@@ -1,12 +1,12 @@
 import Image from 'next/image';
-import Wallpaper from '../public/toronto.jpg';
+import Wallpaper from '../public/wallpapers/toronto.jpg';
 import { ProcessInfoContextProvider } from './contexts/ProcessInfoContext';
-import { Taskbar } from './Taskbar';
+import { Taskbar } from './taskbar/Taskbar';
 
 const Desktop = () => {
   return (
-    <div className="w-[144lvh] h-[90lvh] overflow-clip relative">
-      <Image src={Wallpaper} alt="desktop wallpaper" />
+    <div className="aspect-[16/10] max-w-[144lvh] min-w-0 max-h-[90lvh] min-h-0 overflow-clip relative">
+      <Image src={Wallpaper} alt="desktop wallpaper" draggable={false} />
       <ProcessInfoContextProvider>
         <Taskbar />
       </ProcessInfoContextProvider>
@@ -15,7 +15,7 @@ const Desktop = () => {
 };
 
 export const Computer = () => (
-  <div className="w-lvw h-lvh p-10 flex items-center justify-center">
+  <div className="w-lvw h-lvh p-10 flex items-center justify-center select-none">
     <Desktop />
   </div>
 );

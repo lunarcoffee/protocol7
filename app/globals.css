@@ -1,54 +1,32 @@
 @import 'tailwindcss';
 
 :root {
-  --aero-tint-hue-saturation: 195deg, 45%;
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  --aero-tint-hue-saturation: 195deg 45%;
 
   --aero-tint-regular-lightness: 45%;
   --aero-tint-dark-lightness: 30%;
+  --aero-tint-darkest-lightness: 7%;
+
+  --font-open-sans: 'Open Sans';
 }
 
 @theme {
   --color-aero-tint: hsl(
-    var(--aero-tint-hue-saturation),
-    var(--aero-tint-regular-lightness)
+    var(--aero-tint-hue-saturation) var(--aero-tint-regular-lightness)
   );
   --color-aero-tint-dark: hsl(
-    var(--aero-tint-hue-saturation),
-    var(--aero-tint-dark-lightness)
+    var(--aero-tint-hue-saturation) var(--aero-tint-dark-lightness)
   );
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-aero-tint-darkest: hsl(
+    var(--aero-tint-hue-saturation) var(--aero-tint-darkest-lightness)
+  );
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-@layer components {
-  .aero-gradient {
-    /* background: linear-gradient( */
-    /*   0deg, */
-    /*   rgba(85, 163, 194, 0.25) 0%, */
-    /*   rgba(99, 138, 143, 0.25) 92%, */
-    /*   rgba(189, 227, 255, 0.35) 100% */
-    /* ); */
-    background: linear-gradient(
-      0deg,
-      var(--color-aero-tint) 0%,
-      var(--color-aero-tint) 92%,
-      white 100%
-    );
-  }
-}
-
-@layer utilities {
-  .launcher-button-top {
-  }
+  font-family: var(--font-open-sans), Arial, Helvetica, sans-serif;
 }
