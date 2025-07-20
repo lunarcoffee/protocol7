@@ -25,10 +25,10 @@ const ProcessManagerContext = createContext<ProcessManager>(
   DEFAULT_PROCESS_MANAGER,
 );
 
-export type ProcessManagerDispatchAction = {
-  action: 'create';
-  pid: ProcessID;
-};
+export type ProcessManagerDispatchAction =
+  | { action: 'create'; pid: ProcessID }
+  | { action: 'attach_window'; pid: ProcessID; wid: WindowID }
+  | { action: 'detach_window'; pid: ProcessID; wid: WindowID };
 
 export type ProcessManagerDispatch = (
   action: ProcessManagerDispatchAction,
@@ -46,12 +46,30 @@ const updateProcessManager = (
 ) => {
   const { processes } = draft;
 
+  // TODO: check for duplicate pid
   switch (action.action) {
     case 'create': {
       const { pid } = action;
-      
+
       processes.set(pid, { pid, windows: [], isHeadless: false }); // TODO: update action object to pass arguments
       break;
+    }
+    case 'attach_window': {
+      const { pid, wid } = action;
+
+      const process = processes.get(pid);
+      if (process) process.windows.push(wid);
+      break;
+    }
+    case 'detach_window': {
+      const { pid, wid } = action;
+
+      const process = processes.get(pid);
+      if (process) {
+        process.windows.splice(process.windows.indexOf(wid));
+        if (!process.windows.length && !process.isHeadless)
+          processes.delete(pid);
+      }
     }
   }
 };

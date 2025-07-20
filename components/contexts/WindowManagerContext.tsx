@@ -19,7 +19,7 @@ export interface WindowInfo {
   size: Dimensions;
   zIndex: number;
   isOpen: boolean;
-  render: (info: WindowInfo, index: number) => JSX.Element; // TODO: handle multiple windows per process later
+  render: (info: WindowInfo) => JSX.Element; // TODO: handle multiple windows per process later
 }
 
 type RequiredWindowProps = 'wid' | 'pid' | 'size' | 'render';
@@ -62,6 +62,7 @@ const updateWindowManager = (
 ) => {
   const { windows } = draft;
 
+  // TODO: check for duplicate wid
   switch (action.action) {
     case 'create':
       const { wid, info: creationInfo } = action;
