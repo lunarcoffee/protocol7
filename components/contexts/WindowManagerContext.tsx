@@ -17,9 +17,15 @@ export interface WindowInfo {
   title: string;
   position: Dimensions;
   size: Dimensions;
+  zIndex: number;
   isOpen: boolean;
   render: (info: WindowInfo, index: number) => JSX.Element; // TODO: handle multiple windows per process later
 }
+
+type RequiredWindowProps = 'wid' | 'pid' | 'size' | 'render';
+
+export type WindowCreationInfo = Pick<WindowInfo, RequiredWindowProps> &
+  Partial<Omit<WindowInfo, RequiredWindowProps>>;
 
 export interface WindowManager {
   windows: Map<WindowID, WindowInfo>;
@@ -36,7 +42,7 @@ const WindowManagerContext = createContext<WindowManager>(
 );
 
 export type WindowManagerDispatchAction =
-  | { action: 'create'; wid: WindowID; info: WindowInfo }
+  | { action: 'create'; wid: WindowID; info: WindowCreationInfo }
   | { action: 'destroy'; wid: WindowID }
   | { action: 'move'; wid: WindowID; position: Dimensions };
 
@@ -58,8 +64,15 @@ const updateWindowManager = (
 
   switch (action.action) {
     case 'create':
-      const { wid, info } = action;
+      const { wid, info: creationInfo } = action;
 
+      const info = {
+        title: 'New Window', // TODO: update these values
+        position: draft.defaultPosition,
+        zIndex: 0,
+        isOpen: true,
+        ...creationInfo,
+      };
       windows.set(wid, info);
       break;
     case 'destroy': {
