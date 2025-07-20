@@ -14,7 +14,7 @@ export interface WindowInfo {
   position: Dimensions;
   size: Dimensions;
   isOpen: boolean;
-  render: (info: WindowInfo) => JSX.Element; // TODO: handle multiple windows per process later
+  render: (info: WindowInfo, index: number) => JSX.Element; // TODO: handle multiple windows per process later
 }
 
 export type ProcessID = number;
@@ -34,10 +34,21 @@ export type ProcessTable = Map<ProcessID, ProcessInfo>;
 
 const ProcessTableContext = createContext<ProcessTable>(new Map());
 
-export type ProcessTableDispatchAction = {
-  action: 'create';
-  render: (info: WindowInfo) => JSX.Element; // TODO: this is not fitting
-};
+export type WindowAction =
+  | { action: 'create'; info: WindowInfo }
+  | { action: 'destroy'; index: number }
+  | { action: 'move'; index: number; position: Dimensions };
+
+export type ProcessTableDispatchAction =
+  | {
+      action: 'create';
+      pid: ProcessID;
+    }
+  | {
+      action: 'window';
+      subaction: WindowAction;
+      pid: ProcessID;
+    };
 
 export type ProcessTableDispatch = (action: ProcessTableDispatchAction) => void;
 
@@ -47,27 +58,36 @@ const ProcessTableDispatchContext = createContext<ProcessTableDispatch>(() => {
 
 const updateProcessTable = (
   draft: Draft<ProcessTable>,
-  { action, ...args }: ProcessTableDispatchAction,
+  action: ProcessTableDispatchAction,
 ) => {
-  switch (action) {
-    case 'create':
-      let id = 0;
-      while (draft.get(id)) id++;
+  switch (action.action) {
+    case 'create': {
+      const { pid } = action;
+      draft.set(pid, { id: pid, windows: [] });
+      break;
+    }
+    case 'window': {
+      const { subaction, pid } = action;
 
-      const process = {
-        id,
-        windows: [
-          {
-            title: 'Random title lol',
-            position: { x: 300, y: 200 }, // TODO: ew
-            size: { x: 500, y: 300 },
-            render: args.render,
-            isOpen: true,
-          },
-        ],
-      };
-
-      draft.set(id, process);
+      switch (subaction.action) {
+        case 'create':
+          const { info } = subaction;
+          draft.get(pid)?.windows?.push(info);
+          break;
+        case 'destroy': {
+          const { index } = subaction;
+          draft.get(pid)?.windows?.splice(index, 1);
+          break;
+        }
+        case 'move': {
+          const { index, position } = subaction;
+          if (draft.has(pid))
+            draft.get(pid)!.windows[index].position = position;
+          break;
+        }
+      }
+      break;
+    }
   }
 };
 

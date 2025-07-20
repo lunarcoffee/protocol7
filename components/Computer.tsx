@@ -1,7 +1,7 @@
 'use client'; // TODO: remove this if we move teh window manager out adn no longer need hooks
 
 import Image from 'next/image';
-import Wallpaper from '../public/wallpapers/toronto.jpg';
+import Wallpaper from '../public/wallpapers/leaves.jpg';
 import {
   ProcessTableContextProvider,
   useProcessTable,
@@ -13,31 +13,56 @@ import { WindowFrame } from './controls/WindowFrame';
 
 enableMapSet();
 // TODO: collage wallpaper
+//
+
+const useNextProcessId = () => {
+  const [processTable] = useProcessTable();
+
+  let id = 0;
+  while (processTable.get(id)) id++;
+  return id;
+};
 
 const WindowManager = () => {
   const [processTable, updateProcessTable] = useProcessTable();
   const processes = Array.from(processTable.values());
 
+  const nextPid = useNextProcessId();
+
   return (
     <div className="absolute top-0 left-0 size-full">
       <button
-        onClick={() =>
+        onClick={() => {
           updateProcessTable({
             action: 'create',
-            render: (windowInfo) => (
-              <WindowFrame windowInfo={windowInfo}>
-                this is a window!
-              </WindowFrame>
-            ),
-          })
-        }
+            pid: nextPid,
+          });
+          updateProcessTable({
+            action: 'window',
+            pid: nextPid,
+            subaction: {
+              action: 'create',
+              info: {
+                title: 'Random title lol',
+                position: { x: 300, y: 200 }, // TODO: ew
+                size: { x: 500, y: 300 },
+                render: (windowInfo, i) => (
+                  <WindowFrame windowInfo={windowInfo} pid={nextPid} index={i}>
+                    this is a window!
+                  </WindowFrame>
+                ),
+                isOpen: true,
+              },
+            },
+          });
+        }}
         className="size-5 absolute top-0 left-0 bg-amber-400"
       >
         open sesame
       </button>
       {processes.flatMap(({ id, windows }) => {
         return windows.map((windowInfo, i) => (
-          <div key={`${id}-${i}`}>{windowInfo.render(windowInfo)}</div>
+          <div key={`${id}-${i}`}>{windowInfo.render(windowInfo, i)}</div>
         ));
       })}
     </div>
