@@ -18,6 +18,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  console.log("boom")
   return (
     <html lang="en">
       <body className={`${openSans.variable} antialiased`}>{children}</body>

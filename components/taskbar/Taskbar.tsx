@@ -1,6 +1,6 @@
 'use client';
 
-import { useProcessInfo } from '../contexts/ProcessInfoContext';
+import { useProcessTable } from '../contexts/ProcessInfoContext';
 import { Clock } from './Clock';
 import { LauncherButton } from './LauncherButton';
 import { useToggle } from '@/hooks/useToggle';
@@ -13,11 +13,11 @@ import VolumeHighIcon from '../../public/icons/volume-high.svg';
 import Image from 'next/image';
 
 export const Taskbar = () => {
-  const [processInfo, updateProcessInfo] = useProcessInfo();
+  // const [processInfo, updateProcessInfo] = useProcessTable();
   const [isActive, toggleActive] = useToggle();
 
   return (
-    <div className="absolute bottom-0 w-full h-10 pl-4 pr-2 bg-gradient-to-t from-aero-tint-dark/50 via-95% via-aero-tint/40 to-white/40 backdrop-blur-xs border-t border-t-aero-tint-darkest/85 flex flex-row items-center">
+    <div className="absolute bottom-0 w-full h-10 pl-4 pr-2 bg-gradient-to-t from-aero-tint-dark/80 via-95% via-aero-tint-dark/70 to-white/40 backdrop-blur-xs border-t border-t-aero-tint-darkest/85 flex flex-row items-center">
       <div className="left-4 -mt-1">
         <LauncherButton active={isActive} onClick={toggleActive} />
       </div>
@@ -31,7 +31,7 @@ export const Taskbar = () => {
                 <Image
                   src={VolumeHighIcon}
                   alt="network icon"
-                  className="w-7 p-[0.25rem]"
+                  className="w-7 p-[0.27rem]"
                 />
               ),
               renderPane: () => <p></p>,
@@ -46,16 +46,16 @@ export const Taskbar = () => {
               ),
               renderPane: () => <p></p>,
             },
-            {
-              renderIcon: () => (
-                <Image
-                  src={WirelessIcon}
-                  alt="network icon"
-                  className="w-7 p-[0.4rem]"
-                />
-              ),
-              renderPane: () => <p></p>,
-            },
+            // {
+            //   renderIcon: () => (
+            //     <Image
+            //       src={WirelessIcon}
+            //       alt="network icon"
+            //       className="w-7 p-[0.4rem]"
+            //     />
+            //   ),
+            //   renderPane: () => <p></p>,
+            // },
           ]}
         />
       </div>

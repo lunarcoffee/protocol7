@@ -14,7 +14,7 @@ export const SystemTray = ({ items }: SystemTrayProps) => (
   <div className="flex flex-row justify-center">
     {items.map((item, i) => (
       <Hoverable glow={false} key={i}>
-        <div className="drop-shadow-xs drop-shadow-aero-tint-darkest/80">
+        <div className="drop-shadow-xs drop-shadow-aero-tint-darkest">
           {item.renderIcon()}
         </div>
       </Hoverable>
