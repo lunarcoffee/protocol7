@@ -3,12 +3,13 @@
 import { useNextProcessID } from '@/hooks/useNextProcessID';
 import { useNextWindowID } from '@/hooks/useNextWindowID';
 import { useWindowCreate } from '@/hooks/useWindowCreate';
-import { useWindowManager } from '../contexts/WindowManagerContext';
-import { WindowFrame } from '../controls/WindowFrame';
+import { useWindowManager } from '../../contexts/WindowManagerContext';
+import { WindowFrame } from './WindowFrame';
 
 export const WindowLayer = () => {
   const [{ windows }] = useWindowManager();
   const windowsArray = Array.from(windows.values());
+
   const createWindow = useWindowCreate();
 
   const nextPid = useNextProcessID();

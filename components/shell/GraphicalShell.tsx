@@ -3,7 +3,7 @@
 import { ProcessManagerContextProvider } from '../contexts/ProcessManagerContext';
 import { WindowManagerContextProvider } from '../contexts/WindowManagerContext';
 import { Taskbar } from './taskbar/Taskbar';
-import { WindowLayer } from './WindowLayer';
+import { WindowLayer } from './windows/WindowLayer';
 import { Desktop } from './Desktop';
 import { enableMapSet } from 'immer';
 

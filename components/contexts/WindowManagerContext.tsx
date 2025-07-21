@@ -17,15 +17,21 @@ export interface WindowInfo {
   title: string;
 
   position: Dimensions;
+  zIndex: number;
+
   size: Dimensions;
   minSize: Dimensions;
   maxSize?: Dimensions;
-  zIndex: number;
+  resizable: boolean;
 
   isOpen: boolean;
   hasFocus: boolean;
 
   render: (info: WindowInfo) => JSX.Element; // TODO: handle multiple windows per process later
+}
+
+export interface PropsWithWindowInfo {
+  windowInfo: WindowInfo;
 }
 
 type RequiredWindowProps = 'wid' | 'pid' | 'size' | 'render';
@@ -97,8 +103,9 @@ const updateWindowManager = (
       const info = {
         title: '',
         position: draft.defaultPosition, // TODO: default position shifting like windows? or maybe sentinel options like 'center' or smth
-        minSize: { x: 120, y: 80 },
         zIndex: nextZIndex(draft),
+        minSize: { x: 120, y: 80 },
+        resizable: true,
         isOpen: true,
         hasFocus: true,
         ...creationInfo,
