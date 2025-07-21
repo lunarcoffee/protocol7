@@ -12,6 +12,7 @@ enableMapSet();
 export const GraphicalShell = () => {
   return (
     <div className="relative aspect-[16/10] max-w-[144lvh] min-w-0 max-h-[90lvh] min-h-0 overflow-clip">
+    {/* <div className="relative size-full overflow-clip"> */}
       <ProcessManagerContextProvider>
         <WindowManagerContextProvider>
           <Desktop />

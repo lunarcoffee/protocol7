@@ -7,6 +7,7 @@ import { useWindowMove } from '@/hooks/useWindowMove';
 import { useWindowFocus } from '@/hooks/useWindowFocus';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
+import { useWindowResize } from '@/hooks/useWindowResize';
 
 export interface WindowFrameProps extends PropsWithChildren {
   windowInfo: WindowInfo;
@@ -55,13 +56,16 @@ export const WindowFrame = ({
   windowInfo: { pid, wid, title, position, size, zIndex, hasFocus },
   children,
 }: WindowFrameProps) => {
-  const moveWindow = useWindowMove();
   const destroyWindow = useWindowDestroy();
+  const moveWindow = useWindowMove();
+  const resizeWindow = useWindowResize();
   const focusWindow = useWindowFocus();
 
   const onWindowGainsFocus = () => focusWindow(wid);
 
   const onWindowDragStart = (initialX: number, initialY: number) => {
+    document.body.style.cursor = 'move';
+
     const mouseMoveListener = (rawEvent: Event) => {
       const event = rawEvent as MouseEvent;
       const deltaX = event.clientX - initialX;
@@ -75,11 +79,63 @@ export const WindowFrame = ({
     const mouseUpListener = () => {
       document.removeEventListener('mousemove', mouseMoveListener);
       document.removeEventListener('mouseup', mouseUpListener);
+
+      document.body.style.cursor = 'unset';
     };
 
     document.addEventListener('mousemove', mouseMoveListener);
     document.addEventListener('mouseup', mouseUpListener);
   };
+
+  const onWindowResizeStart = (
+    initialX: number,
+    initialY: number,
+    xMul: number,
+    yMul: number,
+    shiftX: boolean,
+    shiftY: boolean,
+    cursor: string,
+  ) => {
+    document.body.style.cursor = cursor;
+
+    const mouseMoveListener = (rawEvent: Event) => {
+      const event = rawEvent as MouseEvent;
+      const deltaX = event.clientX - initialX;
+      const deltaY = event.clientY - initialY;
+
+      resizeWindow(
+        wid,
+        {
+          x: size.x + deltaX * xMul,
+          y: size.y + deltaY * yMul,
+        },
+        shiftX,
+        shiftY,
+      );
+    };
+    const mouseUpListener = () => {
+      document.removeEventListener('mousemove', mouseMoveListener);
+      document.removeEventListener('mouseup', mouseUpListener);
+
+      document.body.style.cursor = 'unset';
+    };
+
+    document.addEventListener('mousemove', mouseMoveListener);
+    document.addEventListener('mouseup', mouseUpListener);
+  };
+
+  const resizeHandles: [string, number, number, boolean, boolean, string][] = [
+    // top, right, bottom, left
+    ['-top-0.5 left-0 w-full h-1', 0, -1, false, true, 'n-resize'],
+    ['-right-0.5 top-0 w-1 h-full', 1, 0, false, false, 'e-resize'],
+    ['-bottom-0.5 left-0 w-full h-1', 0, 1, false, false, 's-resize'],
+    ['-left-0.5 top-0 w-1 h-full', -1, 0, true, false, 'w-resize'],
+    // top left, top right, bottom right, bottom left
+    ['-top-0.5 -left-0.5 size-3', -1, -1, true, true, 'nwse-resize'],
+    ['-top-0.5 -right-0.5 size-3', 1, -1, false, true, 'nesw-resize'],
+    ['-bottom-0.5 -right-0.5 size-3', 1, 1, false, false, 'nwse-resize'],
+    ['-bottom-0.5 -left-0.5 size-3', -1, 1, true, false, 'nesw-resize'],
+  ];
 
   const mainFrameStyles = twMerge(
     clsx(
@@ -89,7 +145,10 @@ export const WindowFrame = ({
     ),
   );
   const titleBarStyles = twMerge(
-    clsx('flex flex-row items-center p-1', !hasFocus && 'brightness-75 grayscale-50'),
+    clsx(
+      'flex flex-row max-width-[100%] items-center p-1',
+      !hasFocus && 'brightness-75 grayscale-50',
+    ),
   );
 
   return (
@@ -108,7 +167,9 @@ export const WindowFrame = ({
         onMouseDown={(event) => onWindowDragStart(event.clientX, event.clientY)}
         className={titleBarStyles}
       >
-        <p className="pt-px text-sm">{title}</p>
+        <p className="shrink min-width-0 pt-px mr-4 text-sm overflow-hidden text-ellipsis text-nowrap">
+          {title}
+        </p>
         <div className="grow" />
         <div className="flex flex-row items-center gap-2">
           <WindowControlButton
@@ -140,6 +201,16 @@ export const WindowFrame = ({
           />
         </div>
       </div>
+      {resizeHandles.map(([style, ...args]) => (
+        <div
+          onMouseDown={(event) =>
+            onWindowResizeStart(event.clientX, event.clientY, ...args)
+          }
+          className={`absolute ${style}`}
+          style={{ cursor: args[4] }}
+          key={style}
+        />
+      ))}
       <div className="grow bg-gray-200 rounded-sm border border-aero-tint-darkest/85 shadow-[0_0_2px] shadow-white/80">
         {children}
       </div>

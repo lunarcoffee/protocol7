@@ -15,11 +15,16 @@ export interface WindowInfo {
   pid: ProcessID; // every window is owned by a process
 
   title: string;
+
   position: Dimensions;
   size: Dimensions;
+  minSize: Dimensions;
+  maxSize?: Dimensions;
   zIndex: number;
+
   isOpen: boolean;
   hasFocus: boolean;
+
   render: (info: WindowInfo) => JSX.Element; // TODO: handle multiple windows per process later
 }
 
@@ -46,6 +51,13 @@ export type WindowManagerDispatchAction =
   | { action: 'create'; wid: WindowID; info: WindowCreationInfo }
   | { action: 'destroy'; wid: WindowID }
   | { action: 'move'; wid: WindowID; position: Dimensions }
+  | {
+      action: 'resize';
+      wid: WindowID;
+      size: Dimensions;
+      shiftX: boolean;
+      shiftY: boolean;
+    }
   | { action: 'focus_window'; wid: WindowID }
   | { action: 'focus_desktop' };
 
@@ -68,6 +80,9 @@ const nextZIndex = ({ windows }: Draft<WindowManager>) =>
 const unfocusAll = ({ windows }: Draft<WindowManager>) =>
   windows.forEach((window) => (window.hasFocus = false));
 
+const clamp = (value: number, min: number, max: number = Number.MAX_VALUE) =>
+  Math.max(min, Math.min(value, max));
+
 const updateWindowManager = (
   draft: Draft<WindowManager>,
   action: WindowManagerDispatchAction,
@@ -81,14 +96,15 @@ const updateWindowManager = (
 
       const info = {
         title: '',
-        position: draft.defaultPosition, // TODO: default position shifting like windows?
+        position: draft.defaultPosition, // TODO: default position shifting like windows? or maybe sentinel options like 'center' or smth
+        minSize: { x: 120, y: 80 },
         zIndex: nextZIndex(draft),
         isOpen: true,
         hasFocus: true,
         ...creationInfo,
       };
 
-      unfocusAll(draft);
+      unfocusAll(draft); // the new window should be the only focused one
       windows.set(wid, info);
       break;
     case 'destroy': {
@@ -102,6 +118,28 @@ const updateWindowManager = (
 
       const window = windows.get(wid);
       if (window) window.position = position;
+      break;
+    }
+    case 'resize': {
+      const {
+        wid,
+        size: { x, y },
+        shiftX,
+        shiftY,
+      } = action;
+
+      const window = windows.get(wid);
+      if (window) {
+        const clampedX = clamp(x, window.minSize.x, window.maxSize?.x);
+        const clampedY = clamp(y, window.minSize.y, window.maxSize?.y);
+
+        // this is kinda hacky because it's built around the needs of the resize handles - resizing
+        // from the top and/or left requires that the window be moved
+        if (shiftX) window.position.x += window.size.x - clampedX;
+        if (shiftY) window.position.y += window.size.y - clampedY;
+
+        window.size = { x: clampedX, y: clampedY };
+      }
       break;
     }
     case 'focus_window': {
