@@ -19,6 +19,7 @@ export interface WindowInfo {
   size: Dimensions;
   zIndex: number;
   isOpen: boolean;
+  hasFocus: boolean;
   render: (info: WindowInfo) => JSX.Element; // TODO: handle multiple windows per process later
 }
 
@@ -44,7 +45,9 @@ const WindowManagerContext = createContext<WindowManager>(
 export type WindowManagerDispatchAction =
   | { action: 'create'; wid: WindowID; info: WindowCreationInfo }
   | { action: 'destroy'; wid: WindowID }
-  | { action: 'move'; wid: WindowID; position: Dimensions };
+  | { action: 'move'; wid: WindowID; position: Dimensions }
+  | { action: 'focus_window'; wid: WindowID }
+  | { action: 'focus_desktop' };
 
 export type WindowManagerDispatch = (
   action: WindowManagerDispatchAction,
@@ -55,6 +58,15 @@ const WindowManagerDispatchContext = createContext<WindowManagerDispatch>(
     throw new Error('window manager uninitialized!');
   },
 );
+
+const nextZIndex = ({ windows }: Draft<WindowManager>) =>
+  Array.from(windows.values()).reduce(
+    (max, window) => Math.max(max, window.zIndex),
+    0,
+  ) + 1;
+
+const unfocusAll = ({ windows }: Draft<WindowManager>) =>
+  windows.forEach((window) => (window.hasFocus = false));
 
 const updateWindowManager = (
   draft: Draft<WindowManager>,
@@ -68,12 +80,15 @@ const updateWindowManager = (
       const { wid, info: creationInfo } = action;
 
       const info = {
-        title: 'New Window', // TODO: update these values
-        position: draft.defaultPosition,
-        zIndex: 0,
+        title: '',
+        position: draft.defaultPosition, // TODO: default position shifting like windows?
+        zIndex: nextZIndex(draft),
         isOpen: true,
+        hasFocus: true,
         ...creationInfo,
       };
+
+      unfocusAll(draft);
       windows.set(wid, info);
       break;
     case 'destroy': {
@@ -87,6 +102,19 @@ const updateWindowManager = (
 
       const window = windows.get(wid);
       if (window) window.position = position;
+      break;
+    }
+    case 'focus_window': {
+      const { wid } = action;
+
+      windows.forEach((window) => {
+        window.hasFocus = window.wid === wid;
+        if (window.wid === wid) window.zIndex = nextZIndex(draft);
+      });
+      break;
+    }
+    case 'focus_desktop': {
+      unfocusAll(draft);
       break;
     }
   }

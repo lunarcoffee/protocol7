@@ -1,15 +1,15 @@
 'use client';
 
-import { useProcessTable } from '../contexts/ProcessInfoContext';
+import { useProcessManager } from '../../contexts/ProcessManagerContext';
 import { Clock } from './Clock';
 import { LauncherButton } from './LauncherButton';
 import { useToggle } from '@/hooks/useToggle';
 import { SystemTray } from './SystemTray';
 
-import NetworkIcon from '../../public/icons/network.svg';
-import WirelessIcon from '../../public/icons/wireless.svg';
-import BatteryIcon from '../../public/icons/battery.svg';
-import VolumeHighIcon from '../../public/icons/volume-high.svg';
+import NetworkIcon from '@/public/icons/network.svg';
+import WirelessIcon from '@/public/icons/wireless.svg';
+import BatteryIcon from '@/public/icons/battery.svg';
+import VolumeHighIcon from '@/public/icons/volume-high.svg';
 import Image from 'next/image';
 
 export const Taskbar = () => {
@@ -17,7 +17,7 @@ export const Taskbar = () => {
   const [isActive, toggleActive] = useToggle();
 
   return (
-    <div className="absolute bottom-0 w-full h-10 pl-4 pr-2 bg-gradient-to-t from-aero-tint-dark/80 via-95% via-aero-tint-dark/70 to-white/40 backdrop-blur-xs border-t border-t-aero-tint-darkest/85 flex flex-row items-center">
+    <div className="absolute bottom-0 w-full h-10 pl-4 pr-2 bg-gradient-to-t from-aero-tint-dark/80 via-95% via-aero-tint-dark/70 to-white/40 backdrop-blur-xs border-t border-t-aero-tint-darkest/85 flex flex-row items-center z-10">
       <div className="left-4 -mt-1">
         <LauncherButton active={isActive} onClick={toggleActive} />
       </div>

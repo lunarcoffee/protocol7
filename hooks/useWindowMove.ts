@@ -7,7 +7,6 @@ import {
 export const useWindowMove = () => {
   const [, updateWindowManager] = useWindowManager();
 
-  return (wid: WindowID, position: Dimensions) => {
+  return (wid: WindowID, position: Dimensions) =>
     updateWindowManager({ action: 'move', wid, position });
-  };
 };

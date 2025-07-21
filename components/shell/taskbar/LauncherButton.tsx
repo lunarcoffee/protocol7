@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import LauncherIcon from '../../public/launcher.png';
+import LauncherIcon from '@/public/launcher.png';
 import Image from 'next/image';
 import { twMerge } from 'tailwind-merge';
 
