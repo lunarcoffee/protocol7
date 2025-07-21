@@ -5,6 +5,7 @@ import { useNextWindowID } from '@/hooks/useNextWindowID';
 import { useWindowCreate } from '@/hooks/useWindowCreate';
 import { useWindowManager } from '../../contexts/WindowManagerContext';
 import { WindowFrame } from './WindowFrame';
+import { AnimatePresence } from 'motion/react';
 
 export const WindowLayer = () => {
   const [{ windows }] = useWindowManager();
@@ -35,10 +36,12 @@ export const WindowLayer = () => {
       >
         open sesame
       </button>
-      {windowsArray.map((info) => {
-        const { wid, render } = info;
-        return <div key={wid}>{render(info)}</div>;
-      })}
+      <AnimatePresence>
+        {windowsArray.map((info) => {
+          const { wid, render } = info;
+          return <div key={wid}>{render(info)}</div>;
+        })}
+      </AnimatePresence>
     </div>
   );
 };

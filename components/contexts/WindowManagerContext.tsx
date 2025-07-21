@@ -107,6 +107,7 @@ const updateWindowManager = (
         minSize: { x: 120, y: 80 },
         resizable: true,
         isOpen: true,
+        isTransitioning: true,
         hasFocus: true,
         ...creationInfo,
       };
