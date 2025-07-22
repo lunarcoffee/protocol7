@@ -54,15 +54,15 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
 
   const focusWindow = useWindowFocus();
 
-  const [isClosing, toggleClosing] = useToggle(true); // TODO: hacky as hell, dunno how this will interact with minimize/maximize but i just wanted to see the effect first lol
+  const [isDisappearing, toggleDisappearing] = useToggle(true); // TODO: hacky as hell, dunno how this will interact with minimize/maximize but i just wanted to see the effect first lol
   const motionVariants = {
     hidden: { opacity: 0 },
     opening: {
-      transform: 'rotateX(30deg) rotateZ(-2deg) scale(0.9) perspective(300px)',
+      transform: 'rotateX(30deg) rotateY(-2deg) scale(0.9) perspective(300px)',
     },
     open: { opacity: 1, transform: 'scale(1)' },
     closing: {
-      transform: 'rotateX(-20deg) rotateZ(1deg) scale(0.9) perspective(600px)',
+      transform: 'rotateX(-20deg) rotateY(2deg) scale(0.9) perspective(600px)',
     },
   };
 
@@ -74,7 +74,7 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
           'flex flex-col absolute px-1 pb-1 rounded-md bg-gradient-to-tr from-aero-tint-dark/70 to-aero-tint/70 backdrop-blur-xs border border-aero-tint-darkest/85 inset-shadow-[0_0_2px] inset-shadow-white/80 text-shadow-md text-shadow-aero-tint-darkest/50 shadow-[0_0_20px] shadow-aero-tint-darkest/75 origin-[50%_-10%]',
           !hasFocus &&
             'from-aero-tint-dark/50 to-aero-tint-dark/50 border-aero-tint-darkest/70 shadow-aero-tint-darkest/40',
-          isClosing && 'origin-[50%_110%]',
+          isDisappearing && 'origin-[50%_110%]',
         ),
       )}
       style={{
@@ -89,7 +89,7 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
       animate="open"
       exit={['hidden', 'closing']}
       transition={{ ease: 'easeOut', duration: 0.06 }}
-      onAnimationStart={toggleClosing}
+      onAnimationStart={toggleDisappearing}
     >
       <TitleBar windowInfo={windowInfo} />
       <div className="grow rounded-sm border border-aero-tint-darkest/85 shadow-[0_0_2px] shadow-white/80">
