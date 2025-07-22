@@ -13,7 +13,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import { useWindowFocus } from '@/hooks/windows/useWindowFocus';
-import { useFocusDesktop } from '@/hooks/useFocusDesktop';
+import { useFocusDesktop } from '@/hooks/windows/useFocusDesktop';
 
 export const Taskbar = () => {
   const [{ processes }] = useProcessManager();
