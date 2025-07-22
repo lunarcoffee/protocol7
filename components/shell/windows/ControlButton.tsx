@@ -1,5 +1,5 @@
 import { PropsWithWindowInfo } from '@/components/contexts/WindowManagerContext';
-import { useWindowDestroy } from '@/hooks/useWindowDestroy';
+import { useWindowDestroy } from '@/hooks/windows/useWindowDestroy';
 
 interface ControlButtonProps {
   bgFrom: string;

@@ -1,16 +1,18 @@
 'use client';
 
-import { useNextProcessID } from '@/hooks/useNextProcessID';
-import { useNextWindowID } from '@/hooks/useNextWindowID';
-import { useWindowCreate } from '@/hooks/useWindowCreate';
+import { useNextProcessID } from '@/hooks/processes/useNextProcessID';
+import { useNextWindowID } from '@/hooks/windows/useNextWindowID';
+import { useWindowCreate } from '@/hooks/windows/useWindowCreate';
 import { useWindowManager } from '../../contexts/WindowManagerContext';
 import { WindowFrame } from './WindowFrame';
 import { AnimatePresence } from 'motion/react';
+import { useProcessCreate } from '@/hooks/processes/useProcessCreate';
 
 export const WindowLayer = () => {
   const [{ windows }] = useWindowManager();
   const windowsArray = Array.from(windows.values());
 
+  const createProcess = useProcessCreate();
   const createWindow = useWindowCreate();
 
   const nextPid = useNextProcessID();
@@ -20,6 +22,7 @@ export const WindowLayer = () => {
     <div className="absolute top-0 left-0">
       <button
         onClick={() => {
+          createProcess(nextPid);
           createWindow({
             pid: nextPid,
             wid: nextWid,

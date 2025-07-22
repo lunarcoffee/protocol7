@@ -2,8 +2,8 @@
 
 import { PropsWithChildren } from 'react';
 import { PropsWithWindowInfo } from '../../contexts/WindowManagerContext';
-import { useWindowMove } from '@/hooks/useWindowMove';
-import { useWindowFocus } from '@/hooks/useWindowFocus';
+import { useWindowMove } from '@/hooks/windows/useWindowMove';
+import { useWindowFocus } from '@/hooks/windows/useWindowFocus';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import { ControlButtons } from './ControlButton';
