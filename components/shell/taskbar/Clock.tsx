@@ -1,11 +1,12 @@
 import { useCurrentTime } from '@/hooks/useCurrentTime';
-import { DateTime } from 'luxon';
 import { Hoverable } from './Hoverable';
 
 export const Clock = () => {
   const currentTime = useCurrentTime();
-  const time = currentTime.toLocaleString(DateTime.TIME_SIMPLE);
-  const date = currentTime.toLocaleString(DateTime.DATE_SHORT);
+  
+  // sorry non-en-US locales :(
+  const time = currentTime.toFormat('h:mm a');
+  const date = currentTime.toFormat('L/d/yyyy');
 
   return (
     <Hoverable>
