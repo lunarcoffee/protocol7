@@ -1,6 +1,5 @@
 'use client';
 
-import { useProcessManager } from '../../contexts/ProcessManagerContext';
 import { Clock } from './Clock';
 import { LauncherButton } from './LauncherButton';
 import { useToggle } from '@/hooks/useToggle';
@@ -16,13 +15,8 @@ import { useWindowFocus } from '@/hooks/windows/useWindowFocus';
 import { useFocusDesktop } from '@/hooks/windows/useFocusDesktop';
 
 export const Taskbar = () => {
-  const [{ processes }] = useProcessManager();
   const [{ windows }] = useWindowManager();
-
-  const taskbarEntries = Array.from(processes.values(), (process) => ({
-    process,
-    windows: process.windows.map((wid) => windows.get(wid)!),
-  }));
+  const windowArray = Array.from(windows.values());
 
   const focusWindow = useWindowFocus();
   const focusDesktop = useFocusDesktop();
@@ -30,7 +24,7 @@ export const Taskbar = () => {
   const [isLauncherOpen, toggleLauncherOpen] = useToggle();
 
   const entryMotionVariants = {
-    transitioning: {
+    transition: {
       opacity: 0,
       transform: 'scale(0.5)',
       maxWidth: 0,
@@ -51,32 +45,29 @@ export const Taskbar = () => {
       </div>
       <div className="flex flex-row items-center w-full shrink gap-1.5 h-full">
         <AnimatePresence>
-          {taskbarEntries.map(({ process, windows }) => {
-            const groupIsFocused = windows.find(({ hasFocus }) => hasFocus);
+          {windowArray.map(({ pid, wid, title, hasFocus }) => {
             return (
               <motion.div
                 onClick={
-                  groupIsFocused
-                    ? () => focusDesktop()
-                    : () => focusWindow(windows[0].wid)
+                  hasFocus ? () => focusDesktop() : () => focusWindow(wid)
                 }
                 className={twMerge(
                   clsx(
                     'flex flex-row items-center shrink relative min-w-0 h-8 basis-32 rounded-xs overflow-clip bg-radial-[at_100%_100%] from-transparent via-55% via-transparent to-90% to-white/30 ring ring-aero-tint-darkest/60 inset-shadow-[0_0_3px] inset-shadow-white/30 shadow-xs shadow-aero-tint-darkest group hover:inset-shadow-[0_0_6px] transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,box-shadow,backdrop-filter] duration-100',
-                    (groupIsFocused &&
+                    (hasFocus &&
                       'from-aero-tint/40 via-white/20 to-white/60 inset-shadow-[0_0_6px] hover:backdrop-brightness-125') ||
                       'hover:from-aero-tint/60 hover:via-aero-tint-dark/80',
                   ),
                 )}
-                key={process.pid}
-                initial="transitioning"
+                key={pid}
+                initial="transition"
                 animate="normal"
-                exit="transitioning"
+                exit="transition"
                 variants={entryMotionVariants}
                 transition={{ duration: 0.06 }}
               >
                 <p className="min-w-0 text-xs overflow-ellipsis line-clamp-1 text-shadow-md text-shadow-aero-tint-darkest/50">
-                  {windows[0].title}
+                  {title}
                 </p>
               </motion.div>
             );
