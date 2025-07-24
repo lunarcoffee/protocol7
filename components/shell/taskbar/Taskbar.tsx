@@ -62,9 +62,9 @@ export const Taskbar = () => {
                 }
                 className={twMerge(
                   clsx(
-                    'flex flex-row items-center shrink relative min-w-0 h-8 basis-32 rounded-xs overflow-clip bg-radial-[at_100%_100%] from-transparent via-55% via-transparent to-90% to-white/30 ring ring-aero-tint-darkest/60 inset-shadow-[0_0_3px] inset-shadow-white/30 shadow-xs shadow-aero-tint-darkest group hover:inset-shadow-[0_0_6px] transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-via-position,--tw-gradient-to,--tw-gradient-to-position,box-shadow,backdrop-filter] duration-100',
+                    'flex flex-row items-center shrink relative min-w-0 h-8 basis-32 rounded-xs overflow-clip bg-radial-[at_100%_100%] from-transparent via-55% via-transparent to-90% to-white/30 ring ring-aero-tint-darkest/60 inset-shadow-[0_0_3px] inset-shadow-white/30 shadow-xs shadow-aero-tint-darkest group hover:inset-shadow-[0_0_6px] transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,box-shadow,backdrop-filter] duration-100',
                     (groupIsFocused &&
-                      'from-aero-tint/40 via-80% via-white/30 to-120% to-white/70 inset-shadow-[0_0_3px] hover:backdrop-brightness-125') ||
+                      'from-aero-tint/40 via-white/20 to-white/60 inset-shadow-[0_0_6px] hover:backdrop-brightness-125') ||
                       'hover:from-aero-tint/60 hover:via-aero-tint-dark/80',
                   ),
                 )}
