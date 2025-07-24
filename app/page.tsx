@@ -1,5 +1,10 @@
 import { Computer } from '@/components/Computer';
+import { StrictMode } from 'react';
 
 export default function Home() {
-  return <Computer></Computer>;
+  return (
+    <StrictMode>
+      <Computer />
+    </StrictMode>
+  );
 }
