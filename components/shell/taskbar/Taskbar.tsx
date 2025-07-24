@@ -39,11 +39,11 @@ export const Taskbar = () => {
   };
 
   return (
-    <div className="flex flex-row items-center absolute bottom-0 w-full h-10 pl-4 pr-2 bg-gradient-to-t from-aero-tint-dark/80 via-95% via-aero-tint-dark/70 to-white/40 backdrop-blur-xs border-t border-t-aero-tint-darkest/85 z-10">
+    <div className="flex flex-row items-center absolute bottom-0 w-full max-w-full h-10 pl-4 pr-2 bg-gradient-to-t from-aero-tint-dark/80 via-95% via-aero-tint-dark/70 to-white/40 backdrop-blur-xs border-t border-t-aero-tint-darkest/85 z-10">
       <div className="left-4 -mt-1 mr-4">
         <LauncherButton active={isLauncherOpen} onClick={toggleLauncherOpen} />
       </div>
-      <div className="flex flex-row items-center w-full shrink gap-1.5 h-full">
+      <div className="flex flex-row items-center min-w-0 grow shrink gap-1.5 h-full">
         <AnimatePresence>
           {windowArray.map(({ pid, wid, title, hasFocus }) => {
             return (
@@ -53,7 +53,7 @@ export const Taskbar = () => {
                 }
                 className={twMerge(
                   clsx(
-                    'flex flex-row items-center shrink relative min-w-0 h-8 basis-32 rounded-xs overflow-clip bg-radial-[at_100%_100%] from-transparent via-55% via-transparent to-90% to-white/30 ring ring-aero-tint-darkest/60 inset-shadow-[0_0_3px] inset-shadow-white/30 shadow-xs shadow-aero-tint-darkest group hover:inset-shadow-[0_0_6px] transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,box-shadow,backdrop-filter] duration-100',
+                    'flex flex-row items-center basis-32 shrink relative min-w-0 h-8 rounded-xs overflow-clip bg-radial-[at_100%_100%] from-transparent via-55% via-transparent to-90% to-white/30 ring ring-aero-tint-darkest/60 inset-shadow-[0_0_3px] inset-shadow-white/30 shadow-xs shadow-aero-tint-darkest group hover:inset-shadow-[0_0_6px] transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,box-shadow,backdrop-filter] duration-100',
                     (hasFocus &&
                       'from-aero-tint/40 via-white/20 to-white/60 inset-shadow-[0_0_6px] hover:backdrop-brightness-125') ||
                       'hover:from-aero-tint/60 hover:via-aero-tint-dark/80',
@@ -66,7 +66,7 @@ export const Taskbar = () => {
                 variants={entryMotionVariants}
                 transition={{ duration: 0.06 }}
               >
-                <p className="min-w-0 text-xs overflow-ellipsis line-clamp-1 text-shadow-md text-shadow-aero-tint-darkest/50">
+                <p className="text-xs overflow-ellipsis text-nowrap overflow-hidden text-shadow-md text-shadow-aero-tint-darkest/50">
                   {title}
                 </p>
               </motion.div>
@@ -74,7 +74,6 @@ export const Taskbar = () => {
           })}
         </AnimatePresence>
       </div>
-      <div className="grow"></div>
       <div className="shrink-0 ml-3">
         {/* TODO: eventually this module should be attached to a global network manager state thing */}
         <SystemTray
@@ -99,16 +98,6 @@ export const Taskbar = () => {
               ),
               renderPane: () => <p></p>,
             },
-            // {
-            //   renderIcon: () => (
-            //     <Image
-            //       src={WirelessIcon}
-            //       alt="network icon"
-            //       className="w-7 p-[0.4rem]"
-            //     />
-            //   ),
-            //   renderPane: () => <p></p>,
-            // },
           ]}
         />
       </div>

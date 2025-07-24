@@ -26,11 +26,13 @@ export const WindowLayer = () => {
           createWindow({
             pid: nextPid,
             wid: nextWid,
-            title: 'Random title lol',
+            title: 'New window',
             size: { x: 500, y: 300 },
             render: (windowInfo) => (
               <WindowFrame windowInfo={windowInfo}>
-                <div className="size-full bg-gray-300">this is a window!</div>
+                <div className="size-full p-4 bg-gray-300">
+                  <p className="text-blue-900 text-shadow-none">this is a window!</p>
+                </div>
               </WindowFrame>
             ),
           });
