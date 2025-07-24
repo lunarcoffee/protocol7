@@ -92,7 +92,7 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
       onAnimationStart={toggleDisappearing}
     >
       <TitleBar windowInfo={windowInfo} />
-      <div className="grow rounded-sm border border-aero-tint-darkest/85 shadow-[0_0_2px] shadow-white/80">
+      <div className="grow rounded-sm border border-aero-tint-darkest/85 shadow-[0_0_2px] shadow-white/80 overflow-clip">
         {children}
       </div>
       {resizable && <ResizeHandles windowInfo={windowInfo} />}

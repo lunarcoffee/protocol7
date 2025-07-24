@@ -30,7 +30,7 @@ export const WindowLayer = () => {
             size: { x: 500, y: 300 },
             render: (windowInfo) => (
               <WindowFrame windowInfo={windowInfo}>
-                this is a window!
+                <div className="size-full bg-gray-300">this is a window!</div>
               </WindowFrame>
             ),
           });
