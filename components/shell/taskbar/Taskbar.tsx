@@ -17,7 +17,7 @@ export const Taskbar = () => {
   const [isLauncherOpen, toggleLauncherOpen] = useToggle();
 
   return (
-    <div className="flex flex-row items-center absolute bottom-0 w-full max-w-full h-10 pl-4 pr-2 bg-gradient-to-t from-aero-tint-dark/80 via-95% via-aero-tint-dark/70 to-white/40 backdrop-blur-xs border-t border-t-aero-tint-darkest/85 z-10">
+    <div className="flex flex-row items-center absolute bottom-0 w-full max-w-full h-10 pl-4 pr-2 bg-gradient-to-t from-aero-tint-dark/80 via-95% via-aero-tint-dark/70 to-white/40 backdrop-blur-xs border-t border-t-aero-tint-darkest/85 z-[calc(infinity)]">
       <div className="left-4 -mt-1 mr-4">
         <LauncherButton active={isLauncherOpen} onClick={toggleLauncherOpen} />
       </div>
