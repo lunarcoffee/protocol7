@@ -4,11 +4,13 @@ import { handleMouseDrag } from '@/utils/handleMouseDrag';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { ControlButtons } from './ControlButtons';
+import { useWindowMaximize } from '@/hooks/windows/useWindowMaximize';
 
 export const TitleBar = ({ windowInfo }: PropsWithWindowInfo) => {
   const { wid, title, position, isMaximized, hasFocus } = windowInfo;
 
   const moveWindow = useWindowMove();
+  const maximizeWindow = useWindowMaximize();
 
   const onWindowDragStart = (initialX: number, initialY: number) =>
     handleMouseDrag(
@@ -26,6 +28,7 @@ export const TitleBar = ({ windowInfo }: PropsWithWindowInfo) => {
       {...(!isMaximized && {
         onMouseDown: (event) => onWindowDragStart(event.clientX, event.clientY),
       })}
+      onDoubleClick={() => maximizeWindow(wid)}
       className={twMerge(
         clsx(
           'flex flex-row max-width-[100%] items-center p-1',
