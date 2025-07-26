@@ -2,9 +2,7 @@
 
 import { ProcessManagerContextProvider } from '../contexts/ProcessManagerContext';
 import { WindowManagerContextProvider } from '../contexts/WindowManagerContext';
-import { Taskbar } from './taskbar/Taskbar';
-import { WindowLayer } from './windows/WindowLayer';
-import { Desktop } from './Desktop';
+import { WindowLayer } from './WindowLayer';
 import { enableMapSet } from 'immer';
 
 enableMapSet();
@@ -15,9 +13,7 @@ export const GraphicalShell = () => {
     <div className="absolute top-0 right-0 left-0 bottom-0 w-9/10 h-[calc(5/8*90lvw)] max-w-[calc(8/5*90lvh)] max-h-9/10 m-auto overflow-clip">
       <ProcessManagerContextProvider>
         <WindowManagerContextProvider>
-          <Desktop />
           <WindowLayer />
-          <Taskbar />
         </WindowManagerContextProvider>
       </ProcessManagerContextProvider>
     </div>

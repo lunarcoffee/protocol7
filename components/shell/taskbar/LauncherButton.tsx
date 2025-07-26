@@ -12,7 +12,7 @@ export const LauncherButton = ({ active, onClick }: LauncherButtonProps) => (
   <div
     className={twMerge(
       clsx(
-        'size-12 rounded-full bg-aero-tint-dark flex flex-row justify-center shadow-[0_0_0.3rem] shadow-white/50 ring ring-aero-tint-darkest z-0 cursor-pointer group hover:shadow-[0_0_0.5rem] hover:shadow-white/70 transition duration-100',
+        'size-12 rounded-full bg-aero-tint-dark flex flex-row justify-center shadow-[0_0_0.3rem] shadow-white/60 ring ring-aero-tint-darkest z-0 cursor-pointer group hover:shadow-[0_0_0.5rem] hover:shadow-white/70 transition duration-100',
         active &&
           'shadow-[0_0_0.3rem] shadow-white/80 hover:shadow-[0_0_0.3rem] hover:shadow-white/80 transition',
       ),

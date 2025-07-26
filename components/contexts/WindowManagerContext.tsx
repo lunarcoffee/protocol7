@@ -21,8 +21,8 @@ export interface WindowInfo {
 
   size: Dimensions;
   minSize: Dimensions;
-  maxSize?: Dimensions;
   resizable: boolean;
+  isMaximized: boolean;
 
   isOpen: boolean;
   hasFocus: boolean;
@@ -64,6 +64,8 @@ export type WindowManagerDispatchAction =
       shiftX: boolean;
       shiftY: boolean;
     }
+  | { action: 'minimize'; wid: WindowID }
+  | { action: 'toggle_maximized'; wid: WindowID }
   | { action: 'focus_window'; wid: WindowID }
   | { action: 'focus_desktop' };
 
@@ -83,11 +85,19 @@ const nextZIndex = ({ windows }: Draft<WindowManager>) =>
     0,
   ) + 1;
 
+const focusWindow = (draft: Draft<WindowManager>, wid: WindowID) => {
+  const { windows } = draft;
+  windows.forEach((window) => {
+    window.hasFocus = window.wid === wid;
+    if (window.wid === wid) {
+      window.zIndex = nextZIndex(draft);
+      window.isOpen = true;
+    }
+  });
+};
+
 const unfocusAll = ({ windows }: Draft<WindowManager>) =>
   windows.forEach((window) => (window.hasFocus = false));
-
-const clamp = (value: number, min: number, max: number = Number.MAX_VALUE) =>
-  Math.max(min, Math.min(value, max));
 
 const updateWindowManager = (
   draft: Draft<WindowManager>,
@@ -106,6 +116,7 @@ const updateWindowManager = (
         zIndex: nextZIndex(draft),
         minSize: { x: 120, y: 80 },
         resizable: true,
+        isMaximized: false,
         isOpen: true,
         isTransitioning: true,
         hasFocus: true,
@@ -138,8 +149,8 @@ const updateWindowManager = (
 
       const window = windows.get(wid);
       if (window) {
-        const clampedX = clamp(x, window.minSize.x, window.maxSize?.x);
-        const clampedY = clamp(y, window.minSize.y, window.maxSize?.y);
+        const clampedX = Math.max(x, window.minSize.x);
+        const clampedY = Math.max(y, window.minSize.y);
 
         // this is kinda hacky because it's built around the needs of the resize handles - resizing
         // from the top and/or left requires that the window be moved
@@ -150,13 +161,30 @@ const updateWindowManager = (
       }
       break;
     }
+    case 'minimize': {
+      const { wid } = action;
+
+      const window = windows.get(wid);
+      if (window) {
+        window.isOpen = false;
+        window.hasFocus = false;
+      }
+      break;
+    }
+    case 'toggle_maximized': {
+      const { wid } = action;
+
+      const window = windows.get(wid);
+      if (window && window.resizable) {
+        if (!window.isMaximized) focusWindow(draft, wid);
+        window.isMaximized = !window.isMaximized;
+      }
+      break;
+    }
     case 'focus_window': {
       const { wid } = action;
 
-      windows.forEach((window) => {
-        window.hasFocus = window.wid === wid;
-        if (window.wid === wid) window.zIndex = nextZIndex(draft);
-      });
+      focusWindow(draft, wid);
       break;
     }
     case 'focus_desktop': {

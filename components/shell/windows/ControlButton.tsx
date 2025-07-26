@@ -1,7 +1,4 @@
-import { PropsWithWindowInfo } from '@/components/contexts/WindowManagerContext';
-import { useWindowDestroy } from '@/hooks/windows/useWindowDestroy';
-
-interface ControlButtonProps {
+export interface ControlButtonProps {
   bgFrom: string;
   bgTo: string;
   ring: string;
@@ -11,7 +8,7 @@ interface ControlButtonProps {
   onClick: () => void;
 }
 
-const ControlButton = ({
+export const ControlButton = ({
   bgFrom,
   bgTo,
   ring,
@@ -39,41 +36,3 @@ const ControlButton = ({
     </div>
   </div>
 );
-
-export const ControlButtons = ({
-  windowInfo: { pid, wid },
-}: PropsWithWindowInfo) => {
-  const destroyWindow = useWindowDestroy();
-
-  return (
-    <div className="flex flex-row items-center gap-2">
-      <ControlButton
-        bgFrom="from-lime-500"
-        bgTo="to-lime-900"
-        ring="ring-lime-950"
-        topGlow="from-lime-200"
-        topShadow="inset-shadow-lime-950"
-        bottomGlow="from-lime-300"
-        onClick={() => destroyWindow(pid, wid)}
-      />
-      <ControlButton
-        bgFrom="from-yellow-400"
-        bgTo="to-yellow-800"
-        ring="ring-yellow-950"
-        topGlow="from-yellow-200"
-        topShadow="inset-shadow-yellow-950"
-        bottomGlow="from-yellow-300"
-        onClick={() => destroyWindow(pid, wid)}
-      />
-      <ControlButton
-        bgFrom="from-red-500"
-        bgTo="to-red-900"
-        ring="ring-red-950"
-        topGlow="from-red-200"
-        topShadow="inset-shadow-red-950"
-        bottomGlow="from-red-300"
-        onClick={() => destroyWindow(pid, wid)}
-      />
-    </div>
-  );
-};

@@ -3,10 +3,12 @@
 import { useNextProcessID } from '@/hooks/processes/useNextProcessID';
 import { useNextWindowID } from '@/hooks/windows/useNextWindowID';
 import { useWindowCreate } from '@/hooks/windows/useWindowCreate';
-import { useWindowManager } from '../../contexts/WindowManagerContext';
-import { WindowFrame } from './WindowFrame';
+import { useWindowManager } from '../contexts/WindowManagerContext';
+import { WindowFrame } from './windows/WindowFrame';
 import { AnimatePresence } from 'motion/react';
 import { useProcessCreate } from '@/hooks/processes/useProcessCreate';
+import { Desktop } from './Desktop';
+import { Taskbar } from './taskbar/Taskbar';
 
 export const WindowLayer = () => {
   const [{ windows }] = useWindowManager();
@@ -19,7 +21,8 @@ export const WindowLayer = () => {
   const nextWid = useNextWindowID();
 
   return (
-    <div className="absolute top-0 left-0">
+    <div className="absolute top-0 right-0 bottom-0 left-0">
+      <Desktop />
       <button
         onClick={() => {
           createProcess(nextPid);
@@ -31,7 +34,9 @@ export const WindowLayer = () => {
             render: (windowInfo) => (
               <WindowFrame windowInfo={windowInfo}>
                 <div className="size-full p-4 bg-gray-300">
-                  <p className="text-blue-900 text-shadow-none">this is a window!</p>
+                  <p className="text-blue-900 text-shadow-none">
+                    this is a window!
+                  </p>
                 </div>
               </WindowFrame>
             ),
@@ -47,6 +52,7 @@ export const WindowLayer = () => {
           return <div key={wid}>{render(info)}</div>;
         })}
       </AnimatePresence>
+      <Taskbar />
     </div>
   );
 };
