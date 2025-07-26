@@ -6,6 +6,5 @@ import {
 export const useWindowFocus = () => {
   const [, updateWindowManager] = useWindowManager();
 
-  return (wid: WindowID) =>
-    updateWindowManager({ action: 'focus_window', wid });
+  return (wid: WindowID) => updateWindowManager({ action: 'focus', wid });
 };

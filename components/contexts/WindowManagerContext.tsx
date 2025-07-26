@@ -27,7 +27,7 @@ export interface WindowInfo {
   isOpen: boolean;
   hasFocus: boolean;
 
-  render: (info: WindowInfo) => JSX.Element; // TODO: handle multiple windows per process later
+  render: (info: WindowInfo) => JSX.Element;
 }
 
 export interface PropsWithWindowInfo {
@@ -66,8 +66,8 @@ export type WindowManagerDispatchAction =
     }
   | { action: 'minimize'; wid: WindowID }
   | { action: 'toggle_maximized'; wid: WindowID }
-  | { action: 'focus_window'; wid: WindowID }
-  | { action: 'focus_desktop' };
+  | { action: 'focus'; wid: WindowID }
+  | { action: 'unfocus_all' };
 
 export type WindowManagerDispatch = (
   action: WindowManagerDispatchAction,
@@ -181,13 +181,13 @@ const updateWindowManager = (
       }
       break;
     }
-    case 'focus_window': {
+    case 'focus': {
       const { wid } = action;
 
       focusWindow(draft, wid);
       break;
     }
-    case 'focus_desktop': {
+    case 'unfocus_all': {
       unfocusAll(draft);
       break;
     }
