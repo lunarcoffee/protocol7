@@ -55,7 +55,7 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
         hidden: { opacity: 0 },
         opening: {
           transform:
-            'rotateX(30deg) rotateY(-2deg) scale(0.9) perspective(300px)',
+            'rotateX(30deg) rotateY(-2deg) scale(0.9) perspective(400px)',
         },
         open: { opacity: 1, transform: 'scale(1)' },
         closing: {
