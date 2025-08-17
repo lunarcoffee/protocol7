@@ -13,7 +13,7 @@ export const handleMouseDrag = (
     const event = rawEvent as MouseEvent;
     const dx = event.clientX - x;
     const dy = event.clientY - y;
-    
+
     onMove(dx, dy, event);
   };
   const mouseUpListener = () => {

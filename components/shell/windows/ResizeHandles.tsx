@@ -46,7 +46,10 @@ export const ResizeHandles = ({
           onMouseDown={(event) =>
             onWindowResizeStart(event.clientX, event.clientY, ...args)
           }
-          className={`absolute ${style}`}
+          className={`
+            absolute
+            ${style}
+          `}
           style={{ cursor: args[2] }}
           key={style}
         />

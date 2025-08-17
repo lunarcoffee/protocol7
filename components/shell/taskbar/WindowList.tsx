@@ -1,10 +1,9 @@
-import clsx from 'clsx';
 import { AnimatePresence, motion } from 'motion/react';
-import { twMerge } from 'tailwind-merge';
 
 import { WindowInfo } from '@/components/contexts/WindowManagerContext';
 import { useWindowFocus } from '@/hooks/windows/useWindowFocus';
 import { useWindowMinimize } from '@/hooks/windows/useWindowMinimize';
+import { twMergeClsx } from '@/utils/twMergeClsx';
 
 export interface WindowListProps {
   windows: WindowInfo[];
@@ -22,13 +21,20 @@ export const WindowList = ({ windows }: WindowListProps) => {
             onClick={
               hasFocus ? () => minimizeWindow(wid) : () => focusWindow(wid)
             }
-            className={twMerge(
-              clsx(
-                'flex flex-row items-center basis-32 shrink relative min-w-0 h-8 rounded-xs overflow-clip bg-radial-[at_100%_100%] from-transparent via-55% via-transparent to-90% to-white/30 ring ring-aero-tint-darkest/60 inset-shadow-[0_0_3px] inset-shadow-white/30 shadow-xs shadow-aero-tint-darkest group hover:inset-shadow-[0_0_6px] transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,box-shadow,backdrop-filter] duration-100',
-                (hasFocus &&
-                  'from-aero-tint/40 via-white/20 to-white/60 inset-shadow-[0_0_6px] hover:backdrop-brightness-125') ||
-                  'hover:from-aero-tint/60 hover:via-aero-tint-dark/80',
-              ),
+            className={twMergeClsx(
+              `
+                group relative flex h-8 min-w-0 shrink basis-32 flex-row
+                items-center overflow-clip rounded-xs bg-radial-[at_100%_100%]
+                from-transparent via-transparent via-55% to-white/30 to-90%
+                shadow-xs ring inset-shadow-[0_0_3px] shadow-aero-tint-darkest
+                ring-aero-tint-darkest/60 inset-shadow-white/30
+                transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,box-shadow,backdrop-filter]
+                duration-100
+                hover:inset-shadow-[0_0_6px]
+              `,
+              (hasFocus &&
+                'from-aero-tint/40 via-white/20 to-white/60 inset-shadow-[0_0_6px] hover:backdrop-brightness-125') ||
+                'hover:from-aero-tint/60 hover:via-aero-tint-dark/80',
             )}
             key={pid}
             variants={{
@@ -50,7 +56,12 @@ export const WindowList = ({ windows }: WindowListProps) => {
             exit="transition"
             transition={{ duration: 0.06 }}
           >
-            <p className="text-xs overflow-ellipsis text-nowrap overflow-hidden text-shadow-md text-shadow-aero-tint-darkest/50">
+            <p
+              className={`
+                overflow-hidden text-xs text-nowrap overflow-ellipsis
+                text-shadow-aero-tint-darkest/50 text-shadow-md
+              `}
+            >
               {title}
             </p>
           </motion.div>

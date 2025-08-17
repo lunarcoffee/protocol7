@@ -1,12 +1,11 @@
 'use client';
 
-import clsx from 'clsx';
 import { motion } from 'motion/react';
 import { PropsWithChildren } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 import { useToggle } from '@/hooks/useToggle';
 import { useWindowFocus } from '@/hooks/windows/useWindowFocus';
+import { twMergeClsx } from '@/utils/twMergeClsx';
 
 import { PropsWithWindowInfo } from '../../contexts/WindowManagerContext';
 import { ResizeHandles } from './ResizeHandles';
@@ -33,16 +32,26 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
   return (
     <motion.div
       onMouseDown={() => focusWindow(wid)}
-      className={twMerge(
-        clsx(
-          'flex flex-col absolute px-1 pb-1 rounded-md bg-gradient-to-tr from-aero-tint-dark/70 to-aero-tint/70 backdrop-blur-xs border border-aero-tint-darkest/85 inset-shadow-[0_0_2px] inset-shadow-white/80 text-shadow-md text-shadow-aero-tint-darkest/50 shadow-[0_0_20px] shadow-aero-tint-darkest/75 origin-[50%_-10%]',
-          hasFocus ||
-            'from-aero-tint-dark/50 to-aero-tint-dark/50 border-aero-tint-darkest/70 shadow-aero-tint-darkest/40',
-          isMaximized &&
-            'top-0 right-0 bottom-10 left-0 px-0 pb-0 rounded-none inset-shadow-none border-none',
-          isDisappearing && 'origin-[50%_110%]',
-          isOpen || 'hidden',
-        ),
+      className={twMergeClsx(
+        `
+          absolute flex origin-[50%_-10%] flex-col rounded-md border
+          border-aero-tint-darkest/85 bg-gradient-to-tr from-aero-tint-dark/70
+          to-aero-tint/70 px-1 pb-1 shadow-[0_0_20px] inset-shadow-[0_0_2px]
+          shadow-aero-tint-darkest/75 inset-shadow-white/80 backdrop-blur-xs
+          text-shadow-aero-tint-darkest/50 text-shadow-md
+        `,
+        hasFocus ||
+          `
+            border-aero-tint-darkest/70 from-aero-tint-dark/50
+            to-aero-tint-dark/50 shadow-aero-tint-darkest/40
+          `,
+        isMaximized &&
+          `
+            top-0 right-0 bottom-10 left-0 rounded-none border-none px-0 pb-0
+            inset-shadow-none
+          `,
+        isDisappearing && 'origin-[50%_110%]',
+        isOpen || 'hidden',
       )}
       style={{
         zIndex,
@@ -73,12 +82,13 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
     >
       <TitleBar windowInfo={windowInfo} />
       <div
-        className={twMerge(
-          clsx(
-            'grow rounded-sm border border-aero-tint-darkest/85 shadow-[0_0_2px] shadow-white/80 overflow-clip',
-            isMaximized &&
-              'rounded-none border-0 border-t border-t-aero-tint-darkest/85',
-          ),
+        className={twMergeClsx(
+          `
+            grow overflow-clip rounded-sm border border-aero-tint-darkest/85
+            shadow-[0_0_2px] shadow-white/80
+          `,
+          isMaximized &&
+            'rounded-none border-0 border-t border-t-aero-tint-darkest/85',
         )}
       >
         {children}

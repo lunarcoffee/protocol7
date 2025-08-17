@@ -35,7 +35,7 @@ export const WindowLayer = () => {
             size: { x: 500, y: 300 },
             render: (windowInfo) => (
               <WindowFrame windowInfo={windowInfo}>
-                <div className="size-full p-4 bg-gray-100">
+                <div className="size-full bg-gray-100 p-4">
                   <p className="text-blue-900 text-shadow-none">
                     this is a window!
                   </p>
@@ -44,7 +44,7 @@ export const WindowLayer = () => {
             ),
           });
         }}
-        className="size-5 absolute top-0 left-0 bg-amber-400"
+        className="absolute top-0 left-0 size-5 bg-amber-400"
       >
         open sesame
       </button>

@@ -1,10 +1,14 @@
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { FlatCompat } from '@eslint/eslintrc';
-import reactPlugin from 'eslint-plugin-react';
-import tseslint from 'typescript-eslint';
 import { includeIgnoreFile } from '@eslint/compat';
+import { FlatCompat } from '@eslint/eslintrc';
+import eslint from '@eslint/js';
+import betterTailwind from 'eslint-plugin-better-tailwindcss';
+import { getDefaultCallees } from 'eslint-plugin-better-tailwindcss/api/defaults';
+import prettier from 'eslint-plugin-prettier';
+import reactPlugin from 'eslint-plugin-react';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import { dirname } from 'path';
+import tseslint from 'typescript-eslint';
+import { fileURLToPath } from 'url';
 
 const fileName = fileURLToPath(import.meta.url);
 const dirName = dirname(fileName);
@@ -19,6 +23,7 @@ const eslintConfig = [
   reactPlugin.configs.flat.recommended,
   reactPlugin.configs.flat['jsx-runtime'],
 
+  eslint.configs.recommended,
   ...tseslint.configs.recommended,
 
   includeIgnoreFile(gitignorePath),
@@ -26,10 +31,26 @@ const eslintConfig = [
   {
     plugins: {
       'simple-import-sort': simpleImportSort,
+      'better-tailwindcss': betterTailwind,
+      prettier,
     },
     rules: {
-      'simple-import-sort/imports': 'error',
-      'simple-import-sort/exports': 'error',
+      'simple-import-sort/imports': 'warn',
+      'simple-import-sort/exports': 'warn',
+
+      ...betterTailwind.configs['recommended-warn'].rules,
+
+      'prettier/prettier': 'warn',
+    },
+    settings: {
+      'better-tailwindcss': {
+        entryPoint: 'app/globals.css',
+        callees: [
+          ...getDefaultCallees(),
+          // add detection for custom tailwind class helper
+          ['twMergeClsx', [{ match: 'strings' }, { match: 'objectKeys' }]],
+        ],
+      },
     },
   },
 ];

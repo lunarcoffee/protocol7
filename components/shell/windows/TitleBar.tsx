@@ -1,10 +1,8 @@
-import clsx from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
 import { PropsWithWindowInfo } from '@/components/contexts/WindowManagerContext';
 import { useWindowMaximize } from '@/hooks/windows/useWindowMaximize';
 import { useWindowMove } from '@/hooks/windows/useWindowMove';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
+import { twMergeClsx } from '@/utils/twMergeClsx';
 
 import { ControlButtons } from './ControlButtons';
 
@@ -31,15 +29,17 @@ export const TitleBar = ({ windowInfo }: PropsWithWindowInfo) => {
         onMouseDown: (event) => onWindowDragStart(event.clientX, event.clientY),
       })}
       onDoubleClick={() => maximizeWindow(wid)}
-      className={twMerge(
-        clsx(
-          'flex flex-row max-width-[100%] items-center p-1',
-          hasFocus || 'brightness-75 grayscale-50',
-          isMaximized && 'px-2',
-        ),
+      className={twMergeClsx(
+        'flex flex-row items-center p-1',
+        hasFocus || 'brightness-75 grayscale-50',
+        isMaximized && 'px-2',
       )}
     >
-      <p className="pt-px mr-4 text-sm text-ellipsis text-nowrap overflow-hidden">
+      <p
+        className={`
+          mr-4 overflow-hidden pt-px text-sm text-nowrap text-ellipsis
+        `}
+      >
         {title}
       </p>
       <div className="grow" />
