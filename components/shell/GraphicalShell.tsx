@@ -1,9 +1,10 @@
 'use client';
 
+import { enableMapSet } from 'immer';
+
 import { ProcessManagerContextProvider } from '../contexts/ProcessManagerContext';
 import { WindowManagerContextProvider } from '../contexts/WindowManagerContext';
 import { WindowLayer } from './WindowLayer';
-import { enableMapSet } from 'immer';
 
 enableMapSet();
 

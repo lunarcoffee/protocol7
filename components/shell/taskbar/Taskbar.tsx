@@ -1,13 +1,15 @@
 'use client';
 
-import { Clock } from './Clock';
-import { LauncherButton } from './LauncherButton';
+import Image from 'next/image';
+
+import { useWindowManager } from '@/components/contexts/WindowManagerContext';
 import { useToggle } from '@/hooks/useToggle';
-import { SystemTray } from './SystemTray';
 import NetworkIcon from '@/public/icons/network.svg';
 import VolumeHighIcon from '@/public/icons/volume-high.svg';
-import Image from 'next/image';
-import { useWindowManager } from '@/components/contexts/WindowManagerContext';
+
+import { Clock } from './Clock';
+import { LauncherButton } from './LauncherButton';
+import { SystemTray } from './SystemTray';
 import { WindowList } from './WindowList';
 
 export const Taskbar = () => {

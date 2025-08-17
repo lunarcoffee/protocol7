@@ -1,13 +1,15 @@
 'use client';
 
-import { PropsWithChildren } from 'react';
-import { PropsWithWindowInfo } from '../../contexts/WindowManagerContext';
-import { useWindowFocus } from '@/hooks/windows/useWindowFocus';
-import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
-import { ResizeHandles } from './ResizeHandles';
 import { motion } from 'motion/react';
+import { PropsWithChildren } from 'react';
+import { twMerge } from 'tailwind-merge';
+
 import { useToggle } from '@/hooks/useToggle';
+import { useWindowFocus } from '@/hooks/windows/useWindowFocus';
+
+import { PropsWithWindowInfo } from '../../contexts/WindowManagerContext';
+import { ResizeHandles } from './ResizeHandles';
 import { TitleBar } from './TitleBar';
 
 export type WindowFrameProps = PropsWithWindowInfo & PropsWithChildren;

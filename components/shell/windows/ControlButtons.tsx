@@ -1,8 +1,9 @@
 import { PropsWithWindowInfo } from '@/components/contexts/WindowManagerContext';
 import { useWindowDestroy } from '@/hooks/windows/useWindowDestroy';
-import { ControlButton } from './ControlButton';
-import { useWindowMinimize } from '@/hooks/windows/useWindowMinimize';
 import { useWindowMaximize } from '@/hooks/windows/useWindowMaximize';
+import { useWindowMinimize } from '@/hooks/windows/useWindowMinimize';
+
+import { ControlButton } from './ControlButton';
 
 export const ControlButtons = ({
   windowInfo: { wid },

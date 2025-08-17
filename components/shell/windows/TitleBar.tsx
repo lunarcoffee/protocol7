@@ -1,10 +1,12 @@
-import { PropsWithWindowInfo } from '@/components/contexts/WindowManagerContext';
-import { useWindowMove } from '@/hooks/windows/useWindowMove';
-import { handleMouseDrag } from '@/utils/handleMouseDrag';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { ControlButtons } from './ControlButtons';
+
+import { PropsWithWindowInfo } from '@/components/contexts/WindowManagerContext';
 import { useWindowMaximize } from '@/hooks/windows/useWindowMaximize';
+import { useWindowMove } from '@/hooks/windows/useWindowMove';
+import { handleMouseDrag } from '@/utils/handleMouseDrag';
+
+import { ControlButtons } from './ControlButtons';
 
 export const TitleBar = ({ windowInfo }: PropsWithWindowInfo) => {
   const { wid, title, position, isMaximized, hasFocus } = windowInfo;

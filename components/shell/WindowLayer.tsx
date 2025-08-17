@@ -1,14 +1,16 @@
 'use client';
 
+import { AnimatePresence } from 'motion/react';
+
 import { useNextProcessID } from '@/hooks/processes/useNextProcessID';
+import { useProcessCreate } from '@/hooks/processes/useProcessCreate';
 import { useNextWindowID } from '@/hooks/windows/useNextWindowID';
 import { useWindowCreate } from '@/hooks/windows/useWindowCreate';
+
 import { useWindowManager } from '../contexts/WindowManagerContext';
-import { WindowFrame } from './windows/WindowFrame';
-import { AnimatePresence } from 'motion/react';
-import { useProcessCreate } from '@/hooks/processes/useProcessCreate';
 import { Desktop } from './Desktop';
 import { Taskbar } from './taskbar/Taskbar';
+import { WindowFrame } from './windows/WindowFrame';
 
 export const WindowLayer = () => {
   const [{ windows }] = useWindowManager();
@@ -33,7 +35,7 @@ export const WindowLayer = () => {
             size: { x: 500, y: 300 },
             render: (windowInfo) => (
               <WindowFrame windowInfo={windowInfo}>
-                <div className="size-full p-4 bg-gray-300">
+                <div className="size-full p-4 bg-gray-100">
                   <p className="text-blue-900 text-shadow-none">
                     this is a window!
                   </p>

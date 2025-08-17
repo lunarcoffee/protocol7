@@ -1,4 +1,5 @@
 import { JSX } from 'react';
+
 import { Hoverable } from './Hoverable';
 
 export interface SystemTrayItem {

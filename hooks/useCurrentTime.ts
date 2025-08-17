@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { DateTime } from 'luxon';
+import { useEffect, useState } from 'react';
 
 const TIME_UPDATE_INTERVAL = 100;
 

@@ -1,8 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import Wallpaper from '@/public/wallpapers/leaves.jpg';
+
 import { useFocusDesktop } from '@/hooks/windows/useFocusDesktop';
+import Wallpaper from '@/public/wallpapers/leaves.jpg';
 
 export const Desktop = () => {
   const focusDesktop = useFocusDesktop();

@@ -1,9 +1,10 @@
-import { WindowInfo } from '@/components/contexts/WindowManagerContext';
-import { useWindowFocus } from '@/hooks/windows/useWindowFocus';
-import { useWindowMinimize } from '@/hooks/windows/useWindowMinimize';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'motion/react';
 import { twMerge } from 'tailwind-merge';
+
+import { WindowInfo } from '@/components/contexts/WindowManagerContext';
+import { useWindowFocus } from '@/hooks/windows/useWindowFocus';
+import { useWindowMinimize } from '@/hooks/windows/useWindowMinimize';
 
 export interface WindowListProps {
   windows: WindowInfo[];

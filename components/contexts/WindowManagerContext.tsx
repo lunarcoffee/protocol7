@@ -1,7 +1,8 @@
-import { createContext, JSX, PropsWithChildren, use } from 'react';
-import { ProcessID } from './ProcessManagerContext';
 import { Draft } from 'immer';
+import { createContext, JSX, PropsWithChildren, use } from 'react';
 import { useImmerReducer } from 'use-immer';
+
+import { ProcessID } from './ProcessManagerContext';
 
 export type WindowID = number;
 
@@ -107,7 +108,7 @@ const updateWindowManager = (
 
   // TODO: check for duplicate wid
   switch (action.action) {
-    case 'create':
+    case 'create': {
       const { wid, info: creationInfo } = action;
 
       const info = {
@@ -126,6 +127,7 @@ const updateWindowManager = (
       unfocusAll(draft); // the new window should be the only focused one
       windows.set(wid, info);
       break;
+    }
     case 'destroy': {
       const { wid } = action;
 
