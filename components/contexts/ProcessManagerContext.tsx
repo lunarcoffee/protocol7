@@ -1,7 +1,7 @@
 'use client';
 
 import { Draft } from 'immer';
-import { createContext, PropsWithChildren, use } from 'react';
+import { createContext, PropsWithChildren } from 'react';
 import { useImmerReducer } from 'use-immer';
 
 import { WindowID } from './WindowManagerContext';
