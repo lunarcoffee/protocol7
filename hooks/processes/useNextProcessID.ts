@@ -1,4 +1,4 @@
-import { useProcessManager } from '@/components/contexts/ProcessManagerContext';
+import { useProcessManager } from './useProcessManager';
 
 export const useNextProcessID = () => {
   const [{ processes }] = useProcessManager();

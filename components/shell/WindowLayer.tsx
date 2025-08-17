@@ -5,9 +5,9 @@ import { AnimatePresence } from 'motion/react';
 import { useNextProcessID } from '@/hooks/processes/useNextProcessID';
 import { useProcessCreate } from '@/hooks/processes/useProcessCreate';
 import { useNextWindowID } from '@/hooks/windows/useNextWindowID';
-import { useWindowCreate } from '@/hooks/windows/useWindowCreate';
+import { useWindowCreate } from '@/hooks/windows/useWindowCreate.1';
+import { useWindowManager } from '@/hooks/windows/useWindowManager';
 
-import { useWindowManager } from '../contexts/WindowManagerContext';
 import { Desktop } from './Desktop';
 import { Taskbar } from './taskbar/Taskbar';
 import { WindowFrame } from './windows/WindowFrame';

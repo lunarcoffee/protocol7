@@ -2,8 +2,8 @@
 
 import Image from 'next/image';
 
-import { useWindowManager } from '@/components/contexts/WindowManagerContext';
 import { useToggle } from '@/hooks/useToggle';
+import { useWindowManager } from '@/hooks/windows/useWindowManager';
 import NetworkIcon from '@/public/icons/network.svg';
 import VolumeHighIcon from '@/public/icons/volume-high.svg';
 

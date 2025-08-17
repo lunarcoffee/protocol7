@@ -1,8 +1,9 @@
 import {
   Dimensions,
-  useWindowManager,
   WindowID,
 } from '@/components/contexts/WindowManagerContext';
+
+import { useWindowManager } from './useWindowManager';
 
 export const useWindowMove = () => {
   const [, updateWindowManager] = useWindowManager();

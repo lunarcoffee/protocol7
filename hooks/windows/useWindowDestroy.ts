@@ -1,8 +1,7 @@
-import { useProcessManager } from '@/components/contexts/ProcessManagerContext';
-import {
-  useWindowManager,
-  WindowID,
-} from '@/components/contexts/WindowManagerContext';
+import { WindowID } from '@/components/contexts/WindowManagerContext';
+
+import { useProcessManager } from '../processes/useProcessManager';
+import { useWindowManager } from './useWindowManager';
 
 export const useWindowDestroy = () => {
   const [{ windows }, updateWindowManager] = useWindowManager();

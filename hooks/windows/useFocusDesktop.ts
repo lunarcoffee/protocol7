@@ -1,4 +1,4 @@
-import { useWindowManager } from '@/components/contexts/WindowManagerContext';
+import { useWindowManager } from './useWindowManager';
 
 export const useFocusDesktop = () => {
   const [, updateWindowManager] = useWindowManager();

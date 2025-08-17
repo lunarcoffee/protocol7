@@ -50,7 +50,7 @@ const DEAFULT_WINDOW_MANAGER = {
   defaultPosition: { x: 200, y: 200 },
 };
 
-const WindowManagerContext = createContext<WindowManager>(
+export const WindowManagerContext = createContext<WindowManager>(
   DEAFULT_WINDOW_MANAGER,
 );
 
@@ -74,11 +74,10 @@ export type WindowManagerDispatch = (
   action: WindowManagerDispatchAction,
 ) => void;
 
-const WindowManagerDispatchContext = createContext<WindowManagerDispatch>(
-  () => {
+export const WindowManagerDispatchContext =
+  createContext<WindowManagerDispatch>(() => {
     throw new Error('window manager uninitialized!');
-  },
-);
+  });
 
 const nextZIndex = ({ windows }: Draft<WindowManager>) =>
   Array.from(windows.values()).reduce(
@@ -212,8 +211,3 @@ export const WindowManagerContextProvider = ({
     </WindowManagerContext.Provider>
   );
 };
-
-export const useWindowManager = (): [WindowManager, WindowManagerDispatch] => [
-  use(WindowManagerContext),
-  use(WindowManagerDispatchContext),
-];

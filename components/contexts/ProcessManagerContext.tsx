@@ -22,7 +22,7 @@ export interface ProcessManager {
 
 const DEFAULT_PROCESS_MANAGER = { processes: new Map() };
 
-const ProcessManagerContext = createContext<ProcessManager>(
+export const ProcessManagerContext = createContext<ProcessManager>(
   DEFAULT_PROCESS_MANAGER,
 );
 
@@ -35,11 +35,10 @@ export type ProcessManagerDispatch = (
   action: ProcessManagerDispatchAction,
 ) => void;
 
-const ProcessManagerDispatchContext = createContext<ProcessManagerDispatch>(
-  () => {
+export const ProcessManagerDispatchContext =
+  createContext<ProcessManagerDispatch>(() => {
     throw new Error('process table uninitialized!');
-  },
-);
+  });
 
 const updateProcessManager = (
   draft: Draft<ProcessManager>,
@@ -91,8 +90,3 @@ export const ProcessManagerContextProvider = ({
     </ProcessManagerContext.Provider>
   );
 };
-
-export const useProcessManager = (): [
-  ProcessManager,
-  ProcessManagerDispatch,
-] => [use(ProcessManagerContext), use(ProcessManagerDispatchContext)];

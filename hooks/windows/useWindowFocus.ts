@@ -1,7 +1,6 @@
-import {
-  useWindowManager,
-  WindowID,
-} from '@/components/contexts/WindowManagerContext';
+import { WindowID } from '@/components/contexts/WindowManagerContext';
+
+import { useWindowManager } from './useWindowManager';
 
 export const useWindowFocus = () => {
   const [, updateWindowManager] = useWindowManager();

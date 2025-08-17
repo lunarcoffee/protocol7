@@ -2,8 +2,7 @@
 
 import { enableMapSet } from 'immer';
 
-import { ProcessManagerContextProvider } from '../contexts/ProcessManagerContext';
-import { WindowManagerContextProvider } from '../contexts/WindowManagerContext';
+import { SystemContextProviders } from '../contexts/SystemContextProvider';
 import { WindowLayer } from './WindowLayer';
 
 enableMapSet();
@@ -17,11 +16,9 @@ export const GraphicalShell = () => {
         max-h-9/10 w-9/10 max-w-[calc(8/5*90lvh)] overflow-clip
       `}
     >
-      <ProcessManagerContextProvider>
-        <WindowManagerContextProvider>
-          <WindowLayer />
-        </WindowManagerContextProvider>
-      </ProcessManagerContextProvider>
+      <SystemContextProviders>
+        <WindowLayer />
+      </SystemContextProviders>
     </div>
   );
 };
