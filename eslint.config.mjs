@@ -3,6 +3,7 @@ import { FlatCompat } from '@eslint/eslintrc';
 import eslint from '@eslint/js';
 import betterTailwind from 'eslint-plugin-better-tailwindcss';
 import { getDefaultCallees } from 'eslint-plugin-better-tailwindcss/api/defaults';
+import jest from 'eslint-plugin-jest';
 import prettier from 'eslint-plugin-prettier';
 import reactPlugin from 'eslint-plugin-react';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
@@ -25,6 +26,9 @@ const eslintConfig = [
 
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
+
+  jest.configs['flat/recommended'],
+  jest.configs['flat/style'],
 
   includeIgnoreFile(gitignorePath),
 
