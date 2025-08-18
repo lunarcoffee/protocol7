@@ -1,8 +1,8 @@
 import { Draft } from 'immer';
-import { createContext, JSX, PropsWithChildren } from 'react';
-import { useImmerReducer } from 'use-immer';
+import { JSX } from 'react';
 
-import { ProcessID } from './ProcessManagerContext';
+import { detachWindow, ProcessID } from './ProcessManager';
+import { System } from './SystemContext';
 
 export type WindowID = number;
 
@@ -27,6 +27,7 @@ export interface WindowInfo {
 
   isOpen: boolean;
   hasFocus: boolean;
+  isEphemeral: boolean; // ephemeral windows close upon losing focus
 
   render: (info: WindowInfo) => JSX.Element;
 }
@@ -45,7 +46,7 @@ export interface WindowManager {
   defaultPosition: (size: Dimensions) => Dimensions;
 }
 
-const DEAFULT_WINDOW_MANAGER: WindowManager = {
+export const DEFAULT_WINDOW_MANAGER: WindowManager = {
   windows: new Map(),
 
   // center newly created windows by default
@@ -58,10 +59,8 @@ const DEAFULT_WINDOW_MANAGER: WindowManager = {
   },
 };
 
-export const WindowManagerContext = createContext(DEAFULT_WINDOW_MANAGER);
-
 export type WindowManagerDispatchAction =
-  | { action: 'create'; wid: WindowID; info: WindowCreationInfo }
+  | { action: 'create'; info: WindowCreationInfo }
   | { action: 'destroy'; wid: WindowID }
   | { action: 'move'; wid: WindowID; position: Dimensions }
   | {
@@ -80,58 +79,77 @@ export type WindowManagerDispatch = (
   action: WindowManagerDispatchAction,
 ) => void;
 
-export const WindowManagerDispatchContext =
-  createContext<WindowManagerDispatch>(() => {
-    throw new Error('window manager uninitialized!');
-  });
-
 const nextZIndex = ({ windows }: Draft<WindowManager>) =>
   Array.from(windows.values()).reduce(
     (max, window) => Math.max(max, window.zIndex),
     0,
   ) + 1;
 
-const focusWindow = (draft: Draft<WindowManager>, wid: WindowID) => {
-  const { windows } = draft;
-  windows.forEach((window) => {
+const destroyEphemeralWindows = (system: Draft<System>) => {
+  const {
+    wm: { windows },
+  } = system;
+
+  Array.from(windows.values())
+    .filter((window) => window.isEphemeral && !window.hasFocus)
+    .forEach(({ wid, pid }) => {
+      windows.delete(wid);
+      detachWindow(system, pid, wid);
+    });
+};
+
+const focusWindow = (system: Draft<System>, wid: WindowID) => {
+  const { wm } = system;
+
+  wm.windows.forEach((window) => {
     window.hasFocus = window.wid === wid;
     if (window.wid === wid) {
-      window.zIndex = nextZIndex(draft);
+      window.zIndex = nextZIndex(wm);
       window.isOpen = true;
     }
   });
+
+  destroyEphemeralWindows(system);
 };
 
-const unfocusAll = ({ windows }: Draft<WindowManager>) =>
+const unfocusAll = (system: Draft<System>) => {
+  const {
+    wm: { windows },
+  } = system;
+
   windows.forEach((window) => (window.hasFocus = false));
 
-const updateWindowManager = (
-  draft: Draft<WindowManager>,
+  destroyEphemeralWindows(system);
+};
+
+export const updateWindowManager = (
+  system: Draft<System>,
   action: WindowManagerDispatchAction,
 ) => {
-  const { windows } = draft;
+  const { wm, pm } = system;
+  const { windows } = wm;
 
   switch (action.action) {
     case 'create': {
-      const { wid, info: creationInfo } = action;
+      const { info: creationInfo } = action;
+      const { wid } = creationInfo;
 
       if (windows.has(wid)) console.warn('recreating existing wid:', wid);
 
-      const info = {
+      unfocusAll(system); // the new window should be the only focused one
+
+      windows.set(wid, {
         title: '',
-        position: draft.defaultPosition(creationInfo.size),
-        zIndex: nextZIndex(draft),
+        position: wm.defaultPosition(creationInfo.size),
+        zIndex: nextZIndex(wm),
         minSize: { x: 120, y: 100 },
         resizable: true,
         isMaximized: false,
         isOpen: true,
-        isTransitioning: true,
         hasFocus: true,
+        isEphemeral: false,
         ...creationInfo,
-      };
-
-      unfocusAll(draft); // the new window should be the only focused one
-      windows.set(wid, info);
+      });
       break;
     }
     case 'destroy': {
@@ -177,6 +195,8 @@ const updateWindowManager = (
         window.isOpen = false;
         window.hasFocus = false;
       }
+
+      destroyEphemeralWindows(system);
       break;
     }
     case 'toggle_maximized': {
@@ -184,7 +204,7 @@ const updateWindowManager = (
 
       const window = windows.get(wid);
       if (window && window.resizable) {
-        if (!window.isMaximized) focusWindow(draft, wid);
+        if (!window.isMaximized) focusWindow(system, wid);
         window.isMaximized = !window.isMaximized;
       }
       break;
@@ -192,29 +212,12 @@ const updateWindowManager = (
     case 'focus': {
       const { wid } = action;
 
-      focusWindow(draft, wid);
+      focusWindow(system, wid);
       break;
     }
     case 'unfocus_all': {
-      unfocusAll(draft);
+      unfocusAll(system);
       break;
     }
   }
-};
-
-export const WindowManagerContextProvider = ({
-  children,
-}: PropsWithChildren) => {
-  const [windowManager, dispatch] = useImmerReducer(
-    updateWindowManager,
-    DEAFULT_WINDOW_MANAGER,
-  );
-
-  return (
-    <WindowManagerContext.Provider value={windowManager}>
-      <WindowManagerDispatchContext.Provider value={dispatch}>
-        {children}
-      </WindowManagerDispatchContext.Provider>
-    </WindowManagerContext.Provider>
-  );
 };

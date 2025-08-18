@@ -1,13 +1,20 @@
-import { use } from 'react';
-
 import {
   ProcessManager,
-  ProcessManagerContext,
   ProcessManagerDispatch,
-  ProcessManagerDispatchContext,
-} from '@/components/contexts/ProcessManagerContext';
+  ProcessManagerDispatchAction,
+} from '@/components/contexts/system/ProcessManager';
+
+import { useSystem } from '../useSystem';
 
 export const useProcessManager = (): [
   ProcessManager,
   ProcessManagerDispatch,
-] => [use(ProcessManagerContext), use(ProcessManagerDispatchContext)];
+] => {
+  const [{ pm }, dispatch] = useSystem();
+  return [
+    pm,
+    (action: ProcessManagerDispatchAction) => {
+      dispatch({ type: 'process', action });
+    },
+  ];
+};

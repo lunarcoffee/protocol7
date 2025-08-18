@@ -1,4 +1,4 @@
-import { Dimensions } from '@/components/contexts/WindowManagerContext';
+import { Dimensions } from '@/components/contexts/system/WindowManager';
 
 // useful in `onMouseDown` handlers where you want to track the associated drag gesture that comes
 // after - see `WindowFrame` or `ResizeHandles` for examples

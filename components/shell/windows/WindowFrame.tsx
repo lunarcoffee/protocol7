@@ -8,7 +8,7 @@ import { useWindowFocus } from '@/hooks/windows/useWindowFocus';
 import { clamp } from '@/utils/clamp';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
-import { PropsWithWindowInfo } from '../../contexts/WindowManagerContext';
+import { PropsWithWindowInfo } from '../../contexts/system/WindowManager';
 import { ResizeHandles } from './ResizeHandles';
 import { TitleBar } from './TitleBar';
 

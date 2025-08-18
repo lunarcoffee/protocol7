@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 
-import { useToggle } from '@/hooks/useToggle';
 import { useWindowManager } from '@/hooks/windows/useWindowManager';
 import NetworkIcon from '@/public/icons/network.svg';
 import VolumeHighIcon from '@/public/icons/volume-high.svg';
@@ -15,8 +14,6 @@ import { WindowList } from './WindowList';
 export const Taskbar = () => {
   const [{ windows }] = useWindowManager();
   const windowArray = Array.from(windows.values());
-
-  const [isLauncherOpen, toggleLauncherOpen] = useToggle();
 
   return (
     <div
@@ -41,10 +38,7 @@ export const Taskbar = () => {
         `}
       >
         <div className="left-4 z-30 -mt-1 mr-4">
-          <LauncherButton
-            active={isLauncherOpen}
-            onClick={toggleLauncherOpen}
-          />
+          <LauncherButton />
         </div>
       </div>
       <div

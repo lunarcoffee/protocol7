@@ -9,8 +9,11 @@ export interface IconProps {
   onLaunch: () => void;
 
   isSelected: boolean;
+  // TODO: do we even need this parameter? is it always gonna be true
   onSelectionChange: (isSelected: boolean) => void;
 }
+
+// TODO: tooltip on hover
 
 export const Icon = ({
   icon,

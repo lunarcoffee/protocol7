@@ -1,4 +1,4 @@
-import { PropsWithWindowInfo } from '@/components/contexts/WindowManagerContext';
+import { PropsWithWindowInfo } from '@/components/contexts/system/WindowManager';
 import { useWindowResize } from '@/hooks/windows/useWindowResize';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 

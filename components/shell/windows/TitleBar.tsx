@@ -1,4 +1,4 @@
-import { PropsWithWindowInfo } from '@/components/contexts/WindowManagerContext';
+import { PropsWithWindowInfo } from '@/components/contexts/system/WindowManager';
 import { useWindowMaximize } from '@/hooks/windows/useWindowMaximize';
 import { useWindowMove } from '@/hooks/windows/useWindowMove';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';

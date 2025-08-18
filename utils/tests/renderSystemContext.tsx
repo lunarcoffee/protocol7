@@ -1,7 +1,7 @@
 import { render, RenderOptions } from '@testing-library/react';
 import { ReactElement } from 'react';
 
-import { SystemContextProviders } from '@/components/contexts/SystemContextProviders';
+import { SystemContextProviders } from '@/components/contexts/system/SystemContext';
 
 const renderSystemContext = (
   ui: ReactElement,

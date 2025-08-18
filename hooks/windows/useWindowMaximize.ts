@@ -1,4 +1,4 @@
-import { WindowID } from '@/components/contexts/WindowManagerContext';
+import { WindowID } from '@/components/contexts/system/WindowManager';
 
 import { useWindowManager } from './useWindowManager';
 

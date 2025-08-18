@@ -1,9 +1,10 @@
-import { ProcessID } from '@/components/contexts/ProcessManagerContext';
+import { ProcessCreationInfo } from '@/components/contexts/system/ProcessManager';
 
 import { useProcessManager } from './useProcessManager';
 
 export const useProcessCreate = () => {
   const [, updateProcessManager] = useProcessManager();
 
-  return (pid: ProcessID) => updateProcessManager({ action: 'create', pid });
+  return (info: ProcessCreationInfo) =>
+    updateProcessManager({ action: 'create', info });
 };

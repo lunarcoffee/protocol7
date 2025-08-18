@@ -1,7 +1,7 @@
 import {
   Dimensions,
   WindowID,
-} from '@/components/contexts/WindowManagerContext';
+} from '@/components/contexts/system/WindowManager';
 
 import { useWindowManager } from './useWindowManager';
 

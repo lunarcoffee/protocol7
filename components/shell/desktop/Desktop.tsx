@@ -72,12 +72,12 @@ export const Desktop = () => {
           <Icon
             {...props}
             onLaunch={() => {
-              createProcess(nextPid);
+              createProcess({ pid: nextPid });
               createWindow({
                 pid: nextPid,
                 wid: nextWid,
                 title: 'New window',
-                size: { x: 500, y: 300 },
+                size: { x: 800, y: 500 },
                 render: (windowInfo) => (
                   <WindowFrame windowInfo={windowInfo}>
                     <div className="size-full bg-gray-100 p-4">

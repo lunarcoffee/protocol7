@@ -1,13 +1,17 @@
-import { use } from 'react';
-
 import {
   WindowManager,
-  WindowManagerContext,
   WindowManagerDispatch,
-  WindowManagerDispatchContext,
-} from '@/components/contexts/WindowManagerContext';
+  WindowManagerDispatchAction,
+} from '@/components/contexts/system/WindowManager';
 
-export const useWindowManager = (): [WindowManager, WindowManagerDispatch] => [
-  use(WindowManagerContext),
-  use(WindowManagerDispatchContext),
-];
+import { useSystem } from '../useSystem';
+
+export const useWindowManager = (): [WindowManager, WindowManagerDispatch] => {
+  const [{ wm }, dispatch] = useSystem();
+  return [
+    wm,
+    (action: WindowManagerDispatchAction) => {
+      dispatch({ type: 'window', action });
+    },
+  ];
+};
