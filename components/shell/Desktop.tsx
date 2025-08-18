@@ -3,7 +3,7 @@
 import Image from 'next/image';
 
 import { useFocusDesktop } from '@/hooks/windows/useFocusDesktop';
-import Wallpaper from '@/public/wallpapers/leaves.jpg';
+import Wallpaper from '@/public/wallpapers/light.jpg';
 
 export const Desktop = () => {
   const focusDesktop = useFocusDesktop();

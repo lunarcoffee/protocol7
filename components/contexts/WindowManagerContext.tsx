@@ -114,7 +114,7 @@ const updateWindowManager = (
         title: '',
         position: draft.defaultPosition, // TODO: default position shifting like windows? or maybe sentinel options like 'center' or smth
         zIndex: nextZIndex(draft),
-        minSize: { x: 120, y: 80 },
+        minSize: { x: 120, y: 100 },
         resizable: true,
         isMaximized: false,
         isOpen: true,

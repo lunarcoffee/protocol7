@@ -81,11 +81,45 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
       onAnimationStart={toggleDisappearing}
     >
       <TitleBar windowInfo={windowInfo} />
+      {/* glass reflections */}
+      <div className="absolute top-0 left-0 z-0 h-2/5 w-full overflow-clip">
+        <div
+          className={`
+            absolute top-0 left-1/4 h-[200%] w-1/5 origin-top-left -rotate-20
+            bg-gradient-to-r from-transparent via-white/5 via-[3px]
+            to-transparent
+          `}
+        />
+        <div
+          className={`
+            absolute top-0 left-1/2 h-[200%] w-[max(2rem,8%)] origin-top-left
+            -rotate-20 bg-white/5 shadow-[0_0_3px] shadow-white/10
+          `}
+        />
+        {size.x > 300 && size.y > 200 && (
+          <>
+            <div
+              className={`
+                absolute top-0 left-2/3 h-[200%] w-1/3 origin-top-left
+                -rotate-20 bg-gradient-to-r from-transparent via-white/10
+                via-[3px] to-transparent
+              `}
+            />
+            {/* horizontal upwards edge */}
+            <motion.div
+              className={`
+                absolute bottom-0 left-0 z-0 h-1/3 w-full bg-gradient-to-t
+                from-transparent via-white/40 via-[2px] to-transparent
+              `}
+            />
+          </>
+        )}
+      </div>
       <div
         className={twMergeClsx(
           `
-            grow overflow-clip rounded-sm border border-aero-tint-darkest/85
-            shadow-[0_0_2px] shadow-white/80
+            z-20 grow overflow-clip rounded-sm border
+            border-aero-tint-darkest/85 shadow-[0_0_2px] shadow-white/80
           `,
           isMaximized &&
             'rounded-none border-0 border-t border-t-aero-tint-darkest/85',
