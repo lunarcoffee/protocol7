@@ -1,8 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 
 import { WindowInfo } from '@/components/contexts/system/WindowManager';
-import { useWindowFocus } from '@/hooks/windows/useWindowFocus';
-import { useWindowMinimize } from '@/hooks/windows/useWindowMinimize';
+import { useWindowFocus, useWindowMinimize } from '@/hooks/windows';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
 export interface WindowListProps {

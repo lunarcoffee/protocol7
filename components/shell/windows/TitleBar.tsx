@@ -1,6 +1,5 @@
 import { PropsWithWindowInfo } from '@/components/contexts/system/WindowManager';
-import { useWindowMaximize } from '@/hooks/windows/useWindowMaximize';
-import { useWindowMove } from '@/hooks/windows/useWindowMove';
+import { useWindowMaximize, useWindowMove } from '@/hooks/windows';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 

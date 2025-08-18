@@ -2,7 +2,7 @@
 
 import { AnimatePresence } from 'motion/react';
 
-import { useWindowManager } from '@/hooks/windows/useWindowManager';
+import { useWindowManager } from '@/hooks/windows';
 
 import { Desktop } from './desktop/Desktop';
 import { Taskbar } from './taskbar/Taskbar';

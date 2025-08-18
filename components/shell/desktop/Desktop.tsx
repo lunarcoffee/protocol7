@@ -3,11 +3,12 @@
 import Image from 'next/image';
 import { useImmerReducer } from 'use-immer';
 
-import { useNextProcessID } from '@/hooks/processes/useNextProcessID';
-import { useProcessCreate } from '@/hooks/processes/useProcessCreate';
-import { useFocusDesktop } from '@/hooks/windows/useFocusDesktop';
-import { useNextWindowID } from '@/hooks/windows/useNextWindowID';
-import { useWindowCreate } from '@/hooks/windows/useWindowCreate';
+import { useNextProcessID, useProcessCreate } from '@/hooks/processes';
+import {
+  useFocusDesktop,
+  useNextWindowID,
+  useWindowCreate,
+} from '@/hooks/windows';
 import Battery from '@/public/icons/battery.svg';
 import Wireless from '@/public/icons/wireless.svg';
 import Launcher from '@/public/launcher.png';

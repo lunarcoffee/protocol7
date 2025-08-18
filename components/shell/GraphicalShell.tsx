@@ -3,8 +3,7 @@
 import { enableMapSet } from 'immer';
 import { useEffect } from 'react';
 
-import { useProcessCreate } from '@/hooks/processes/useProcessCreate';
-import { useProcessDestroy } from '@/hooks/processes/useProcessDestroy';
+import { useProcessCreate, useProcessDestroy } from '@/hooks/processes';
 
 import { PID_SHELL } from '../contexts/system/ProcessManager';
 import { WindowLayer } from './WindowLayer';

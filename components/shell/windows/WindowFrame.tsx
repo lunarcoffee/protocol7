@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { PropsWithChildren } from 'react';
 
 import { useToggle } from '@/hooks/useToggle';
-import { useWindowFocus } from '@/hooks/windows/useWindowFocus';
+import { useWindowFocus } from '@/hooks/windows';
 import { clamp } from '@/utils/clamp';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
