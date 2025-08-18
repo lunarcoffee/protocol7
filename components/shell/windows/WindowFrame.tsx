@@ -5,6 +5,7 @@ import { PropsWithChildren } from 'react';
 
 import { useToggle } from '@/hooks/useToggle';
 import { useWindowFocus } from '@/hooks/windows/useWindowFocus';
+import { clamp } from '@/utils/clamp';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
 import { PropsWithWindowInfo } from '../../contexts/WindowManagerContext';
@@ -28,6 +29,10 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
   const focusWindow = useWindowFocus();
 
   const [isDisappearing, toggleDisappearing] = useToggle(true); // TODO: hacky as hell, dunno how this will interact with minimize/maximize but i just wanted to see the effect first lol
+
+  // fade out corner glass reflections as the window gets too small
+  const cornerReflectionOpacity =
+    Math.min(clamp(0, size.x - 350, 150), clamp(0, size.y - 200, 150)) / 150;
 
   return (
     <motion.div
@@ -86,8 +91,7 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
         <div
           className={`
             absolute top-0 left-1/4 h-[200%] w-1/5 origin-top-left -rotate-20
-            bg-gradient-to-r from-transparent via-white/5 via-[3px]
-            to-transparent
+            bg-gradient-to-r via-white/8 via-[3px]
           `}
         />
         <div
@@ -96,24 +100,21 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
             -rotate-20 bg-white/5 shadow-[0_0_3px] shadow-white/10
           `}
         />
-        {size.x > 300 && size.y > 200 && (
-          <>
-            <div
-              className={`
-                absolute top-0 left-2/3 h-[200%] w-1/3 origin-top-left
-                -rotate-20 bg-gradient-to-r from-transparent via-white/10
-                via-[3px] to-transparent
-              `}
-            />
-            {/* horizontal upwards edge */}
-            <motion.div
-              className={`
-                absolute bottom-0 left-0 z-0 h-1/3 w-full bg-gradient-to-t
-                from-transparent via-white/40 via-[2px] to-transparent
-              `}
-            />
-          </>
-        )}
+        <div style={{ opacity: cornerReflectionOpacity }}>
+          <div
+            className={`
+              absolute top-0 left-2/3 h-[200%] w-1/3 origin-top-left -rotate-20
+              bg-gradient-to-r via-white/10 via-[3px]
+            `}
+          />
+          {/* horizontal upwards edge */}
+          <motion.div
+            className={`
+              absolute bottom-0 left-0 z-0 h-1/3 w-full bg-gradient-to-t
+              from-transparent via-white/40 via-[2px] to-transparent
+            `}
+          />
+        </div>
       </div>
       <div
         className={twMergeClsx(

@@ -36,7 +36,6 @@ export const WindowLayer = () => {
             render: (windowInfo) => (
               <WindowFrame windowInfo={windowInfo}>
                 <div className="size-full bg-gray-100 p-4">
-                  {/* <div className="size-full  p-4"> */}
                   <p className="text-blue-900 text-shadow-none">
                     this is a window!
                   </p>
