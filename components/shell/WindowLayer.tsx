@@ -12,7 +12,7 @@ export const WindowLayer = () => {
   const windowsArray = Array.from(windows.values());
 
   return (
-    <div className="absolute top-0 right-0 bottom-0 left-0">
+    <div id="window-layer" className="absolute top-0 right-0 bottom-0 left-0">
       <Desktop />
       <AnimatePresence>
         {windowsArray.map((info) => {

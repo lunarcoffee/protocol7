@@ -46,10 +46,11 @@ const updateProcessManager = (
 ) => {
   const { processes } = draft;
 
-  // TODO: check for duplicate pid
   switch (action.action) {
     case 'create': {
       const { pid } = action;
+
+      if (processes.has(pid)) console.warn('recreating existing pid:', pid);
 
       processes.set(pid, { pid, windows: [], isHeadless: false }); // TODO: update action object to pass arguments
       break;

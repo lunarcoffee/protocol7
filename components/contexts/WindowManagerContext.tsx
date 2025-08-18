@@ -42,17 +42,23 @@ export type WindowCreationInfo = Pick<WindowInfo, RequiredWindowProps> &
 
 export interface WindowManager {
   windows: Map<WindowID, WindowInfo>;
-  defaultPosition: Dimensions;
+  defaultPosition: (size: Dimensions) => Dimensions;
 }
 
-const DEAFULT_WINDOW_MANAGER = {
+const DEAFULT_WINDOW_MANAGER: WindowManager = {
   windows: new Map(),
-  defaultPosition: { x: 200, y: 200 },
+
+  // center newly created windows by default
+  defaultPosition: ({ x, y }) => {
+    const [{ width, height }] = document
+      .getElementById('window-layer')!
+      .getClientRects();
+
+    return { x: (width - x) / 2, y: (height - y) / 2 };
+  },
 };
 
-export const WindowManagerContext = createContext<WindowManager>(
-  DEAFULT_WINDOW_MANAGER,
-);
+export const WindowManagerContext = createContext(DEAFULT_WINDOW_MANAGER);
 
 export type WindowManagerDispatchAction =
   | { action: 'create'; wid: WindowID; info: WindowCreationInfo }
@@ -105,14 +111,15 @@ const updateWindowManager = (
 ) => {
   const { windows } = draft;
 
-  // TODO: check for duplicate wid
   switch (action.action) {
     case 'create': {
       const { wid, info: creationInfo } = action;
 
+      if (windows.has(wid)) console.warn('recreating existing wid:', wid);
+
       const info = {
         title: '',
-        position: draft.defaultPosition, // TODO: default position shifting like windows? or maybe sentinel options like 'center' or smth
+        position: draft.defaultPosition(creationInfo.size),
         zIndex: nextZIndex(draft),
         minSize: { x: 120, y: 100 },
         resizable: true,
