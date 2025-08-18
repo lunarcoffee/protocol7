@@ -40,6 +40,7 @@ const ControlButton = ({
     `}
   >
     <div className="relative">
+      {/* top reflective glow */}
       <div
         className={`
           absolute -mt-1 -ml-1 h-3 w-6 rounded-full bg-radial
@@ -48,20 +49,22 @@ const ControlButton = ({
           group-hover:brightness-125
           group-active:brightness-80
         `}
-      ></div>
+      />
+      {/* upper half drop shadow */}
       <div
         className={`
           absolute size-4 rounded-full inset-shadow-[0_1px_2px]
           ${topShadow}
         `}
-      ></div>
+      />
+      {/* bottom glow */}
       <div
         className={`
           absolute mt-2 h-4 w-4 rounded-full bg-radial
           ${bottomGlow}
           to-transparent to-70%
         `}
-      ></div>
+      />
     </div>
   </div>
 );

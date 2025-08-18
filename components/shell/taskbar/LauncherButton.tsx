@@ -12,6 +12,35 @@ import { twMergeClsx } from '@/utils/twMergeClsx';
 
 import { Launcher } from './Launcher';
 
+const ReflectiveOrb = () => (
+  <>
+    {/* upper reflection */}
+    <div
+      className={`
+        absolute z-10 h-7 w-12 rounded-t-3xl rounded-b-sm bg-gradient-to-b
+        from-white/40 to-white/5 inset-shadow-sm inset-shadow-white/40
+        transition duration-100
+        group-hover:from-white/50 group-hover:inset-shadow-white/60
+      `}
+    />
+    {/* manual mask to round out the bottom */}
+    <div
+      className={`
+        absolute z-20 mt-[1.62rem] h-2 w-10 rounded-[50%] bg-gradient-to-b
+        from-aero-tint-dark from-40% to-transparent to-40%
+      `}
+    />
+    {/* lower half glow */}
+    <div
+      className={`
+        absolute z-30 size-12 rounded-full bg-radial-[at_50%_100%]
+        from-aero-tint to-transparent to-50% transition duration-100
+        group-hover:to-60%
+      `}
+    />
+  </>
+);
+
 export const LauncherButton = () => {
   const [{ processes }] = useProcessManager();
   const shellWindows = processes.get(PID_SHELL)?.windows; // TODO: flimsy; maybe add window ids or smth
@@ -54,30 +83,7 @@ export const LauncherButton = () => {
       )}
       onClick={toggleLauncher}
     >
-      {/* upper reflection */}
-      <div
-        className={`
-          absolute z-10 h-7 w-12 rounded-t-3xl rounded-b-sm bg-gradient-to-b
-          from-white/40 to-white/5 inset-shadow-sm inset-shadow-white/40
-          transition duration-100
-          group-hover:from-white/50 group-hover:inset-shadow-white/60
-        `}
-      />
-      {/* manual mask to round out the bottom */}
-      <div
-        className={`
-          absolute z-20 mt-[1.62rem] h-2 w-10 rounded-[50%] bg-gradient-to-b
-          from-aero-tint-dark from-40% to-transparent to-40%
-        `}
-      />
-      {/* lower half glow */}
-      <div
-        className={`
-          absolute z-30 size-12 rounded-full bg-radial-[at_50%_100%]
-          from-aero-tint to-transparent to-50% transition duration-100
-          group-hover:to-60%
-        `}
-      />
+      <ReflectiveOrb />
       <Image
         src={LauncherIcon}
         alt="launcher icon"

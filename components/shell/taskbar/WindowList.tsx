@@ -14,7 +14,7 @@ export const WindowList = ({ windows }: WindowListProps) => {
 
   return (
     <AnimatePresence>
-      {windows.map(({ pid, wid, title, hasFocus }) => {
+      {windows.map(({ wid, title, hasFocus }) => {
         return (
           <motion.div
             onClick={
@@ -35,7 +35,7 @@ export const WindowList = ({ windows }: WindowListProps) => {
                 'from-aero-tint/40 via-white/20 to-white/60 inset-shadow-[0_0_6px] hover:backdrop-brightness-125') ||
                 'hover:from-aero-tint/60 hover:via-aero-tint-dark/80',
             )}
-            key={pid}
+            key={wid}
             variants={{
               transition: {
                 opacity: 0,
