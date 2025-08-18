@@ -2,13 +2,14 @@
 
 :root {
   --background: #0a0a0a;
-  --foreground: #ededed;
+  --foreground: #f6f6f6;
 
   --aero-tint-hue-saturation: 210deg 40%;
 
   --aero-tint-regular-lightness: 40%;
   --aero-tint-dark-lightness: 30%;
   --aero-tint-darkest-lightness: 7%;
+  --aero-tint-highlight-lightness: 60%;
 
   --font-open-sans: 'Open Sans';
 }
@@ -22,6 +23,9 @@
   );
   --color-aero-tint-darkest: hsl(
     var(--aero-tint-hue-saturation) var(--aero-tint-darkest-lightness)
+  );
+  --color-aero-tint-highlight: hsl(
+    var(--aero-tint-hue-saturation) var(--aero-tint-highlight-lightness)
   );
 }
 

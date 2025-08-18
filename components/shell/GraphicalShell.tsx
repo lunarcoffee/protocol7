@@ -2,7 +2,7 @@
 
 import { enableMapSet } from 'immer';
 
-import { SystemContextProviders } from '../contexts/SystemContextProvider';
+import { SystemContextProviders } from '../contexts/SystemContextProviders';
 import { WindowLayer } from './WindowLayer';
 
 enableMapSet();
