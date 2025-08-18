@@ -12,7 +12,7 @@ import { Launcher } from './Launcher';
 
 export const LauncherButton = () => {
   const [{ processes }] = useProcessManager();
-  const shellWindows = processes.get(PID_SHELL)?.windows;
+  const shellWindows = processes.get(PID_SHELL)?.windows; // TODO: flimsy; maybe add window ids or smth
   const isLauncherOpen = shellWindows?.length === 1;
 
   const createWindow = useWindowCreate();
@@ -30,7 +30,7 @@ export const LauncherButton = () => {
         title: 'Launcher',
         size: { x: 300, y: 500 },
         isEphemeral: true,
-        render: (windowInfo) => <Launcher />,
+        render: () => <Launcher />,
       });
     }
   };

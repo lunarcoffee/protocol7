@@ -2,18 +2,16 @@ import { Draft } from 'immer';
 import { createContext, PropsWithChildren } from 'react';
 import { useImmerReducer } from 'use-immer';
 
+import { DEFAULT_PROCESS_MANAGER, ProcessManager } from './ProcessManager';
 import {
-  DEFAULT_PROCESS_MANAGER,
-  ProcessManager,
   ProcessManagerDispatchAction,
   updateProcessManager,
-} from './ProcessManager';
+} from './updateProcessManager';
 import {
-  DEFAULT_WINDOW_MANAGER,
   updateWindowManager,
-  WindowManager,
   WindowManagerDispatchAction,
-} from './WindowManager';
+} from './updateWindowManager';
+import { DEFAULT_WINDOW_MANAGER, WindowManager } from './WindowManager';
 
 export interface System {
   pm: ProcessManager;

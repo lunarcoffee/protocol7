@@ -1,10 +1,11 @@
-import {
-  ProcessManager,
-  ProcessManagerDispatch,
-  ProcessManagerDispatchAction,
-} from '@/components/contexts/system/ProcessManager';
+import { ProcessManager } from '@/components/contexts/system/ProcessManager';
+import { ProcessManagerDispatchAction } from '@/components/contexts/system/updateProcessManager';
 
 import { useSystem } from '../useSystem';
+
+export type ProcessManagerDispatch = (
+  action: ProcessManagerDispatchAction,
+) => void;
 
 export const useProcessManager = (): [
   ProcessManager,
@@ -13,8 +14,7 @@ export const useProcessManager = (): [
   const [{ pm }, dispatch] = useSystem();
   return [
     pm,
-    (action: ProcessManagerDispatchAction) => {
-      dispatch({ type: 'process', action });
-    },
+    (action: ProcessManagerDispatchAction) =>
+      dispatch({ type: 'process', action }),
   ];
 };
