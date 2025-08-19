@@ -29,14 +29,14 @@ export const TitleBar = ({ windowInfo }: PropsWithWindowInfo) => {
       })}
       onDoubleClick={() => maximizeWindow(wid)}
       className={twMergeClsx(
-        'z-10 flex flex-row items-center p-1',
+        'z-10 flex flex-row items-center px-1 py-1.5',
         hasFocus || 'brightness-75 grayscale-50',
         isMaximized && 'px-2',
       )}
     >
       <p
         className={`
-          mr-4 overflow-hidden pt-px text-sm text-nowrap text-ellipsis
+          mr-4 overflow-hidden pt-px text-xs text-nowrap text-ellipsis
         `}
       >
         {title}

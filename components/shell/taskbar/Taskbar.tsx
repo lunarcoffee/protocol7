@@ -15,8 +15,8 @@ import { WindowList } from './WindowList';
 const LeftIsland = () => (
   <div
     className={`
-      flex h-full items-center bg-gradient-to-r from-aero-tint-darkest/14
-      via-aero-tint-darkest/19 via-[calc(100%-1.5rem] pr-5 pl-4
+      flex h-full items-center bg-gradient-to-r from-aero-tint-darkest/15
+      via-aero-tint-darkest/15 via-[calc(100%-1.5rem)] pr-5 pl-4
     `}
   >
     <div className="left-5 z-30 -mt-1 mr-4">

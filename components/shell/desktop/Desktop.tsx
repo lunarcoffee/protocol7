@@ -13,8 +13,8 @@ import Battery from '@/public/icons/battery.svg';
 import Wireless from '@/public/icons/wireless.svg';
 import Launcher from '@/public/launcher.png';
 import Garden from '@/public/wallpapers/garden.jpg';
-import Wallpaper from '@/public/wallpapers/light.jpg';
 import Maple from '@/public/wallpapers/maple.jpg';
+import Wallpaper from '@/public/wallpapers/toronto.jpg';
 
 import { WindowFrame } from '../windows/WindowFrame';
 import { Icon } from './Icon';
@@ -28,7 +28,7 @@ export const Desktop = () => {
     { icon: Garden, label: 'HPIM_3329.jpg' },
     { icon: Battery, label: 'battery indicator.svg' },
     { icon: Wireless, label: 'signal.jpg' },
-    { icon: Launcher, label: 'hanyu english字典.txt' },
+    { icon: Launcher, label: 'hanyu english字典 translation dictionary.txt' },
   ];
 
   // TODO: move all this where its supposed to be eventually
@@ -82,7 +82,7 @@ export const Desktop = () => {
                 render: (windowInfo) => (
                   <WindowFrame windowInfo={windowInfo}>
                     <div className="size-full bg-gray-100 p-4">
-                      <p className="text-blue-900 text-shadow-none">
+                      <p className="text-sm text-blue-900 text-shadow-none">
                         this is a window!
                       </p>
                     </div>

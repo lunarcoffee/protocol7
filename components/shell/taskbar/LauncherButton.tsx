@@ -12,16 +12,23 @@ import { twMergeClsx } from '@/utils/twMergeClsx';
 
 import { Launcher } from './Launcher';
 
-const ReflectiveOrb = () => (
+interface ReflectiveOrbProps {
+  isLauncherOpen: boolean;
+}
+
+const ReflectiveOrb = ({ isLauncherOpen }: ReflectiveOrbProps) => (
   <>
     {/* upper reflection */}
     <div
-      className={`
-        absolute z-10 h-7 w-12 rounded-t-3xl rounded-b-sm bg-gradient-to-b
-        from-white/40 to-white/5 inset-shadow-sm inset-shadow-white/40
-        transition duration-100
-        group-hover:from-white/50 group-hover:inset-shadow-white/60
-      `}
+      className={twMergeClsx(
+        `
+          absolute z-10 h-7 w-12 rounded-t-3xl rounded-b-sm bg-gradient-to-b
+          from-white/40 to-white/5 inset-shadow-sm inset-shadow-white/40
+          transition duration-100
+          group-hover:from-white/50 group-hover:inset-shadow-white/60
+        `,
+        isLauncherOpen && 'inset-shadow-white/50',
+      )}
     />
     {/* manual mask to round out the bottom */}
     <div
@@ -32,11 +39,18 @@ const ReflectiveOrb = () => (
     />
     {/* lower half glow */}
     <div
-      className={`
-        absolute z-30 size-12 rounded-full bg-radial-[at_50%_100%]
-        from-aero-tint to-transparent to-50% transition duration-100
-        group-hover:to-60%
-      `}
+      className={twMergeClsx(
+        `
+          absolute z-30 size-12 rounded-full bg-radial-[at_50%_100%]
+          from-aero-tint to-transparent to-50% transition duration-100
+          group-hover:from-aero-tint-highlight/60
+        `,
+        isLauncherOpen &&
+          `
+            from-aero-tint-highlight/80
+            group-hover:from-aero-tint-highlight/80
+          `,
+      )}
     />
   </>
 );
@@ -61,7 +75,7 @@ export const LauncherButton = () => {
         title: 'Launcher',
         size: { x: 300, y: 500 },
         isEphemeral: true,
-        render: () => <Launcher />,
+        render: (windowInfo) => <Launcher windowInfo={windowInfo} />,
       });
     }
   };
@@ -77,22 +91,26 @@ export const LauncherButton = () => {
         `,
         isLauncherOpen &&
           `
-            shadow-[0_0_0.3rem] shadow-white/80 transition
-            hover:shadow-[0_0_0.3rem] hover:shadow-white/80
+            shadow-[0_0_0.4rem] shadow-white/70
+            hover:shadow-white/80
           `,
       )}
       onClick={toggleLauncher}
     >
-      <ReflectiveOrb />
+      <ReflectiveOrb isLauncherOpen={isLauncherOpen} />
       <Image
         src={LauncherIcon}
         alt="launcher icon"
-        className={`
-          absolute z-30 mt-1 size-10 opacity-70 drop-shadow-[0_0_0]
-          drop-shadow-transparent transition duration-100
-          group-hover:opacity-100 group-hover:drop-shadow-[0_0_2px]
-          group-hover:drop-shadow-white/50
-        `}
+        className={twMergeClsx(
+          `
+            absolute z-30 mt-1 size-10 opacity-70 drop-shadow-[0_0_0]
+            drop-shadow-transparent transition duration-100
+            group-hover:opacity-100 group-hover:drop-shadow-[0_0_2px]
+            group-hover:drop-shadow-white/50
+          `,
+          isLauncherOpen &&
+            'opacity-90 drop-shadow-[0_0_1px] drop-shadow-white/30',
+        )}
         draggable={false}
       />
     </div>
