@@ -1,12 +1,23 @@
 import { Dimensions } from '@/components/contexts/system/WindowManager';
 
+export interface HandleMouseDragArgs {
+  initialPosition: Dimensions;
+
+  onMove: (dx: number, dy: number, event: MouseEvent) => void;
+  onDragEnd?: () => void;
+
+  // cursor style to apply for the duration of the gesture
+  cursor?: string;
+}
+
 // useful in `onMouseDown` handlers where you want to track the associated drag gesture that comes
 // after - see `WindowFrame` or `ResizeHandles` for examples
-export const handleMouseDrag = (
-  { x, y }: Dimensions,
-  onMove: (dx: number, dy: number, event: MouseEvent) => void,
-  cursor?: string, // cursor style to apply for the duration of the gesture
-) => {
+export const handleMouseDrag = ({
+  initialPosition: { x, y },
+  onMove,
+  onDragEnd,
+  cursor,
+}: HandleMouseDragArgs) => {
   if (cursor) document.body.style.cursor = cursor;
 
   const mouseMoveListener = (rawEvent: Event) => {
@@ -16,11 +27,14 @@ export const handleMouseDrag = (
 
     onMove(dx, dy, event);
   };
+
   const mouseUpListener = () => {
     document.removeEventListener('mousemove', mouseMoveListener);
     document.removeEventListener('mouseup', mouseUpListener);
 
     if (cursor) document.body.style.cursor = 'unset';
+
+    onDragEnd?.();
   };
 
   document.addEventListener('mousemove', mouseMoveListener);

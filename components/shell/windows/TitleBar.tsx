@@ -1,4 +1,7 @@
-import { PropsWithWindowInfo } from '@/components/contexts/system/WindowManager';
+import {
+  Dimensions,
+  PropsWithWindowInfo,
+} from '@/components/contexts/system/WindowManager';
 import { useWindowMaximize, useWindowMove } from '@/hooks/windows';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 import { twMergeClsx } from '@/utils/twMergeClsx';
@@ -11,21 +14,22 @@ export const TitleBar = ({ windowInfo }: PropsWithWindowInfo) => {
   const moveWindow = useWindowMove();
   const maximizeWindow = useWindowMaximize();
 
-  const onWindowDragStart = (initialX: number, initialY: number) =>
-    handleMouseDrag(
-      { x: initialX, y: initialY },
-      (dx, dy) =>
+  const onWindowDragStart = (initialPosition: Dimensions) =>
+    handleMouseDrag({
+      initialPosition,
+      onMove: (dx, dy) =>
         moveWindow(wid, {
           x: position.x + dx,
           y: position.y + dy,
         }),
-      'move',
-    );
+      cursor: 'move',
+    });
 
   return (
     <div
       {...(!isMaximized && {
-        onMouseDown: (event) => onWindowDragStart(event.clientX, event.clientY),
+        onMouseDown: (event) =>
+          onWindowDragStart({ x: event.clientX, y: event.clientY }),
       })}
       onDoubleClick={() => maximizeWindow(wid)}
       className={twMergeClsx(

@@ -1,10 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import { MouseEvent } from 'react';
+import { MouseEvent, useState } from 'react';
 import { useImmerReducer } from 'use-immer';
 
+import { Dimensions } from '@/components/contexts/system/WindowManager';
 import { useNextProcessID, useProcessCreate } from '@/hooks/processes';
+import { useBoolean } from '@/hooks/useBoolean';
 import {
   useFocusDesktop,
   useNextWindowID,
@@ -15,10 +17,12 @@ import Wireless from '@/public/icons/wireless.svg';
 import Launcher from '@/public/launcher.png';
 import Garden from '@/public/wallpapers/garden.jpg';
 import Maple from '@/public/wallpapers/maple.jpg';
-import Wallpaper from '@/public/wallpapers/toronto.jpg';
+import Wallpaper from '@/public/wallpapers/torontoold.jpg';
+import { handleMouseDrag } from '@/utils/handleMouseDrag';
+import { toScreenPosition } from '@/utils/toScreenPosition';
 
 import { WindowFrame } from '../windows/WindowFrame';
-import { Icon } from './Icon';
+import { DesktopIcon } from './DesktopIcon';
 
 export const Desktop = () => {
   const focusDesktop = useFocusDesktop();
@@ -52,12 +56,36 @@ export const Desktop = () => {
     })),
   );
 
-  const onClickDesktop = (e: MouseEvent) => {
+  const onDesktopClick = (e: MouseEvent) => {
     focusDesktop();
 
     // allow desktop item multi-select with ctrl
     if (!e.getModifierState('Control'))
       icons.forEach((_, index) => updateIcon({ index, value: false }));
+  };
+
+  const [isDragging, startDrag, endDrag] = useBoolean(false);
+
+  const initialDragRect = { top: 0, left: 0, width: 0, height: 0 };
+  const [dragRect, setDragRect] = useState(initialDragRect);
+
+  const onDesktopDragStart = (initialPosition: Dimensions) => {
+    startDrag();
+    setDragRect(initialDragRect);
+
+    handleMouseDrag({
+      initialPosition,
+      onMove: (dx, dy) => {
+        const { x, y } = toScreenPosition(initialPosition);
+        return setDragRect({
+          top: dy < 0 ? y + dy : y,
+          left: dx < 0 ? x + dx : x,
+          width: Math.abs(dx),
+          height: Math.abs(dy),
+        });
+      },
+      onDragEnd: endDrag,
+    });
   };
 
   return (
@@ -68,13 +96,17 @@ export const Desktop = () => {
         draggable={false}
         priority
         className="absolute size-full object-cover object-center"
+        unoptimized
       />
       <div
-        onMouseDownCapture={onClickDesktop}
+        onMouseDownCapture={onDesktopClick}
+        onMouseDown={(event) =>
+          onDesktopDragStart({ x: event.clientX, y: event.clientY })
+        }
         className="absolute flex size-full flex-row flex-wrap gap-2 p-1"
       >
         {icons.map((props, i) => (
-          <Icon
+          <DesktopIcon
             {...props}
             onLaunch={() => {
               createProcess({ pid: nextPid });
@@ -98,6 +130,15 @@ export const Desktop = () => {
           />
         ))}
       </div>
+      {isDragging && (
+        <div
+          className={`
+            absolute border border-aero-tint-highlight/25
+            bg-aero-tint-highlight/20
+          `}
+          style={dragRect}
+        />
+      )}
     </div>
   );
 };

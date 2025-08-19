@@ -1,4 +1,7 @@
-import { PropsWithWindowInfo } from '@/components/contexts/system/WindowManager';
+import {
+  Dimensions,
+  PropsWithWindowInfo,
+} from '@/components/contexts/system/WindowManager';
 import { useWindowResize } from '@/hooks/windows';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 
@@ -21,15 +24,14 @@ export const ResizeHandles = ({
   const resizeWindow = useWindowResize();
 
   const onWindowResizeStart = (
-    initialX: number,
-    initialY: number,
+    initialPosition: Dimensions,
     xMul: number,
     yMul: number,
     cursor: string,
   ) =>
-    handleMouseDrag(
-      { x: initialX, y: initialY },
-      (dx, dy) =>
+    handleMouseDrag({
+      initialPosition,
+      onMove: (dx, dy) =>
         resizeWindow(
           wid,
           { x: size.x + dx * xMul, y: size.y + dy * yMul },
@@ -37,14 +39,14 @@ export const ResizeHandles = ({
           yMul < 0,
         ),
       cursor,
-    );
+    });
 
   return (
     <div>
       {RESIZE_HANDLES.map(([style, ...args]) => (
         <div
           onMouseDown={(event) =>
-            onWindowResizeStart(event.clientX, event.clientY, ...args)
+            onWindowResizeStart({ x: event.clientX, y: event.clientY }, ...args)
           }
           className={`
             absolute

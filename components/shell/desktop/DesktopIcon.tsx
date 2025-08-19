@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
-export interface IconProps {
+export interface DesktopIconProps {
   icon: string | StaticImport;
   label: string;
   onLaunch: () => void;
@@ -14,17 +14,17 @@ export interface IconProps {
 
 // TODO: tooltip on hover
 
-export const Icon = ({
+export const DesktopIcon = ({
   icon,
   label,
   onLaunch,
   isSelected,
   onSelectionChange,
-}: IconProps) => (
+}: DesktopIconProps) => (
   <div
     className={twMergeClsx(
       `
-        group flex h-fit w-20 flex-col items-center gap-1.5 overflow-visible
+        flex h-fit w-20 flex-col items-center gap-1.5 overflow-visible
         rounded-xs pt-1
         hover:bg-aero-tint-highlight/25 hover:ring
         hover:ring-aero-tint-highlight/30
