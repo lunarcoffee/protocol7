@@ -61,7 +61,7 @@ const RightIsland = () => (
                 className="w-7 p-[0.27rem]"
               />
             ),
-            renderPane: () => <p></p>,
+            renderPane: () => <p />,
           },
           {
             renderIcon: () => (
@@ -71,7 +71,7 @@ const RightIsland = () => (
                 className="w-7 p-[0.4rem]"
               />
             ),
-            renderPane: () => <p></p>,
+            renderPane: () => <p />,
           },
         ]}
       />

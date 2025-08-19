@@ -19,7 +19,7 @@ export const Hoverable = ({ glow = true, children }: HoverableProps) => (
           to-transparent to-70% transition duration-100
           group-hover:from-aero-tint/80
         `}
-      ></div>
+      />
     )}
     {children}
   </div>

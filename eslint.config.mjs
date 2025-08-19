@@ -39,6 +39,11 @@ const eslintConfig = [
       prettier,
     },
     rules: {
+      quotes: ['warn', 'single', { allowTemplateLiterals: false }],
+
+      'react/self-closing-comp': 'warn',
+      'react/jsx-curly-brace-presence': 'warn',
+
       'simple-import-sort/imports': 'warn',
       'simple-import-sort/exports': 'warn',
 
