@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { MouseEvent } from 'react';
 import { useImmerReducer } from 'use-immer';
 
 import { useNextProcessID, useProcessCreate } from '@/hooks/processes';
@@ -51,9 +52,12 @@ export const Desktop = () => {
     })),
   );
 
-  const onClickDesktop = () => {
+  const onClickDesktop = (e: MouseEvent) => {
     focusDesktop();
-    icons.forEach((_, index) => updateIcon({ index, value: false }));
+
+    // allow desktop item multi-select with ctrl
+    if (!e.getModifierState('Control'))
+      icons.forEach((_, index) => updateIcon({ index, value: false }));
   };
 
   return (

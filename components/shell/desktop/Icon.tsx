@@ -9,7 +9,6 @@ export interface IconProps {
   onLaunch: () => void;
 
   isSelected: boolean;
-  // TODO: do we even need this parameter? is it always gonna be true
   onSelectionChange: (isSelected: boolean) => void;
 }
 
@@ -25,38 +24,44 @@ export const Icon = ({
   <div
     className={twMergeClsx(
       `
-        group flex h-fit max-h-30 w-22 flex-col items-center gap-1.5 rounded-xs
-        pt-1
-        hover:bg-aero-tint-highlight/30 hover:ring
-        hover:ring-aero-tint-highlight/40
+        group flex h-fit w-20 flex-col items-center gap-1.5 overflow-visible
+        rounded-xs pt-1
+        hover:bg-aero-tint-highlight/25 hover:ring
+        hover:ring-aero-tint-highlight/30
       `,
       isSelected &&
         `
-          bg-aero-tint-highlight/40 ring ring-aero-tint-highlight/50
-          hover:bg-aero-tint-highlight/50 hover:ring
+          bg-aero-tint-highlight/45 ring ring-aero-tint-highlight/50
+          hover:bg-aero-tint-highlight/55 hover:ring
           hover:ring-aero-tint-highlight/60
         `,
     )}
     onMouseDown={() => onSelectionChange(true)}
-    onDoubleClick={onLaunch}
+    onDoubleClick={() => {
+      onSelectionChange(false);
+      onLaunch();
+    }}
   >
     <div
       className={`
-        flex h-16 w-16 items-center justify-center drop-shadow-md
+        flex h-15 w-15 items-center justify-center drop-shadow-md
         drop-shadow-aero-tint-darkest/50
       `}
     >
       <Image src={icon} alt={label} draggable={false} />
     </div>
-    <div className="flex max-h-10 w-22 justify-center overflow-visible">
-      <div
-        className={`
-          line-clamp-2 pb-1 text-center text-xs break-words
-          text-shadow-aero-tint-darkest/80 text-shadow-md
-        `}
+    <div className="flex w-20 justify-center overflow-visible">
+      <p
+        className={twMergeClsx(
+          `
+            px-0.5 pb-0.5 text-center text-xs break-words
+            text-shadow-aero-tint-darkest text-shadow-md
+          `,
+          (isSelected && 'line-clamp-4') || 'line-clamp-2',
+        )}
       >
         {label}
-      </div>
+      </p>
     </div>
   </div>
 );
