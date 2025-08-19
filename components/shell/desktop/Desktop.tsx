@@ -66,12 +66,18 @@ export const Desktop = () => {
 
   const [isDragging, startDrag, endDrag] = useBoolean(false);
 
-  const initialDragRect = { top: 0, left: 0, width: 0, height: 0 };
+  const { x: screenLeft, y: screenTop } = toScreenPosition({ x: 0, y: 0 });
+  const initialDragRect = {
+    top: screenTop,
+    left: screenLeft,
+    width: 0,
+    height: 0,
+  };
   const [dragRect, setDragRect] = useState(initialDragRect);
 
   const onDesktopDragStart = (initialPosition: Dimensions) => {
-    startDrag();
     setDragRect(initialDragRect);
+    startDrag();
 
     handleMouseDrag({
       initialPosition,
@@ -105,15 +111,15 @@ export const Desktop = () => {
         }
         className="absolute flex size-full flex-row flex-wrap gap-2 p-1"
       >
-        {icons.map((props, i) => (
+        {icons.map((icon, i) => (
           <DesktopIcon
-            {...props}
+            {...icon}
             onLaunch={() => {
               createProcess({ pid: nextPid });
               createWindow({
                 pid: nextPid,
                 wid: nextWid,
-                title: 'New window',
+                title: icon.label,
                 size: { x: 800, y: 500 },
                 render: (windowInfo) => (
                   <WindowFrame windowInfo={windowInfo}>

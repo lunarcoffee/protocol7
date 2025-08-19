@@ -58,7 +58,7 @@ export const WindowList = ({ windows }: WindowListProps) => {
         >
           <p
             className={`
-              overflow-hidden text-xs text-nowrap overflow-ellipsis
+              -ml-1 overflow-hidden p-1 text-xs text-nowrap overflow-ellipsis
               text-shadow-aero-tint-darkest/50 text-shadow-md
             `}
           >

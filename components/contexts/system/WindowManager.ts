@@ -49,10 +49,10 @@ export const DEFAULT_WINDOW_MANAGER: WindowManager = {
 
   // center newly created windows by default
   defaultPosition: ({ x, y }) => {
-    const [{ width, height }] = document
-      .getElementById('window-layer')!
-      .getClientRects();
+    const windowLayer = document.getElementById('window-layer');
+    if (!windowLayer) return { x: 200, y: 200 };
 
+    const [{ width, height }] = windowLayer.getClientRects();
     return { x: (width - x) / 2, y: (height - y) / 2 };
   },
 };
