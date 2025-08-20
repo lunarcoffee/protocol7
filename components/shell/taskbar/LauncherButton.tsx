@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import { PID_SHELL } from '@/components/contexts/system/ProcessManager';
+import { PID_SHELL } from '@/components/contexts/system/processes/ProcessManager';
 import { useProcessManager } from '@/hooks/processes';
 import {
   useNextWindowID,

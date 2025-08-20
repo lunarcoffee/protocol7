@@ -1,10 +1,10 @@
-import { WindowManagerDispatchAction } from '@/components/contexts/system/updateWindowManager';
+import { WindowManagerDispatchAction } from '@/components/contexts/system/windows/updateWindowManager';
 import {
   Dimensions,
   WindowCreationInfo,
   WindowID,
   WindowManager,
-} from '@/components/contexts/system/WindowManager';
+} from '@/components/contexts/system/windows/WindowManager';
 
 import { useSystem } from './useSystem';
 

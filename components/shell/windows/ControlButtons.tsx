@@ -1,4 +1,4 @@
-import { PropsWithWindowInfo } from '@/components/contexts/system/WindowManager';
+import { PropsWithWindowInfo } from '@/components/contexts/system/windows/WindowManager';
 import {
   useWindowDestroy,
   useWindowMaximize,

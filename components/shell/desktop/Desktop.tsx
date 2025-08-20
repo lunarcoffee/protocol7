@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { MouseEvent, useState } from 'react';
 import { useImmerReducer } from 'use-immer';
 
-import { Dimensions } from '@/components/contexts/system/WindowManager';
 import { useNextProcessID, useProcessCreate } from '@/hooks/processes';
 import { useBoolean } from '@/hooks/useBoolean';
 import {
@@ -18,8 +17,8 @@ import Launcher from '@/public/launcher.png';
 import Garden from '@/public/wallpapers/garden.jpg';
 import Maple from '@/public/wallpapers/maple.jpg';
 import Wallpaper from '@/public/wallpapers/torontoold.jpg';
+import { Dimensions, toScreenPosition } from '@/utils/Dimensions';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
-import { toScreenPosition } from '@/utils/toScreenPosition';
 
 import { WindowFrame } from '../windows/WindowFrame';
 import { DesktopIcon } from './DesktopIcon';
@@ -76,20 +75,20 @@ export const Desktop = () => {
   const [dragRect, setDragRect] = useState(initialDragRect);
 
   const onDesktopDragStart = (initialPosition: Dimensions) => {
+    const { x, y } = toScreenPosition(initialPosition);
+
     setDragRect(initialDragRect);
     startDrag();
 
     handleMouseDrag({
       initialPosition,
-      onMove: (dx, dy) => {
-        const { x, y } = toScreenPosition(initialPosition);
-        return setDragRect({
+      onMove: (dx, dy) =>
+        setDragRect({
           top: dy < 0 ? y + dy : y,
           left: dx < 0 ? x + dx : x,
           width: Math.abs(dx),
           height: Math.abs(dy),
-        });
-      },
+        }),
       onDragEnd: endDrag,
     });
   };

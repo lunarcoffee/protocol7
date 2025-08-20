@@ -1,6 +1,9 @@
 'use client';
 
-import { Dimensions } from '@/components/contexts/system/WindowManager';
+export interface Dimensions {
+  x: number;
+  y: number;
+}
 
 export const toScreenPosition = ({ x, y }: Dimensions) => {
   if (typeof window === 'undefined') return { x, y };

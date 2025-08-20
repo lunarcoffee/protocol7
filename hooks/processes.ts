@@ -2,8 +2,8 @@ import {
   ProcessCreationInfo,
   ProcessID,
   ProcessManager,
-} from '@/components/contexts/system/ProcessManager';
-import { ProcessManagerDispatchAction } from '@/components/contexts/system/updateProcessManager';
+} from '@/components/contexts/system/processes/ProcessManager';
+import { ProcessManagerDispatchAction } from '@/components/contexts/system/processes/updateProcessManager';
 
 import { useSystem } from './useSystem';
 

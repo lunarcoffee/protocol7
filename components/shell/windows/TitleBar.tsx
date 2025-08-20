@@ -1,8 +1,6 @@
-import {
-  Dimensions,
-  PropsWithWindowInfo,
-} from '@/components/contexts/system/WindowManager';
+import { PropsWithWindowInfo } from '@/components/contexts/system/windows/WindowManager';
 import { useWindowMaximize, useWindowMove } from '@/hooks/windows';
+import { Dimensions } from '@/utils/Dimensions';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
@@ -38,7 +36,11 @@ export const TitleBar = ({ windowInfo }: PropsWithWindowInfo) => {
         isMaximized && 'pr-2 pl-1',
       )}
     >
-      <p className="mr-4 overflow-hidden p-1 text-xs text-nowrap text-ellipsis">
+      <p
+        className={`
+          mr-4 overflow-hidden p-1 pt-[5px] text-xs text-nowrap text-ellipsis
+        `}
+      >
         {title}
       </p>
       <div className="grow" />

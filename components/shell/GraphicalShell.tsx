@@ -5,20 +5,24 @@ import { useEffect } from 'react';
 
 import { useProcessCreate, useProcessDestroy } from '@/hooks/processes';
 
-import { PID_SHELL } from '../contexts/system/ProcessManager';
+import { PID_SHELL } from '../contexts/system/processes/ProcessManager';
 import { WindowLayer } from './WindowLayer';
 
 enableMapSet();
 
-export const GraphicalShell = () => {
+const useShellProcess = () => {
   const createProcess = useProcessCreate();
   const destroyProcess = useProcessDestroy();
 
+  // spawn a persistent shell process
   useEffect(() => {
     createProcess({ pid: PID_SHELL, isHeadless: true });
     return () => destroyProcess(PID_SHELL);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [createProcess, destroyProcess]);
+};
+
+export const GraphicalShell = () => {
+  useShellProcess();
 
   return (
     // maintain 16:10 (8:5) aspect ratio but take up at most 90% of the entire viewport

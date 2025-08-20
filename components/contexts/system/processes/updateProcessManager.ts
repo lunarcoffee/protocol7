@@ -1,14 +1,14 @@
 import { Draft } from 'immer';
 
+import { System } from '../SystemContext';
+import { windowDestroy } from '../windows/updateWindowManager';
+import { WindowID } from '../windows/WindowManager';
 import {
   PID_SHELL,
   ProcessCreationInfo,
   ProcessID,
   ProcessManager,
 } from './ProcessManager';
-import { System } from './SystemContext';
-import { windowDestroy } from './updateWindowManager';
-import { WindowID } from './WindowManager';
 
 /* process manager helpers */
 

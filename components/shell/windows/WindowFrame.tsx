@@ -6,12 +6,10 @@ import { PropsWithChildren } from 'react';
 import { useToggle } from '@/hooks/useToggle';
 import { useWindowFocus } from '@/hooks/windows';
 import { clamp } from '@/utils/clamp';
+import { Dimensions } from '@/utils/Dimensions';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
-import {
-  Dimensions,
-  PropsWithWindowInfo,
-} from '../../contexts/system/WindowManager';
+import { PropsWithWindowInfo } from '../../contexts/system/windows/WindowManager';
 import { ResizeHandles } from './ResizeHandles';
 import { TitleBar } from './TitleBar';
 

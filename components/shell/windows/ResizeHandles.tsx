@@ -1,8 +1,6 @@
-import {
-  Dimensions,
-  PropsWithWindowInfo,
-} from '@/components/contexts/system/WindowManager';
+import { PropsWithWindowInfo } from '@/components/contexts/system/windows/WindowManager';
 import { useWindowResize } from '@/hooks/windows';
+import { Dimensions } from '@/utils/Dimensions';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 
 const RESIZE_HANDLES: [string, number, number, string][] = [

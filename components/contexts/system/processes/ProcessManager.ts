@@ -1,6 +1,6 @@
 'use client';
 
-import { WindowID } from './WindowManager';
+import { WindowID } from '../windows/WindowManager';
 
 export type ProcessID = number;
 

@@ -1,16 +1,13 @@
 import { Draft } from 'immer';
 
-import { System } from './SystemContext';
+import { Dimensions } from '@/utils/Dimensions';
+
 import {
   processAttachWindow,
   processDetachWindow,
-} from './updateProcessManager';
-import {
-  Dimensions,
-  WindowCreationInfo,
-  WindowID,
-  WindowManager,
-} from './WindowManager';
+} from '../processes/updateProcessManager';
+import { System } from '../SystemContext';
+import { WindowCreationInfo, WindowID, WindowManager } from './WindowManager';
 
 /* window manager helpers */
 
