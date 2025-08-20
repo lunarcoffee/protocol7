@@ -1,5 +1,6 @@
 'use client';
 
+import { SystemDispatch } from '../SystemContext';
 import { WindowID } from '../windows/WindowManager';
 
 export type ProcessID = number;
@@ -24,3 +25,25 @@ export interface ProcessManager {
 }
 
 export const DEFAULT_PROCESS_MANAGER = { processes: new Map() };
+
+/* initialization and cleanup for system context provider */
+
+export const initializeProcessManager = (systemDispatch: SystemDispatch) => {
+  systemDispatch({
+    type: 'process',
+    action: {
+      action: 'create',
+      info: { pid: PID_SHELL, isHeadless: true },
+    },
+  });
+};
+
+export const deinitializeProcessManager = (systemDispatch: SystemDispatch) => {
+  systemDispatch({
+    type: 'process',
+    action: {
+      action: 'destroy',
+      pid: PID_SHELL,
+    },
+  });
+};

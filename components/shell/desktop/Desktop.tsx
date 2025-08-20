@@ -15,8 +15,8 @@ import Battery from '@/public/icons/battery.svg';
 import Wireless from '@/public/icons/wireless.svg';
 import Launcher from '@/public/launcher.png';
 import Garden from '@/public/wallpapers/garden.jpg';
+import Wallpaper from '@/public/wallpapers/light.jpg';
 import Maple from '@/public/wallpapers/maple.jpg';
-import Wallpaper from '@/public/wallpapers/torontoold.jpg';
 import { Dimensions, toScreenPosition } from '@/utils/Dimensions';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 

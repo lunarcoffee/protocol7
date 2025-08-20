@@ -1,29 +1,12 @@
 'use client';
 
 import { enableMapSet } from 'immer';
-import { useEffect } from 'react';
 
-import { useProcessCreate, useProcessDestroy } from '@/hooks/processes';
-
-import { PID_SHELL } from '../contexts/system/processes/ProcessManager';
 import { WindowLayer } from './WindowLayer';
 
 enableMapSet();
 
-const useShellProcess = () => {
-  const createProcess = useProcessCreate();
-  const destroyProcess = useProcessDestroy();
-
-  // spawn a persistent shell process
-  useEffect(() => {
-    createProcess({ pid: PID_SHELL, isHeadless: true });
-    return () => destroyProcess(PID_SHELL);
-  }, [createProcess, destroyProcess]);
-};
-
 export const GraphicalShell = () => {
-  useShellProcess();
-
   return (
     // maintain 16:10 (8:5) aspect ratio but take up at most 90% of the entire viewport
     <div

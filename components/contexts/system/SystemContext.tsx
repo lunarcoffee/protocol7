@@ -1,9 +1,13 @@
+import { configureSingle } from '@zenfs/core';
+import { IndexedDB } from '@zenfs/dom';
 import { Draft } from 'immer';
-import { createContext, PropsWithChildren } from 'react';
+import { createContext, PropsWithChildren, useEffect } from 'react';
 import { useImmerReducer } from 'use-immer';
 
 import {
   DEFAULT_PROCESS_MANAGER,
+  deinitializeProcessManager,
+  initializeProcessManager,
   ProcessManager,
 } from './processes/ProcessManager';
 import {
@@ -54,6 +58,13 @@ export const SystemDispatchContext = createContext<SystemDispatch>(() => {
 
 export const SystemContextProvider = ({ children }: PropsWithChildren) => {
   const [system, dispatch] = useImmerReducer(updateSystem, DEFAULT_SYSTEM);
+
+  useEffect(() => {
+    initializeProcessManager(dispatch);
+    configureSingle(IndexedDB);
+
+    return () => deinitializeProcessManager(dispatch);
+  }, [dispatch]);
 
   return (
     <SystemContext.Provider value={system}>
