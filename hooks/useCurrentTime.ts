@@ -14,7 +14,7 @@ export const useCurrentTime = () => {
       TIME_UPDATE_INTERVAL,
     );
     return () => clearInterval(interval);
-  }, [setTime]);
+  }, []);
 
   return time;
 };

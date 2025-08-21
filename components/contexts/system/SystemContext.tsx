@@ -61,10 +61,12 @@ export const SystemContextProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     initializeProcessManager(dispatch);
-    configureSingle(IndexedDB);
+    configureSingle({ backend: IndexedDB });
 
     return () => deinitializeProcessManager(dispatch);
-  }, [dispatch]);
+    // `dispatch` should be referentially stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <SystemContext.Provider value={system}>
