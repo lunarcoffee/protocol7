@@ -57,7 +57,7 @@ export const DesktopIcon = ({
             px-0.5 pb-0.5 text-center text-xs break-words
             text-shadow-aero-tint-darkest text-shadow-md
           `,
-          (isSelected && 'line-clamp-4') || 'line-clamp-2',
+          isSelected ? 'line-clamp-4' : 'line-clamp-2',
         )}
       >
         {label}

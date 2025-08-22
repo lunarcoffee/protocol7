@@ -138,7 +138,7 @@ export const Desktop = () => {
       {isDragging && (
         <div
           className={`
-            absolute border border-aero-tint-highlight/25
+            pointer-events-none absolute border border-aero-tint-highlight/25
             bg-aero-tint-highlight/20
           `}
           style={dragRect}

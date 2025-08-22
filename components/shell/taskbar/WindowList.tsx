@@ -32,9 +32,13 @@ export const WindowList = ({ windows }: WindowListProps) => {
               duration-75
               hover:inset-shadow-[0_0_6px]
             `,
-            (hasFocus &&
-              'from-aero-tint/40 via-white/20 to-white/60 inset-shadow-[0_0_6px] hover:backdrop-brightness-125') ||
-              'hover:from-aero-tint/60 hover:via-aero-tint-dark/80',
+            hasFocus
+              ? `
+                from-aero-tint/40 via-white/20 to-white/60
+                inset-shadow-[0_0_6px]
+                hover:backdrop-brightness-125
+              `
+              : 'hover:from-aero-tint/60 hover:via-aero-tint-dark/80',
           )}
           key={wid}
           variants={{
