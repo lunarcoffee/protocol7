@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { PropsWithChildren } from 'react';
 
 import { useToggle } from '@/hooks/useToggle';
-import { useWindowFocus } from '@/hooks/windows';
+import { useWindowManager } from '@/hooks/useWindowManager';
 import { clamp } from '@/utils/clamp';
 import { Dimensions } from '@/utils/Dimensions';
 import { twMergeClsx } from '@/utils/twMergeClsx';
@@ -69,13 +69,13 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
     hasFocus,
   } = windowInfo;
 
-  const focusWindow = useWindowFocus();
+  const wm = useWindowManager();
 
   const [isDisappearing, toggleDisappearing] = useToggle(true); // TODO: hacky as hell, dunno how this will interact with minimize/maximize but i just wanted to see the effect first lol
 
   return (
     <motion.div
-      onMouseDown={() => focusWindow(wid)}
+      onMouseDown={() => wm.focus(wid)}
       className={twMergeClsx(
         `
           absolute flex origin-[50%_-10%] flex-col rounded-md border
@@ -110,7 +110,7 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
         hidden: { opacity: 0 },
         opening: {
           transform:
-            'rotateX(30deg) rotateY(-2deg) scale(0.9) perspective(400px)',
+            'rotateX(20deg) rotateY(-2deg) scale(0.9) perspective(400px)',
         },
         open: { opacity: 1, transform: 'scale(1)' },
         closing: {

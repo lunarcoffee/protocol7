@@ -1,12 +1,8 @@
 import Image from 'next/image';
 
 import { PID_SHELL } from '@/components/contexts/system/processes/ProcessManager';
-import { useProcessManager } from '@/hooks/processes';
-import {
-  useNextWindowID,
-  useWindowCreate,
-  useWindowDestroy,
-} from '@/hooks/windows';
+import { useProcessManager } from '@/hooks/useProcessManager';
+import { useWindowManager } from '@/hooks/useWindowManager';
 import LauncherIcon from '@/public/launcher.png';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
@@ -43,12 +39,12 @@ const ReflectiveOrb = ({ isLauncherOpen }: ReflectiveOrbProps) => (
         `
           absolute z-30 size-12 rounded-full bg-radial-[at_50%_100%]
           from-aero-tint to-transparent to-50% transition duration-100
-          group-hover:from-aero-tint-highlight/60
+          group-hover:from-aero-tint-highlight/40
         `,
         isLauncherOpen &&
           `
-            from-aero-tint-highlight/80
-            group-hover:from-aero-tint-highlight/80
+            from-aero-tint-highlight/60
+            group-hover:from-aero-tint-highlight/60
           `,
       )}
     />
@@ -56,22 +52,19 @@ const ReflectiveOrb = ({ isLauncherOpen }: ReflectiveOrbProps) => (
 );
 
 export const LauncherButton = () => {
-  const [{ processes }] = useProcessManager();
+  const { processes } = useProcessManager();
+  const wm = useWindowManager();
+
   const shellWindows = processes.get(PID_SHELL)?.windows; // TODO: flimsy; maybe add window ids or smth
   const isLauncherOpen = shellWindows?.length === 1;
 
-  const createWindow = useWindowCreate();
-  const destroyWindow = useWindowDestroy();
-
-  const nextWid = useNextWindowID();
-
   const toggleLauncher = () => {
     if (isLauncherOpen) {
-      destroyWindow(shellWindows[0]!);
+      wm.destroy(shellWindows[0]!);
     } else {
-      createWindow({
+      wm.create({
         pid: PID_SHELL,
-        wid: nextWid,
+        wid: wm.nextWindowID,
         title: 'Launcher',
         size: { x: 300, y: 500 },
         isEphemeral: true,

@@ -1,5 +1,5 @@
 import { PropsWithWindowInfo } from '@/components/contexts/system/windows/WindowManager';
-import { useWindowResize } from '@/hooks/windows';
+import { useWindowManager } from '@/hooks/useWindowManager';
 import { Dimensions } from '@/utils/Dimensions';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 
@@ -19,7 +19,7 @@ const RESIZE_HANDLES: [string, number, number, string][] = [
 export const ResizeHandles = ({
   windowInfo: { wid, size },
 }: PropsWithWindowInfo) => {
-  const resizeWindow = useWindowResize();
+  const wm = useWindowManager();
 
   const onWindowResizeStart = (
     initialPosition: Dimensions,
@@ -30,7 +30,7 @@ export const ResizeHandles = ({
     handleMouseDrag({
       initialPosition,
       onMove: (dx, dy) =>
-        resizeWindow(
+        wm.resize(
           wid,
           { x: size.x + dx * xMul, y: size.y + dy * yMul },
           xMul < 0,

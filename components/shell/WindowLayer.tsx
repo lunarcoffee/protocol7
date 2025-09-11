@@ -2,13 +2,13 @@
 
 import { AnimatePresence } from 'motion/react';
 
-import { useWindowManager } from '@/hooks/windows';
+import { useWindowManager } from '@/hooks/useWindowManager';
 
 import { Desktop } from './desktop/Desktop';
 import { Taskbar } from './taskbar/Taskbar';
 
 export const WindowLayer = () => {
-  const [{ windows }] = useWindowManager();
+  const { windows } = useWindowManager();
   const windowsArray = Array.from(windows.values());
 
   return (

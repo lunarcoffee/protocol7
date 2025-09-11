@@ -4,27 +4,25 @@ import Image from 'next/image';
 import { MouseEvent, useState } from 'react';
 import { useImmerReducer } from 'use-immer';
 
-import { useNextProcessID, useProcessCreate } from '@/hooks/processes';
 import { useBoolean } from '@/hooks/useBoolean';
-import {
-  useFocusDesktop,
-  useNextWindowID,
-  useWindowCreate,
-} from '@/hooks/windows';
+import { useProcessManager } from '@/hooks/useProcessManager';
+import { useWindowManager } from '@/hooks/useWindowManager';
 import Battery from '@/public/icons/battery.svg';
 import Wireless from '@/public/icons/wireless.svg';
 import Launcher from '@/public/launcher.png';
-import Garden from '@/public/wallpapers/garden.jpg';
-import Wallpaper from '@/public/wallpapers/light.jpg';
-import Maple from '@/public/wallpapers/maple.jpg';
+import Garden from '@/public/pictures/garden.jpg';
+import Maple from '@/public/pictures/maple.jpg';
+import Wallpaper from '@/public/wallpapers/flowers.avif';
 import { Dimensions, toScreenPosition } from '@/utils/Dimensions';
+import { doRectanglesIntersect } from '@/utils/doRectanglesIntersect';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 
 import { WindowFrame } from '../windows/WindowFrame';
 import { DesktopIcon } from './DesktopIcon';
 
 export const Desktop = () => {
-  const focusDesktop = useFocusDesktop();
+  const pm = useProcessManager();
+  const wm = useWindowManager();
 
   // TODO: pull from fs once thats implemented
   const iconData = [
@@ -36,31 +34,28 @@ export const Desktop = () => {
   ];
 
   // TODO: move all this where its supposed to be eventually
-  const createProcess = useProcessCreate();
-  const createWindow = useWindowCreate();
-
-  const nextPid = useNextProcessID();
-  const nextWid = useNextWindowID();
-
   const [icons, updateIcon] = useImmerReducer(
-    (draft, { index, value }: { index: number; value: boolean }) => {
-      draft[index].isSelected = value;
+    (draft, { id, value }: { id: number; value: boolean }) => {
+      // TODO: currently the id is the index assigned here but change this to be correct once we
+      // start pulling icons from the filesystem
+      draft[id].isSelected = value;
     },
     iconData.map((icon, index) => ({
       ...icon,
       isSelected: false,
+      id: index,
       onSelectionChange: (value: boolean) => {
-        updateIcon({ index, value });
+        updateIcon({ id: index, value });
       },
     })),
   );
 
   const onDesktopClick = (e: MouseEvent) => {
-    focusDesktop();
+    wm.unfocusAll();
 
     // allow desktop item multi-select with ctrl
     if (!e.getModifierState('Control'))
-      icons.forEach((_, index) => updateIcon({ index, value: false }));
+      icons.forEach((_, index) => updateIcon({ id: index, value: false }));
   };
 
   const [isDragging, startDrag, endDrag] = useBoolean(false);
@@ -82,13 +77,30 @@ export const Desktop = () => {
 
     handleMouseDrag({
       initialPosition,
-      onMove: (dx, dy) =>
+      onMove: (dx, dy) => {
         setDragRect({
           top: dy < 0 ? y + dy : y,
           left: dx < 0 ? x + dx : x,
           width: Math.abs(dx),
           height: Math.abs(dy),
-        }),
+        });
+
+        const dragRectElement = document.getElementById('desktop-drag-rect');
+        if (!dragRectElement) return;
+
+        icons.forEach(({ id }) => {
+          const iconElement = document.getElementById(`desktop-icon-${id}`);
+          if (iconElement) {
+            updateIcon({
+              id,
+              value: doRectanglesIntersect(
+                dragRectElement.getBoundingClientRect(),
+                iconElement.getBoundingClientRect(),
+              ),
+            });
+          }
+        });
+      },
       onDragEnd: endDrag,
     });
   };
@@ -114,10 +126,10 @@ export const Desktop = () => {
           <DesktopIcon
             {...icon}
             onLaunch={() => {
-              createProcess({ pid: nextPid });
-              createWindow({
-                pid: nextPid,
-                wid: nextWid,
+              pm.create({ pid: pm.nextProcessID });
+              wm.create({
+                pid: pm.nextProcessID,
+                wid: wm.nextWindowID,
                 title: icon.label,
                 size: { x: 800, y: 500 },
                 render: (windowInfo) => (
@@ -137,6 +149,7 @@ export const Desktop = () => {
       </div>
       {isDragging && (
         <div
+          id="desktop-drag-rect"
           className={`
             pointer-events-none absolute border border-aero-tint-highlight/25
             bg-aero-tint-highlight/20

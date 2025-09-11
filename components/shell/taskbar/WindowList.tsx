@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 
 import { WindowInfo } from '@/components/contexts/system/windows/WindowManager';
-import { useWindowFocus, useWindowMinimize } from '@/hooks/windows';
+import { useWindowManager } from '@/hooks/useWindowManager';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
 export interface WindowListProps {
@@ -9,8 +9,7 @@ export interface WindowListProps {
 }
 
 export const WindowList = ({ windows }: WindowListProps) => {
-  const focusWindow = useWindowFocus();
-  const minimizeWindow = useWindowMinimize();
+  const wm = useWindowManager();
 
   const nonEphemeralWindows = windows.filter(({ isEphemeral }) => !isEphemeral);
 
@@ -18,9 +17,7 @@ export const WindowList = ({ windows }: WindowListProps) => {
     <AnimatePresence>
       {nonEphemeralWindows.map(({ wid, title, hasFocus }) => (
         <motion.div
-          onClick={
-            hasFocus ? () => minimizeWindow(wid) : () => focusWindow(wid)
-          }
+          onClick={hasFocus ? () => wm.minimize(wid) : () => wm.focus(wid)}
           className={twMergeClsx(
             `
               relative flex h-8 min-w-0 shrink basis-40 flex-row items-center

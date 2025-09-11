@@ -4,6 +4,8 @@ import Image from 'next/image';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
 export interface DesktopIconProps {
+  id: number; // TODO
+
   icon: string | StaticImport;
   label: string;
   onLaunch: () => void;
@@ -15,6 +17,7 @@ export interface DesktopIconProps {
 // TODO: tooltip on hover
 
 export const DesktopIcon = ({
+  id,
   icon,
   label,
   onLaunch,
@@ -22,18 +25,20 @@ export const DesktopIcon = ({
   onSelectionChange,
 }: DesktopIconProps) => (
   <div
+    id={`desktop-icon-${id}`}
     className={twMergeClsx(
       `
         flex h-fit w-20 flex-col items-center gap-1.5 overflow-visible
         rounded-xs pt-1
-        hover:bg-aero-tint-highlight/25 hover:ring
-        hover:ring-aero-tint-highlight/30
+        hover:bg-aero-tint-highlight/25 hover:shadow-[0_0_4px] hover:ring
+        hover:shadow-aero-tint-highlight/25 hover:ring-aero-tint-highlight/25
       `,
       isSelected &&
         `
-          bg-aero-tint-highlight/45 ring ring-aero-tint-highlight/50
+          bg-aero-tint-highlight/45 shadow-[0_0_4px] ring
+          shadow-aero-tint-highlight/45 ring-aero-tint-highlight/45
           hover:bg-aero-tint-highlight/55 hover:ring
-          hover:ring-aero-tint-highlight/60
+          hover:shadow-aero-tint-highlight/55 hover:ring-aero-tint-highlight/55
         `,
     )}
     onMouseDown={() => onSelectionChange(true)}
@@ -44,8 +49,8 @@ export const DesktopIcon = ({
   >
     <div
       className={`
-        flex h-15 w-15 items-center justify-center drop-shadow-md
-        drop-shadow-aero-tint-darkest/50
+        flex h-15 w-15 items-center justify-center drop-shadow-sm
+        drop-shadow-aero-tint-darkest/70
       `}
     >
       <Image src={icon} alt={label} draggable={false} />

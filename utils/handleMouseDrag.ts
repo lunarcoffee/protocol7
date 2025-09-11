@@ -1,4 +1,4 @@
-import { Dimensions } from '@/components/contexts/system/windows/WindowManager';
+import { Dimensions } from './Dimensions';
 
 export interface HandleMouseDragArgs {
   initialPosition: Dimensions;

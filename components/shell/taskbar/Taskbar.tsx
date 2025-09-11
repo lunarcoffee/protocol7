@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 
-import { useWindowManager } from '@/hooks/windows';
+import { useWindowManager } from '@/hooks/useWindowManager';
 import NetworkIcon from '@/public/icons/network.svg';
 import VolumeHighIcon from '@/public/icons/volume-high.svg';
 
@@ -26,7 +26,7 @@ const LeftIsland = () => (
 );
 
 const CenterIsland = () => {
-  const [{ windows }] = useWindowManager();
+  const { windows } = useWindowManager();
   const windowArray = Array.from(windows.values());
 
   return (
