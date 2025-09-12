@@ -56,8 +56,14 @@ const actionMove =
 
 const actionResize =
   (dispatch: WindowManagerDispatch) =>
-  (wid: WindowID, size: Dimensions, shiftX: boolean, shiftY: boolean) =>
-    dispatch({ action: 'resize', wid, size, shiftX, shiftY });
+  (wid: WindowID, size: Dimensions, fixRight: boolean, fixBottom: boolean) =>
+    dispatch({
+      action: 'resize',
+      wid,
+      size,
+      fixRight,
+      fixBottom,
+    });
 
 const actionMinimize = (dispatch: WindowManagerDispatch) => (wid: WindowID) =>
   dispatch({ action: 'minimize', wid });

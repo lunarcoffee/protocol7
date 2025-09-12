@@ -2,8 +2,6 @@
 
 import Image from 'next/image';
 
-import { PropsWithWindowInfo } from '@/components/contexts/system/windows/WindowManager';
-import { useWindowManager } from '@/hooks/useWindowManager';
 import NetworkIcon from '@/public/icons/network.svg';
 import VolumeHighIcon from '@/public/icons/volume-high.svg';
 
@@ -26,20 +24,15 @@ const LeftIsland = () => (
   </div>
 );
 
-const CenterIsland = () => {
-  const { windows } = useWindowManager();
-  const windowArray = Array.from(windows.values());
-
-  return (
-    <div
-      className={`
-        z-10 -mx-5 flex h-full min-w-0 shrink grow flex-row items-center gap-1.5
-      `}
-    >
-      <WindowList windows={windowArray} />
-    </div>
-  );
-};
+const CenterIsland = () => (
+  <div
+    className={`
+      z-10 -mx-5 flex h-full min-w-0 shrink grow flex-row items-center gap-1.5
+    `}
+  >
+    <WindowList />
+  </div>
+);
 
 // includes right dark background gradient
 const RightIsland = () => (
@@ -83,8 +76,7 @@ const RightIsland = () => (
   </div>
 );
 
-export const Taskbar = ({ windowInfo: { wid } }: PropsWithWindowInfo) => {
-  const wm = useWindowManager();
+export const Taskbar = () => {
   return (
     <div
       className={`
@@ -93,7 +85,6 @@ export const Taskbar = ({ windowInfo: { wid } }: PropsWithWindowInfo) => {
         bg-gradient-to-t from-aero-tint-dark/80 to-aero-tint-dark/70
         backdrop-blur-xs
       `}
-      onMouseDown={() => wm.focus(wid)}
     >
       {/* white top highlight */}
       <div

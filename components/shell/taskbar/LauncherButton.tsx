@@ -53,8 +53,8 @@ const ReflectiveOrb = ({ isLauncherOpen }: ReflectiveOrbProps) => (
 
 export const LauncherButton = () => {
   const wm = useWindowManager();
-
   const isLauncherOpen = wm.windows.has(WID_LAUNCHER);
+
   const toggleLauncher = () => {
     if (isLauncherOpen) {
       wm.destroy(WID_LAUNCHER);
@@ -63,7 +63,6 @@ export const LauncherButton = () => {
         pid: PID_SHELL,
         wid: WID_LAUNCHER,
         title: 'Launcher',
-        size: { x: 300, y: 500 },
         isEphemeral: true,
         render: (windowInfo) => <Launcher windowInfo={windowInfo} />,
       });

@@ -12,9 +12,10 @@ import { WindowCreationInfo, WindowID, WindowManager } from './WindowManager';
 /* window manager helpers */
 
 const nextZIndex = ({ windows }: Draft<WindowManager>) =>
-  Array.from(windows.values())
-    .map((window) => window.zIndex)
-    .reduce((a, b) => Math.max(a, b), 0) + 1;
+  Array.from(windows.values(), ({ zIndex }) => zIndex).reduce(
+    (a, b) => Math.max(a, b),
+    0,
+  ) + 1;
 
 const destroyEphemeralWindows = (system: Draft<System>) =>
   Array.from(system.wm.windows.values())
@@ -38,8 +39,8 @@ export type WindowManagerDispatchAction =
       action: 'resize';
       wid: WindowID;
       size: Dimensions;
-      shiftX: boolean;
-      shiftY: boolean;
+      fixRight: boolean;
+      fixBottom: boolean;
     }
   | { action: 'minimize'; wid: WindowID }
   | { action: 'toggle_maximized'; wid: WindowID }
@@ -103,18 +104,18 @@ export const windowResize = (
   { windows }: Draft<WindowManager>,
   wid: WindowID,
   { x, y }: Dimensions,
-  shiftX: boolean, // TODO: find a better name
-  shiftY: boolean,
+  fixRight: boolean,
+  fixBottom: boolean,
 ) => {
   const window = windows.get(wid);
   if (window) {
     const clampedX = Math.max(x, window.minSize.x);
     const clampedY = Math.max(y, window.minSize.y);
 
-    // this is kinda hacky because it's built around the needs of the resize handles - resizing
-    // from the top and/or left requires that the window be moved
-    if (shiftX) window.position.x += window.size.x - clampedX;
-    if (shiftY) window.position.y += window.size.y - clampedY;
+    // since windows are positioned from the top and left, resizing from the top and/or left (i.e.,
+    // fixing the bottom and/or right edge(s)) requires that the window be moved
+    if (fixRight) window.position.x += window.size.x - clampedX;
+    if (fixBottom) window.position.y += window.size.y - clampedY;
 
     window.size = { x: clampedX, y: clampedY };
   }
@@ -183,8 +184,8 @@ export const updateWindowManager = (
       break;
     }
     case 'resize': {
-      const { wid, size, shiftX, shiftY } = action;
-      windowResize(wm, wid, size, shiftX, shiftY);
+      const { wid, size, fixRight, fixBottom } = action;
+      windowResize(wm, wid, size, fixRight, fixBottom);
       break;
     }
     case 'minimize': {

@@ -16,16 +16,18 @@ export interface WindowListProps {
   windows: WindowInfo[];
 }
 
-export const WindowList = ({ windows }: WindowListProps) => {
+export const WindowList = () => {
   const wm = useWindowManager();
 
-  const visibleWindows = windows.filter(
-    ({ wid, isEphemeral }) => !(isEphemeral || HIDDEN_WIDS.includes(wid)),
-  );
+  const visibleWindows = wm.windows
+    .values()
+    .filter(
+      ({ wid, isEphemeral }) => !(isEphemeral || HIDDEN_WIDS.includes(wid)),
+    );
 
   return (
     <AnimatePresence>
-      {visibleWindows.map(({ wid, title, hasFocus }) => (
+      {Array.from(visibleWindows, ({ wid, title, hasFocus }) => (
         <motion.div
           onClick={hasFocus ? () => wm.minimize(wid) : () => wm.focus(wid)}
           className={twMergeClsx(
