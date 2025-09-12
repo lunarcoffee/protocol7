@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 
+import { PropsWithWindowInfo } from '@/components/contexts/system/windows/WindowManager';
 import { useWindowManager } from '@/hooks/useWindowManager';
 import NetworkIcon from '@/public/icons/network.svg';
 import VolumeHighIcon from '@/public/icons/volume-high.svg';
@@ -82,22 +83,27 @@ const RightIsland = () => (
   </div>
 );
 
-export const Taskbar = () => (
-  <div
-    className={`
-      absolute bottom-0 z-[calc(infinity)] flex h-10 w-full max-w-full flex-row
-      items-center border-t border-t-aero-tint-darkest/85 bg-gradient-to-t
-      from-aero-tint-dark/80 to-aero-tint-dark/70 backdrop-blur-xs
-    `}
-  >
-    {/* white top highlight */}
+export const Taskbar = ({ windowInfo: { wid } }: PropsWithWindowInfo) => {
+  const wm = useWindowManager();
+  return (
     <div
       className={`
-        absolute top-0 left-0 z-20 h-0.5 w-full bg-gradient-to-b from-white/30
+        absolute bottom-0 z-[calc(infinity)] flex h-10 w-full max-w-full
+        flex-row items-center border-t border-t-aero-tint-darkest/85
+        bg-gradient-to-t from-aero-tint-dark/80 to-aero-tint-dark/70
+        backdrop-blur-xs
       `}
-    />
-    <LeftIsland />
-    <CenterIsland />
-    <RightIsland />
-  </div>
-);
+      onMouseDown={() => wm.focus(wid)}
+    >
+      {/* white top highlight */}
+      <div
+        className={`
+          absolute top-0 left-0 z-20 h-0.5 w-full bg-gradient-to-b from-white/30
+        `}
+      />
+      <LeftIsland />
+      <CenterIsland />
+      <RightIsland />
+    </div>
+  );
+};

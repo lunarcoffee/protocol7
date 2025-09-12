@@ -36,8 +36,7 @@ export type WindowManagerDispatchAction =
     }
   | { action: 'minimize'; wid: WindowID }
   | { action: 'toggle_maximized'; wid: WindowID }
-  | { action: 'focus'; wid: WindowID }
-  | { action: 'unfocus_all' };
+  | { action: 'focus'; wid: WindowID };
 
 export const windowCreate = (
   system: Draft<System>,
@@ -51,7 +50,7 @@ export const windowCreate = (
 
   if (windows.has(wid)) console.warn('recreating existing wid:', wid);
 
-  windowUnfocusAll(system); // the new window should be the only focused one
+  destroyEphemeralWindows(system);
 
   const size = info.size || { x: 300, y: 200 }; // TODO: better default size
   windows.set(wid, {
@@ -154,17 +153,6 @@ export const windowFocus = (system: Draft<System>, wid: WindowID) => {
   destroyEphemeralWindows(system);
 };
 
-// this can be thought of as focusing the desktop
-export const windowUnfocusAll = (system: Draft<System>) => {
-  const {
-    wm: { windows },
-  } = system;
-
-  windows.forEach((window) => (window.hasFocus = false));
-
-  destroyEphemeralWindows(system);
-};
-
 export const updateWindowManager = (
   system: Draft<System>,
   action: WindowManagerDispatchAction,
@@ -205,10 +193,6 @@ export const updateWindowManager = (
     case 'focus': {
       const { wid } = action;
       windowFocus(system, wid);
-      break;
-    }
-    case 'unfocus_all': {
-      windowUnfocusAll(system);
       break;
     }
   }

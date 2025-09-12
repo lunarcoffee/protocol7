@@ -2,7 +2,6 @@ import Image from 'next/image';
 
 import { PID_SHELL } from '@/components/contexts/system/processes/ProcessManager';
 import { WID_LAUNCHER } from '@/components/contexts/system/windows/WindowManager';
-import { useProcessManager } from '@/hooks/useProcessManager';
 import { useWindowManager } from '@/hooks/useWindowManager';
 import LauncherIcon from '@/public/launcher.png';
 import { twMergeClsx } from '@/utils/twMergeClsx';

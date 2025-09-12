@@ -1,9 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import { useImmerReducer } from 'use-immer';
 
+import { PropsWithWindowInfo } from '@/components/contexts/system/windows/WindowManager';
 import { useBoolean } from '@/hooks/useBoolean';
 import { useProcessManager } from '@/hooks/useProcessManager';
 import { useWindowManager } from '@/hooks/useWindowManager';
@@ -20,7 +21,9 @@ import { handleMouseDrag } from '@/utils/handleMouseDrag';
 import { WindowFrame } from '../windows/WindowFrame';
 import { DesktopIcon } from './DesktopIcon';
 
-export const Desktop = () => {
+export const Desktop = ({
+  windowInfo: { wid, hasFocus },
+}: PropsWithWindowInfo) => {
   const pm = useProcessManager();
   const wm = useWindowManager();
 
@@ -50,13 +53,21 @@ export const Desktop = () => {
     })),
   );
 
+  // TODO: fix behavior where holding ctrl and clicking desktop (not on an icons) still keeps focus;
+  // this is not desired
   const onDesktopClick = (e: MouseEvent) => {
-    wm.unfocusAll();
-
     // allow desktop item multi-select with ctrl
     if (!e.getModifierState('Control'))
       icons.forEach((_, index) => updateIcon({ id: index, value: false }));
   };
+
+  // deselect icons on losing focus
+  useEffect(() => {
+    if (!hasFocus)
+      icons.forEach((_, index) => updateIcon({ id: index, value: false }));
+    // immer reducer dispatch is referentially stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasFocus, icons]);
 
   const [isDragging, startDrag, endDrag] = useBoolean(false);
 
@@ -106,7 +117,10 @@ export const Desktop = () => {
   };
 
   return (
-    <div className="absolute top-0 right-0 bottom-0 left-0 z-0">
+    <div
+      className="absolute top-0 right-0 bottom-0 left-0 z-0"
+      onMouseDown={() => wm.focus(wid)}
+    >
       <Image
         src={Wallpaper}
         alt="desktop wallpaper"

@@ -21,11 +21,20 @@ export const GraphicalShell = () => {
   const pm = useProcessManager();
   const wm = useWindowManager();
 
+  // spawn core shell apps
   useEffect(() => {
     pm.create({ pid: PID_SHELL, isHeadless: true });
 
-    wm.create({ pid: PID_SHELL, wid: WID_DESKTOP, render: () => <Desktop /> });
-    wm.create({ pid: PID_SHELL, wid: WID_TASKBAR, render: () => <Taskbar /> });
+    wm.create({
+      pid: PID_SHELL,
+      wid: WID_DESKTOP,
+      render: (info) => <Desktop windowInfo={info} />,
+    });
+    wm.create({
+      pid: PID_SHELL,
+      wid: WID_TASKBAR,
+      render: (info) => <Taskbar windowInfo={info} />,
+    });
 
     return () => pm.destroy(PID_SHELL);
     // this is fine because `pm.create` and `wm.create` only depend on the pm/wm dispatches, which

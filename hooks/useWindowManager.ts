@@ -23,7 +23,6 @@ export const useWindowManager = () => {
     minimize: actionMinimize(dispatch),
     maximize: actionMaximize(dispatch),
     focus: actionFocus(dispatch),
-    unfocusAll: actionUnfocusAll(dispatch),
   };
 };
 
@@ -68,6 +67,3 @@ const actionMaximize = (dispatch: WindowManagerDispatch) => (wid: WindowID) =>
 
 const actionFocus = (dispatch: WindowManagerDispatch) => (wid: WindowID) =>
   dispatch({ action: 'focus', wid });
-
-const actionUnfocusAll = (dispatch: WindowManagerDispatch) => () =>
-  dispatch({ action: 'unfocus_all' });
