@@ -6,8 +6,6 @@ import { useImmerReducer } from 'use-immer';
 
 import {
   DEFAULT_PROCESS_MANAGER,
-  deinitializeProcessManager,
-  initializeProcessManager,
   ProcessManager,
 } from './processes/ProcessManager';
 import {
@@ -60,12 +58,7 @@ export const SystemContextProvider = ({ children }: PropsWithChildren) => {
   const [system, dispatch] = useImmerReducer(updateSystem, DEFAULT_SYSTEM);
 
   useEffect(() => {
-    initializeProcessManager(dispatch);
-    configureSingle({ backend: IndexedDB });
-
-    return () => deinitializeProcessManager(dispatch);
-    // `dispatch` should be referentially stable
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    configureSingle({ backend: IndexedDB }); // TODO: await this promise lol
   }, []);
 
   return (

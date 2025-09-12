@@ -106,7 +106,7 @@ export const Desktop = () => {
   };
 
   return (
-    <div className="relative size-full">
+    <div className="absolute top-0 right-0 bottom-0 left-0 z-0">
       <Image
         src={Wallpaper}
         alt="desktop wallpaper"

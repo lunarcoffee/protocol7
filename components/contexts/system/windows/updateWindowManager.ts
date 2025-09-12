@@ -47,16 +47,18 @@ export const windowCreate = (
   const { wm, pm } = system;
   const { windows } = wm;
 
-  const { wid, pid, size } = info;
+  const { wid, pid } = info;
 
   if (windows.has(wid)) console.warn('recreating existing wid:', wid);
 
   windowUnfocusAll(system); // the new window should be the only focused one
 
+  const size = info.size || { x: 300, y: 200 }; // TODO: better default size
   windows.set(wid, {
     title: '',
     position: wm.defaultPosition(size),
     zIndex: nextZIndex(wm),
+    size,
     minSize: { x: 120, y: 100 },
     resizable: true,
     isMaximized: false,

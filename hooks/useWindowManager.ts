@@ -1,5 +1,6 @@
 import { WindowManagerDispatchAction } from '@/components/contexts/system/windows/updateWindowManager';
 import {
+  MIN_USER_WID,
   WindowCreationInfo,
   WindowID,
   WindowManager,
@@ -38,7 +39,7 @@ const useWindowManagerRaw = (): [WindowManager, WindowManagerDispatch] => {
 };
 
 const nextWindowID = ({ windows }: WindowManager) => {
-  let id = 0;
+  let id = MIN_USER_WID;
   while (windows.get(id)) id++;
   return id;
 };

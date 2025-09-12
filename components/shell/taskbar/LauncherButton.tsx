@@ -1,6 +1,7 @@
 import Image from 'next/image';
 
 import { PID_SHELL } from '@/components/contexts/system/processes/ProcessManager';
+import { WID_LAUNCHER } from '@/components/contexts/system/windows/WindowManager';
 import { useProcessManager } from '@/hooks/useProcessManager';
 import { useWindowManager } from '@/hooks/useWindowManager';
 import LauncherIcon from '@/public/launcher.png';
@@ -52,19 +53,16 @@ const ReflectiveOrb = ({ isLauncherOpen }: ReflectiveOrbProps) => (
 );
 
 export const LauncherButton = () => {
-  const { processes } = useProcessManager();
   const wm = useWindowManager();
 
-  const shellWindows = processes.get(PID_SHELL)?.windows; // TODO: flimsy; maybe add window ids or smth
-  const isLauncherOpen = shellWindows?.length === 1;
-
+  const isLauncherOpen = wm.windows.has(WID_LAUNCHER);
   const toggleLauncher = () => {
     if (isLauncherOpen) {
-      wm.destroy(shellWindows[0]!);
+      wm.destroy(WID_LAUNCHER);
     } else {
       wm.create({
         pid: PID_SHELL,
-        wid: wm.nextWindowID,
+        wid: WID_LAUNCHER,
         title: 'Launcher',
         size: { x: 300, y: 500 },
         isEphemeral: true,

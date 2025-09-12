@@ -6,6 +6,14 @@ import { ProcessID } from '../processes/ProcessManager';
 
 export type WindowID = number;
 
+// app-specific system-reserved window IDs
+export const WID_DESKTOP = 0;
+export const WID_TASKBAR = 1;
+export const WID_LAUNCHER = 2;
+
+// user window IDs start at this ID, any below are reserved
+export const MIN_USER_WID = 100;
+
 export interface WindowInfo {
   wid: WindowID;
   pid: ProcessID; // every window is owned by a process
@@ -31,7 +39,7 @@ export interface PropsWithWindowInfo {
   windowInfo: WindowInfo;
 }
 
-type RequiredWindowProps = 'wid' | 'pid' | 'size' | 'render';
+type RequiredWindowProps = 'wid' | 'pid' | 'render';
 
 export type WindowCreationInfo = Pick<WindowInfo, RequiredWindowProps> &
   Partial<Omit<WindowInfo, RequiredWindowProps>>;

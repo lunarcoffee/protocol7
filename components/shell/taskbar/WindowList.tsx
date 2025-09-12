@@ -1,8 +1,16 @@
 import { AnimatePresence, motion } from 'motion/react';
 
-import { WindowInfo } from '@/components/contexts/system/windows/WindowManager';
+import {
+  WID_DESKTOP,
+  WID_LAUNCHER,
+  WID_TASKBAR,
+  WindowInfo,
+} from '@/components/contexts/system/windows/WindowManager';
 import { useWindowManager } from '@/hooks/useWindowManager';
 import { twMergeClsx } from '@/utils/twMergeClsx';
+
+// IDs of windows which should not appear in the window list
+export const HIDDEN_WIDS = [WID_DESKTOP, WID_TASKBAR, WID_LAUNCHER];
 
 export interface WindowListProps {
   windows: WindowInfo[];
@@ -11,11 +19,13 @@ export interface WindowListProps {
 export const WindowList = ({ windows }: WindowListProps) => {
   const wm = useWindowManager();
 
-  const nonEphemeralWindows = windows.filter(({ isEphemeral }) => !isEphemeral);
+  const visibleWindows = windows.filter(
+    ({ wid, isEphemeral }) => !(isEphemeral || HIDDEN_WIDS.includes(wid)),
+  );
 
   return (
     <AnimatePresence>
-      {nonEphemeralWindows.map(({ wid, title, hasFocus }) => (
+      {visibleWindows.map(({ wid, title, hasFocus }) => (
         <motion.div
           onClick={hasFocus ? () => wm.minimize(wid) : () => wm.focus(wid)}
           className={twMergeClsx(
