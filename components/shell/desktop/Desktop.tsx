@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { MouseEvent, useEffect, useState } from 'react';
+import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useImmerReducer } from 'use-immer';
 
 import { PropsWithWindowInfo } from '@/components/contexts/system/windows/WindowManager';
@@ -28,63 +28,67 @@ export const Desktop = ({
   const wm = useWindowManager();
 
   // TODO: pull from fs once thats implemented
-  const iconData = [
-    { icon: Maple, label: 'HPIM_3328.jpg' },
-    { icon: Garden, label: 'HPIM_3329.jpg' },
-    { icon: Battery, label: 'battery indicator.svg' },
-    { icon: Wireless, label: 'signal.jpg' },
-    { icon: Launcher, label: 'hanyu english字典 translation dictionary.txt' },
-  ];
+  const iconData = new Map([
+    ['1.desktop', { icon: Maple, label: 'HPIM_3328.jpg' }],
+    ['2.desktop', { icon: Garden, label: 'HPIM_3329.jpg' }],
+    ['3.desktop', { icon: Battery, label: 'battery indicator.svg' }],
+    ['4.desktop', { icon: Wireless, label: 'signal.jpg' }],
+    [
+      '5.desktop',
+      { icon: Launcher, label: 'hanyu english字典 translation dictionary.txt' },
+    ],
+  ]);
 
-  // TODO: move all this where its supposed to be eventually
-  const [icons, updateIcon] = useImmerReducer(
-    (draft, { id, value }: { id: number; value: boolean }) => {
-      // TODO: currently the id is the index assigned here but change this to be correct once we
-      // start pulling icons from the filesystem
-      draft[id].isSelected = value;
-    },
-    iconData.map((icon, index) => ({
-      ...icon,
-      isSelected: false,
-      id: index,
-      onSelectionChange: (value: boolean) => {
-        updateIcon({ id: index, value });
+  // in the latest mouseDown event, was an icon clicked or just the desktop? this value informs the
+  // behavior of mouseDown handlers so they can implement icon selection properly
+  const wasIconClicked = useRef(false);
+
+  const initialIconStates = new Map(
+    [...iconData].map(([id, icon]) => [
+      id,
+      {
+        ...icon,
+        isSelected: false,
+        onClick: (event: MouseEvent) => {
+          // clicking an icon in multi-select mode (holding control) toggles the selection state;
+          // otherwise, it is always set to true
+          const isMultiSelect = event.getModifierState('Control');
+          if (!isMultiSelect) deselectAllIcons();
+          updateIcon({ id, value: !isMultiSelect || 'toggle' });
+
+          wasIconClicked.current = true;
+        },
       },
-    })),
+    ]),
   );
 
-  // TODO: fix behavior where holding ctrl and clicking desktop (not on an icons) still keeps focus;
-  // this is not desired
-  const onDesktopClick = (e: MouseEvent) => {
-    // allow desktop item multi-select with ctrl
-    if (!e.getModifierState('Control'))
-      icons.forEach((_, index) => updateIcon({ id: index, value: false }));
-  };
+  type UpdateIconAction = { id: string; value: boolean | 'toggle' };
+
+  const [icons, updateIcon] = useImmerReducer(
+    (draft, { id, value }: UpdateIconAction) => {
+      const icon = draft.get(id);
+      if (icon) icon.isSelected = value === 'toggle' ? !icon.isSelected : value;
+    },
+    initialIconStates,
+  );
+
+  const deselectAllIcons = useCallback(
+    () => icons.forEach((_, id) => updateIcon({ id, value: false })),
+    // `updateIcon` is a reducer dispatch and is referentially stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [icons],
+  );
 
   // deselect icons on losing focus
   useEffect(() => {
-    if (!hasFocus)
-      icons.forEach((_, index) => updateIcon({ id: index, value: false }));
-    // immer reducer dispatch is referentially stable
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasFocus, icons]);
+    if (!hasFocus) deselectAllIcons();
+  }, [hasFocus, deselectAllIcons]);
 
   const [isDragging, startDrag, endDrag] = useBoolean(false);
-
-  const { x: screenLeft, y: screenTop } = toScreenPosition({ x: 0, y: 0 });
-  const initialDragRect = {
-    top: screenTop,
-    left: screenLeft,
-    width: 0,
-    height: 0,
-  };
-  const [dragRect, setDragRect] = useState(initialDragRect);
+  const [dragRect, setDragRect] = useState({});
 
   const onDesktopDragStart = (initialPosition: Dimensions) => {
     const { x, y } = toScreenPosition(initialPosition);
-
-    setDragRect(initialDragRect);
-    startDrag();
 
     handleMouseDrag({
       initialPosition,
@@ -96,10 +100,15 @@ export const Desktop = ({
           height: Math.abs(dy),
         });
 
+        // only call this after moving to avoid drawing a rectangle if the user ends up only
+        // clicking instead of dragging
+        startDrag();
+
         const dragRectElement = document.getElementById('desktop-drag-rect');
         if (!dragRectElement) return;
 
-        icons.forEach(({ id }) => {
+        // select all icons which intersect the drag rectangle and deselect all others
+        icons.forEach((_, id) => {
           const iconElement = document.getElementById(`desktop-icon-${id}`);
           if (iconElement) {
             updateIcon({
@@ -119,7 +128,13 @@ export const Desktop = ({
   return (
     <div
       className="absolute top-0 right-0 bottom-0 left-0 z-0"
-      onMouseDown={() => wm.focus(wid)}
+      onMouseDownCapture={() => {
+        wm.focus(wid);
+
+        // reset for the new click event; this happens in the capturing stage so it comes before
+        // other reads/writes
+        wasIconClicked.current = false;
+      }}
     >
       <Image
         src={Wallpaper}
@@ -130,15 +145,19 @@ export const Desktop = ({
         unoptimized
       />
       <div
-        onMouseDownCapture={onDesktopClick}
-        onMouseDown={(event) =>
-          onDesktopDragStart({ x: event.clientX, y: event.clientY })
-        }
+        onMouseDown={(event) => {
+          // clicks directly on the desktop should always deselect icons and prepare for dragging
+          if (!wasIconClicked.current) {
+            deselectAllIcons();
+            onDesktopDragStart({ x: event.clientX, y: event.clientY });
+          }
+        }}
         className="absolute flex size-full flex-row flex-wrap gap-2 p-1"
       >
-        {icons.map((icon, i) => (
+        {Array.from(icons.entries(), ([id, icon]) => (
           <DesktopIcon
             {...icon}
+            id={id}
             onLaunch={() => {
               pm.create({ pid: pm.nextProcessID });
               wm.create({
@@ -157,7 +176,7 @@ export const Desktop = ({
                 ),
               });
             }}
-            key={i}
+            key={id}
           />
         ))}
       </div>

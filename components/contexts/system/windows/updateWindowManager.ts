@@ -21,6 +21,13 @@ const destroyEphemeralWindows = (system: Draft<System>) =>
     .filter((window) => window.isEphemeral && !window.hasFocus)
     .forEach(({ wid }) => windowDestroy(system, wid));
 
+const unfocusAll = (system: Draft<System>) => {
+  Array.from(system.wm.windows.values()).forEach(
+    (window) => (window.hasFocus = false),
+  );
+  destroyEphemeralWindows(system);
+};
+
 /* window manager actions */
 
 export type WindowManagerDispatchAction =
@@ -50,7 +57,7 @@ export const windowCreate = (
 
   if (windows.has(wid)) console.warn('recreating existing wid:', wid);
 
-  destroyEphemeralWindows(system);
+  unfocusAll(system);
 
   const size = info.size || { x: 300, y: 200 }; // TODO: better default size
   windows.set(wid, {

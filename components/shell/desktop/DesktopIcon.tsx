@@ -1,17 +1,18 @@
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import Image from 'next/image';
+import { MouseEvent } from 'react';
 
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
 export interface DesktopIconProps {
-  id: number; // TODO
+  id: string; // in practice, this is the name of the desktop icon file
 
   icon: string | StaticImport;
   label: string;
   onLaunch: () => void;
 
   isSelected: boolean;
-  onSelectionChange: (isSelected: boolean) => void;
+  onClick: (event: MouseEvent) => void;
 }
 
 // TODO: tooltip on hover
@@ -22,7 +23,7 @@ export const DesktopIcon = ({
   label,
   onLaunch,
   isSelected,
-  onSelectionChange,
+  onClick,
 }: DesktopIconProps) => (
   <div
     id={`desktop-icon-${id}`}
@@ -41,11 +42,8 @@ export const DesktopIcon = ({
           hover:shadow-aero-tint-highlight/55 hover:ring-aero-tint-highlight/55
         `,
     )}
-    onMouseDown={() => onSelectionChange(true)}
-    onDoubleClick={() => {
-      onSelectionChange(false);
-      onLaunch();
-    }}
+    onMouseDown={onClick}
+    onDoubleClick={onLaunch}
   >
     <div
       className={`

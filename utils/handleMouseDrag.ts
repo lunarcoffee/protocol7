@@ -10,7 +10,7 @@ export interface HandleMouseDragArgs {
   cursor?: string;
 }
 
-// useful in `onMouseDown` handlers where you want to track the associated drag gesture that comes
+// useful in mouseDown handlers where you want to track the associated drag movement that comes
 // after - see `WindowFrame` or `ResizeHandles` for examples
 export const handleMouseDrag = ({
   initialPosition: { x, y },

@@ -28,17 +28,16 @@ export const GraphicalShell = () => {
     wm.create({
       pid: PID_SHELL,
       wid: WID_DESKTOP,
-      render: (info) => <Desktop windowInfo={info} />,
+      render: (windowInfo) => <Desktop windowInfo={windowInfo} />,
     });
     wm.create({
       pid: PID_SHELL,
       wid: WID_TASKBAR,
-      render: (info) => <Taskbar windowInfo={info} />,
+      render: () => <Taskbar />,
     });
 
     return () => pm.destroy(PID_SHELL);
-    // this is fine because `pm.create` and `wm.create` only depend on the pm/wm dispatches, which
-    // are referentially stable
+    // wm/pm actions only use reducer dispatches which are referentially stable
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
