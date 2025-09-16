@@ -30,11 +30,7 @@ export const GraphicalShell = () => {
       wid: WID_DESKTOP,
       render: (windowInfo) => <Desktop windowInfo={windowInfo} />,
     });
-    wm.create({
-      pid: PID_SHELL,
-      wid: WID_TASKBAR,
-      render: () => <Taskbar />,
-    });
+    wm.create({ pid: PID_SHELL, wid: WID_TASKBAR, render: () => <Taskbar /> });
 
     return () => pm.destroy(PID_SHELL);
     // wm/pm actions only use reducer dispatches which are referentially stable

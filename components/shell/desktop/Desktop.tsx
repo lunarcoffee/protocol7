@@ -35,7 +35,7 @@ export const Desktop = ({
     ['4.desktop', { icon: Wireless, label: 'signal.jpg' }],
     [
       '5.desktop',
-      { icon: Launcher, label: 'hanyu english字典 translation dictionary.txt' },
+      { icon: Launcher, label: 'launcher_icon_720_x_720_fullres_hd.png' },
     ],
   ]);
 

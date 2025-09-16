@@ -51,7 +51,7 @@ export const DesktopIcon = ({
         drop-shadow-aero-tint-darkest/70
       `}
     >
-      <Image src={icon} alt={label} draggable={false} />
+      <Image src={icon} alt={label} draggable={false} unoptimized />
     </div>
     <div className="flex w-20 justify-center overflow-visible">
       <p

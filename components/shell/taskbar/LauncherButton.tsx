@@ -101,6 +101,7 @@ export const LauncherButton = () => {
             'opacity-90 drop-shadow-[0_0_1px] drop-shadow-white/30',
         )}
         draggable={false}
+        unoptimized
       />
     </div>
   );
