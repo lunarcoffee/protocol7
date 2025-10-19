@@ -50,6 +50,8 @@ const eslintConfig = [
       ...betterTailwind.configs['recommended-warn'].rules,
 
       'prettier/prettier': 'warn',
+
+      '@next/next/no-img-element': 'off',
     },
     settings: {
       'better-tailwindcss': {

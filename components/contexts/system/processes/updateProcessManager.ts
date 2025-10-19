@@ -62,8 +62,6 @@ export const processDestroy = (system: Draft<System>, pid: ProcessID) => {
     pm: { processes },
   } = system;
 
-  if (pid === PID_SHELL) console.warn('destroying shell process');
-
   const process = processes.get(pid);
   if (process) {
     processes.delete(pid);

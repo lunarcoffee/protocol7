@@ -40,5 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-public/wallpapers/*
-public/pictures/*
+# exclude host filesystems for now
+static/**/*

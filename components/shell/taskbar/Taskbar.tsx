@@ -2,8 +2,8 @@
 
 import Image from 'next/image';
 
-import NetworkIcon from '@/public/icons/network.svg';
-import VolumeHighIcon from '@/public/icons/volume-high.svg';
+import NetworkIcon from '@/static/localhost/icons/network.svg';
+import VolumeHighIcon from '@/static/localhost/icons/volume-high.svg';
 
 import { Clock } from './Clock';
 import { LauncherButton } from './LauncherButton';

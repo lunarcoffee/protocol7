@@ -1,19 +1,19 @@
 'use client';
 
-import Image from 'next/image';
 import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useImmerReducer } from 'use-immer';
 
+import { FileHandle } from '@/components/contexts/system/filesystem';
 import { PropsWithWindowInfo } from '@/components/contexts/system/windows/WindowManager';
 import { useBoolean } from '@/hooks/useBoolean';
+import { useFile } from '@/hooks/useFile';
 import { useProcessManager } from '@/hooks/useProcessManager';
 import { useWindowManager } from '@/hooks/useWindowManager';
-import Battery from '@/public/icons/battery.svg';
-import Wireless from '@/public/icons/wireless.svg';
-import Launcher from '@/public/launcher.png';
-import Garden from '@/public/pictures/garden.jpg';
-import Maple from '@/public/pictures/maple.jpg';
-import Wallpaper from '@/public/wallpapers/flowers.avif';
+import Battery from '@/static/localhost/icons/battery.svg';
+import Wireless from '@/static/localhost/icons/wireless.svg';
+import Launcher from '@/static/localhost/launcher.png';
+import Garden from '@/static/localhost/pictures/garden.jpg';
+import Maple from '@/static/localhost/pictures/maple.jpg';
 import { Dimensions, toScreenPosition } from '@/utils/Dimensions';
 import { doRectanglesIntersect } from '@/utils/doRectanglesIntersect';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
@@ -38,6 +38,8 @@ export const Desktop = ({
       { icon: Launcher, label: 'hanyu english字典 translation dictionary.txt' },
     ],
   ]);
+
+  const [background, isLoading] = useFile('wallpapers/pub.jpg');
 
   // in the latest mouseDown event, was an icon clicked or just the desktop? this value informs the
   // behavior of mouseDown handlers so they can implement icon selection properly
@@ -136,14 +138,14 @@ export const Desktop = ({
         wasIconClicked.current = false;
       }}
     >
-      <Image
-        src={Wallpaper}
-        alt="desktop wallpaper"
-        draggable={false}
-        priority
-        className="absolute size-full object-cover object-center"
-        unoptimized
-      />
+      {!isLoading && background && typeof background !== 'string' && (
+        <img
+          src={(background! as FileHandle).readToObjectURL()}
+          alt="desktop wallpaper"
+          draggable={false}
+          className="absolute size-full object-cover object-center"
+        />
+      )}
       <div
         onMouseDown={(event) => {
           // clicks directly on the desktop should always deselect icons and prepare for dragging

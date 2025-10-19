@@ -1,9 +1,18 @@
 import { configureSingle } from '@zenfs/core';
 import { IndexedDB } from '@zenfs/dom';
 import { Draft } from 'immer';
-import { createContext, PropsWithChildren, useEffect } from 'react';
+import {
+  createContext,
+  JSX,
+  PropsWithChildren,
+  useEffect,
+  useMemo,
+} from 'react';
 import { useImmerReducer } from 'use-immer';
 
+import { useBoolean } from '@/hooks/useBoolean';
+
+import { createSkeletonForHost, eraseHostFiles } from './filesystem';
 import {
   DEFAULT_PROCESS_MANAGER,
   ProcessManager,
@@ -19,11 +28,15 @@ import {
 import { DEFAULT_WINDOW_MANAGER, WindowManager } from './windows/WindowManager';
 
 export interface System {
+  hostname: string;
+
   pm: ProcessManager;
   wm: WindowManager;
 }
 
 const DEFAULT_SYSTEM = {
+  hostname: 'localhost',
+
   pm: DEFAULT_PROCESS_MANAGER,
   wm: DEFAULT_WINDOW_MANAGER,
 };
@@ -54,17 +67,39 @@ export const SystemDispatchContext = createContext<SystemDispatch>(() => {
   throw new Error('system context uninitialized!');
 });
 
-export const SystemContextProvider = ({ children }: PropsWithChildren) => {
+export interface SystemContextProviderProps extends PropsWithChildren {
+  fallback: JSX.Element;
+}
+
+export const SystemContextProvider = ({
+  fallback,
+  children,
+}: SystemContextProviderProps) => {
   const [system, dispatch] = useImmerReducer(updateSystem, DEFAULT_SYSTEM);
 
+  const hostname = useMemo(() => system.hostname, [system]);
+  const [isFsReady, setFsReady, setFsNotReady] = useBoolean();
+
   useEffect(() => {
-    configureSingle({ backend: IndexedDB }); // TODO: await this promise lol
-  }, []);
+    const initializeFilesystem = async () => {
+      await configureSingle({ backend: IndexedDB });
+
+      await eraseHostFiles(hostname); // TODO: only for debug
+      await createSkeletonForHost(hostname);
+
+      setFsReady();
+    };
+
+    setFsNotReady();
+    initializeFilesystem();
+    // `useBoolean` setters are referentially stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hostname]);
 
   return (
     <SystemContext.Provider value={system}>
       <SystemDispatchContext.Provider value={dispatch}>
-        {children}
+        {isFsReady ? children : fallback}
       </SystemDispatchContext.Provider>
     </SystemContext.Provider>
   );
