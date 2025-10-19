@@ -26,9 +26,6 @@ export const Desktop = ({
   const pm = useProcessManager();
   const wm = useWindowManager();
 
-  const WallpaperFallback = (
-    <div className="absolute size-full bg-aero-tint object-cover object-center" />
-  );
   const [wallpaper] = useFile(
     'wallpapers/flowers.avif',
     (file) => (
@@ -39,8 +36,8 @@ export const Desktop = ({
         className="absolute size-full object-cover object-center"
       />
     ),
-    WallpaperFallback,
-    () => WallpaperFallback,
+    <></>,
+    () => <></>,
   );
 
   // TODO: pull from fs once thats implemented
@@ -156,7 +153,13 @@ export const Desktop = ({
         wasIconClicked.current = false;
       }}
     >
-      {wallpaper}
+      <div
+        className={`
+          absolute size-full bg-aero-tint-darkest object-cover object-center
+        `}
+      >
+        {wallpaper}
+      </div>
       <div
         onMouseDown={(event) => {
           // clicks directly on the desktop should always deselect icons and prepare for dragging

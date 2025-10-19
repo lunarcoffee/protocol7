@@ -13,7 +13,7 @@ export const Clock = () => {
     <Hoverable>
       <div
         className={`
-          flex h-full flex-col items-center justify-center px-2 text-gray-200
+          flex h-full flex-col items-center justify-center px-1 text-gray-200
           text-shadow-aero-tint-darkest/50 text-shadow-md
         `}
       >

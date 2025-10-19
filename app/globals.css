@@ -10,8 +10,6 @@
   --aero-tint-dark-lightness: 30%;
   --aero-tint-darkest-lightness: 7%;
   --aero-tint-highlight-lightness: 80%;
-
-  --font-open-sans: 'Open Sans';
 }
 
 @theme {
@@ -27,6 +25,9 @@
   --color-aero-tint-highlight: hsl(
     var(--aero-tint-hue-saturation) var(--aero-tint-highlight-lightness)
   );
+
+  --font-manrope: var(--font-manrope);
+  --font-open-sans: var(--font-open-sans);
 }
 
 body {

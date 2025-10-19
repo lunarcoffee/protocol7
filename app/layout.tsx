@@ -1,12 +1,18 @@
 import './globals.css';
 
 import type { Metadata } from 'next';
-import { Open_Sans } from 'next/font/google';
+import { Manrope, Open_Sans } from 'next/font/google';
 
 const openSans = Open_Sans({
   variable: '--font-open-sans',
   subsets: ['latin'],
   weight: ['400'],
+});
+
+const manrope = Manrope({
+  variable: '--font-manrope',
+  subsets: ['latin'],
+  weight: ['300'],
 });
 
 export const metadata: Metadata = {
@@ -24,6 +30,7 @@ export default function RootLayout({
       <body
         className={`
           ${openSans.variable}
+          ${manrope.variable}
           antialiased
         `}
       >
