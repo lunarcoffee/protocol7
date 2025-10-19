@@ -71,30 +71,13 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
 
   const wm = useWindowManager();
 
-  const [isDisappearing, toggleDisappearing] = useToggle(true); // TODO: hacky as hell, dunno how this will interact with minimize/maximize but i just wanted to see the effect first lol
+  const [isDisappearing, toggleDisappearing] = useToggle();
 
   return (
-    <motion.div
-      onMouseDown={() => wm.focus(wid)}
+    <div
       className={twMergeClsx(
-        `
-          absolute flex origin-[50%_-10%] flex-col rounded-md border
-          border-aero-tint-darkest/85 bg-gradient-to-tr from-aero-tint-dark/70
-          to-aero-tint/70 px-1 pb-1 shadow-[0_0_20px] inset-shadow-[0_0_2px]
-          shadow-aero-tint-darkest/75 inset-shadow-white/80 backdrop-blur-xs
-          text-shadow-aero-tint-darkest/50 text-shadow-md
-        `,
-        hasFocus ||
-          `
-            border-aero-tint-darkest/70 from-aero-tint-dark/50
-            to-aero-tint-dark/50 shadow-aero-tint-darkest/40
-          `,
-        isMaximized &&
-          `
-            top-0 right-0 bottom-10 left-0 rounded-none border-none px-0 pb-0
-            inset-shadow-none
-          `,
-        isDisappearing && 'origin-[50%_110%]',
+        'absolute perspective-midrange',
+        isMaximized && 'top-0 right-0 bottom-10 left-0',
         isOpen || 'hidden',
       )}
       style={{
@@ -106,39 +89,57 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
           height: size.y,
         }),
       }}
-      variants={{
-        hidden: { opacity: 0 },
-        opening: {
-          transform:
-            'rotateX(20deg) rotateY(-2deg) scale(0.9) perspective(400px)',
-        },
-        open: { opacity: 1, transform: 'scale(1)' },
-        closing: {
-          transform:
-            'rotateX(-20deg) rotateY(2deg) scale(0.9) perspective(600px)',
-        },
-      }}
-      initial={['hidden', 'opening']}
-      animate="open"
-      exit={['hidden', 'closing']}
-      transition={{ ease: 'easeOut', duration: 0.06 }}
-      onAnimationStart={toggleDisappearing}
     >
-      <TitleBar windowInfo={windowInfo} />
-      <ReflectiveSurface size={size} />
-      <div
+      <motion.div
+        onMouseDown={() => wm.focus(wid)}
         className={twMergeClsx(
           `
-            z-20 grow overflow-clip rounded-sm border
-            border-aero-tint-darkest/85 shadow-[0_0_2px] shadow-white/80
+            absolute top-0 right-0 bottom-0 left-0 flex origin-[50%_-10%]
+            flex-col rounded-md border border-aero-tint-darkest/85
+            bg-gradient-to-tr from-aero-tint-dark/70 to-aero-tint/70 px-1 pb-1
+            shadow-[0_0_20px] inset-shadow-[0_0_2px] shadow-aero-tint-darkest/75
+            inset-shadow-white/80 backdrop-blur-xs
+            text-shadow-aero-tint-darkest/50 text-shadow-md
           `,
-          isMaximized &&
-            'rounded-none border-0 border-t border-t-aero-tint-darkest/85',
+          hasFocus ||
+            `
+              border-aero-tint-darkest/70 from-aero-tint-dark/50
+              to-aero-tint-dark/50 shadow-aero-tint-darkest/40
+            `,
+          isMaximized && 'rounded-none border-none px-0 pb-0 inset-shadow-none',
+          isDisappearing && 'origin-[50%_110%]',
         )}
+        variants={{
+          hidden: { opacity: 0 },
+          opening: { rotateX: -30, scale: 0.9 },
+          open: { opacity: 1, rotateX: 0, rotateY: 0, scale: 1 },
+          closing: { rotateX: 30, rotateY: -4, scale: 0.9 },
+        }}
+        initial={['hidden', 'opening']}
+        animate="open"
+        exit={['hidden', 'closing']}
+        transition={{
+          ease: isDisappearing ? 'easeIn' : 'easeOut',
+          duration: 0.2,
+        }}
+        onAnimationComplete={toggleDisappearing}
       >
-        {children}
-      </div>
-      {resizable && !isMaximized && <ResizeHandles windowInfo={windowInfo} />}
-    </motion.div>
+        <TitleBar windowInfo={windowInfo} />
+        <ReflectiveSurface size={size} />
+        <div
+          className={twMergeClsx(
+            `
+              z-20 grow overflow-clip rounded-sm border
+              border-aero-tint-darkest/85 shadow-[0_0_2px] shadow-white/80
+            `,
+            isMaximized &&
+              'rounded-none border-0 border-t border-t-aero-tint-darkest/85',
+          )}
+        >
+          {children}
+        </div>
+        {resizable && !isMaximized && <ResizeHandles windowInfo={windowInfo} />}
+      </motion.div>
+    </div>
   );
 };
