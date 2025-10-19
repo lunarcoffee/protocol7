@@ -1,8 +1,6 @@
 import { promises as fs } from '@zenfs/core';
 import path from 'path';
 
-import { isStringArray } from '@/utils/isStringArray';
-
 // magic value indicating a file needs to be fetched from the server
 export const FS_SKELETON_PLACEHOLDER = 0x94070c01;
 export const FS_SKELETON_PLACEHOLDER_ARRAY = Uint8Array.from([
@@ -19,6 +17,11 @@ export type FileError = 'not found' | 'unauthorized'; // TODO: etc
 
 export type FileResult = FileHandle | FileError;
 
+interface Skeleton {
+  dirs: string[];
+  files: string[];
+}
+
 const directoryDepth = (path: string) =>
   path.split('').filter((c) => c === '/').length;
 
@@ -28,11 +31,7 @@ export const createSkeletonForHost = async (hostname: string) => {
   if (!response.ok) return console.error('could not fetch fs skeleton!');
 
   try {
-    const skeleton = await response.json();
-    if (!('dirs' in skeleton && 'files' in skeleton)) throw new TypeError();
-
-    const { dirs, files } = skeleton;
-    if (!isStringArray(dirs) || !isStringArray(files)) throw new TypeError();
+    const { dirs, files } = (await response.json()) as Skeleton;
 
     // create directories before files to avoid problems writing files in nonexistent directories
     await fs.mkdir(hostname);

@@ -26,22 +26,10 @@ export const Desktop = ({
   const pm = useProcessManager();
   const wm = useWindowManager();
 
-  // TODO: pull from fs once thats implemented
-  const iconData = new Map([
-    ['1.desktop', { icon: Maple, label: 'HPIM_3328.jpg' }],
-    ['2.desktop', { icon: Garden, label: 'HPIM_3329.jpg' }],
-    ['3.desktop', { icon: Battery, label: 'battery indicator.svg' }],
-    ['4.desktop', { icon: Wireless, label: 'signal.jpg' }],
-    [
-      '5.desktop',
-      { icon: Launcher, label: 'hanyu english字典 translation dictionary.txt' },
-    ],
-  ]);
-
   const WallpaperFallback = (
     <div className="absolute size-full bg-aero-tint object-cover object-center" />
   );
-  const [background] = useFile(
+  const [wallpaper] = useFile(
     'wallpapers/flowers.avif',
     (file) => (
       <img
@@ -54,6 +42,22 @@ export const Desktop = ({
     WallpaperFallback,
     () => WallpaperFallback,
   );
+
+  // TODO: pull from fs once thats implemented
+  const iconData = new Map([
+    ['1.desktop', { icon: Maple, label: 'HPIM_3328.jpg' }],
+    ['2.desktop', { icon: Garden, label: 'HPIM_3329.jpg' }],
+    ['3.desktop', { icon: Battery, label: 'battery indicator.svg' }],
+    ['4.desktop', { icon: Wireless, label: 'signal.jpg' }],
+    [
+      '5.desktop',
+      { icon: Launcher, label: 'hanyu english字典 translation dictionary.txt' },
+    ],
+  ]);
+
+  // const iconFilenames = [0, 1].map(
+  //   (i) => `/Users/lunarcoffee/Desktop/icon${i}.json`,
+  // );
 
   // in the latest mouseDown event, was an icon clicked or just the desktop? this value informs the
   // behavior of mouseDown handlers so they can implement icon selection properly
@@ -152,7 +156,7 @@ export const Desktop = ({
         wasIconClicked.current = false;
       }}
     >
-      {background}
+      {wallpaper}
       <div
         onMouseDown={(event) => {
           // clicks directly on the desktop should always deselect icons and prepare for dragging
