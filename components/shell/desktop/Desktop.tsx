@@ -3,7 +3,6 @@
 import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useImmerReducer } from 'use-immer';
 
-import { FileHandle } from '@/components/contexts/system/filesystem';
 import { PropsWithWindowInfo } from '@/components/contexts/system/windows/WindowManager';
 import { useBoolean } from '@/hooks/useBoolean';
 import { useFile } from '@/hooks/useFile';
@@ -39,7 +38,22 @@ export const Desktop = ({
     ],
   ]);
 
-  const [background, isLoading] = useFile('wallpapers/pub.jpg');
+  const WallpaperFallback = (
+    <div className="absolute size-full bg-aero-tint object-cover object-center" />
+  );
+  const [background] = useFile(
+    'wallpapers/flowers.avif',
+    (file) => (
+      <img
+        src={file.readToObjectURL()}
+        alt="desktop wallpaper"
+        draggable={false}
+        className="absolute size-full object-cover object-center"
+      />
+    ),
+    WallpaperFallback,
+    () => WallpaperFallback,
+  );
 
   // in the latest mouseDown event, was an icon clicked or just the desktop? this value informs the
   // behavior of mouseDown handlers so they can implement icon selection properly
@@ -138,14 +152,7 @@ export const Desktop = ({
         wasIconClicked.current = false;
       }}
     >
-      {!isLoading && background && typeof background !== 'string' && (
-        <img
-          src={(background! as FileHandle).readToObjectURL()}
-          alt="desktop wallpaper"
-          draggable={false}
-          className="absolute size-full object-cover object-center"
-        />
-      )}
+      {background}
       <div
         onMouseDown={(event) => {
           // clicks directly on the desktop should always deselect icons and prepare for dragging

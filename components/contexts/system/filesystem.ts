@@ -41,9 +41,9 @@ export const createSkeletonForHost = async (hostname: string) => {
     // for existing directories even when set to true; this ordering will ensure we create parent
     // directories before their child directories
     dirs.sort((a, b) => directoryDepth(a) - directoryDepth(b));
-    await Promise.all(
-      dirs.map(async (dir) => await fs.mkdir(path.join(hostname, dir))),
-    );
+    for (const dir of dirs) {
+      await fs.mkdir(path.join(hostname, dir));
+    }
 
     // now we can populate the filesystem with placeholder files
     await Promise.all(

@@ -3,6 +3,7 @@ import { PathLike } from 'fs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
+  FileHandle,
   FileResult,
   FS_SKELETON_PLACEHOLDER,
 } from '@/components/contexts/system/filesystem';
@@ -11,9 +12,10 @@ import { useBoolean } from './useBoolean';
 import { useSystem } from './useSystem';
 import { useToggle } from './useToggle';
 
-export const useFile = (
-  path: PathLike,
-): [FileResult | undefined, boolean, () => void] => {
+// actual file loading result, loading flag, and refresh trigger
+export type UseFileResult = [FileResult | undefined, boolean, () => void];
+
+const useFileRaw = (path: PathLike): UseFileResult => {
   const [system] = useSystem();
   const hostname = useMemo(() => system.hostname, [system]);
   path = `${hostname}/${path}`;
@@ -91,4 +93,19 @@ export const useFile = (
   }, [openFile]);
 
   return [handle, isLoading, triggerRefresh];
+};
+
+export const useFile = <T>(
+  path: PathLike,
+  success: (handle: FileHandle) => T,
+  loading: T,
+  error: (error: string) => T,
+): [T, () => void] => {
+  const [handle, isLoading, refresh] = useFileRaw(path);
+
+  if (isLoading) return [loading, refresh];
+  if (typeof handle === 'string') return [error(handle), refresh];
+
+  // this should be safe; see the branching in the effect in `useFileRaw` above
+  return [success(handle!), refresh];
 };

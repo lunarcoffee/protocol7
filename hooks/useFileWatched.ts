@@ -2,14 +2,17 @@ import fs from '@zenfs/core';
 import { PathLike } from 'fs';
 import { useEffect } from 'react';
 
-import { FileResult } from '@/components/contexts/system/filesystem';
+import { FileHandle } from '@/components/contexts/system/filesystem';
 
 import { useFile } from './useFile';
 
-export const useFileWatched = (
+export const useFileWatched = <T>(
   path: PathLike,
-): [FileResult | undefined, boolean, () => void] => {
-  const [handle, isLoading, refresh] = useFile(path);
+  success: (handle: FileHandle) => T,
+  loading: T,
+  error: (error: string) => T,
+) => {
+  const [result, refresh] = useFile(path, success, loading, error);
 
   useEffect(() => {
     // TODO: handle rename
@@ -19,5 +22,5 @@ export const useFileWatched = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path]);
 
-  return [handle, isLoading, refresh];
+  return [result, refresh];
 };
