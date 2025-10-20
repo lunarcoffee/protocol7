@@ -38,7 +38,7 @@ const CenterIsland = () => (
 const RightIsland = () => (
   <div
     className={`
-      flex h-full flex-row items-center bg-gradient-to-l
+      flex h-full flex-none flex-row items-center bg-gradient-to-l
       from-aero-tint-darkest/15 via-aero-tint-darkest/20 via-[calc(100%-1.5rem)]
       pr-2 pl-5
     `}
