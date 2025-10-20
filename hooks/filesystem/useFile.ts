@@ -4,38 +4,47 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   FileHandle,
-  FileResult,
   FS_SKELETON_PLACEHOLDER,
+  OpenFileResult,
 } from '@/components/contexts/system/filesystem';
 import { useBoolean } from '@/hooks/useBoolean';
 import { useSystem } from '@/hooks/useSystem';
 import { useToggle } from '@/hooks/useToggle';
 
-// actual file loading result, loading flag, and refresh trigger
-export type UseFileResult = [FileResult | undefined, boolean, () => void];
+export interface UseFileOptions {
+  noFetch?: boolean;
+}
 
-const useFileOrFetch = (path: PathLike): UseFileResult => {
+export type RefreshTrigger = () => void;
+
+// actual file loading result, loading flag, and refresh trigger
+type UseFileResult = [OpenFileResult | undefined, boolean, RefreshTrigger];
+
+const useFileOrFetch = (
+  path: PathLike,
+  { noFetch }: UseFileOptions,
+): UseFileResult => {
   const [system] = useSystem();
   const hostname = useMemo(() => system.hostname, [system]);
-  path = `${hostname}/${path}`;
+  const hostQualifiedPath = `${hostname}/${path}`;
 
-  const [handle, setHandle] = useState<FileResult>();
+  const [handle, setHandle] = useState<OpenFileResult>();
   const [isLoading, setLoading, setDone] = useBoolean(true);
 
   const [refreshSignal, triggerRefresh] = useToggle();
 
   const openFile = useCallback(async () => {
-    const deletePlaceholderResult = async (): Promise<FileResult> => {
-      await fs.rm(path, { force: true });
+    const deletePlaceholderResult = async (): Promise<OpenFileResult> => {
+      await fs.rm(hostQualifiedPath, { force: true });
       return 'not found';
     };
 
-    let buffer = await fs.readFile(path).catch(() => null);
+    let buffer = await fs.readFile(hostQualifiedPath).catch(() => null);
     if (!buffer) return 'not found';
 
     // current file is a placeholder from the skeleton; need to fetch actual contents
-    if (buffer.readUint32BE() === FS_SKELETON_PLACEHOLDER) {
-      const serverFile = await fetch('hosts/' + path);
+    if (!noFetch && buffer.readUint32BE() === FS_SKELETON_PLACEHOLDER) {
+      const serverFile = await fetch('hosts/' + hostQualifiedPath);
 
       if (!serverFile.ok) return deletePlaceholderResult();
 
@@ -55,7 +64,7 @@ const useFileOrFetch = (path: PathLike): UseFileResult => {
 
       const bytes = await contents.arrayBuffer();
       buffer = Buffer.from(bytes);
-      await fs.writeFile(path, buffer);
+      await fs.writeFile(hostQualifiedPath, buffer);
     }
 
     // for elements taking URLs (e.g. <img>)
@@ -68,7 +77,7 @@ const useFileOrFetch = (path: PathLike): UseFileResult => {
     };
     // `refreshSignal` allows a consumer to manually trigger a reread of the file contents
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [path, refreshSignal]);
+  }, [hostQualifiedPath, refreshSignal, noFetch]);
 
   useEffect(() => {
     let canceled = false;
@@ -94,22 +103,22 @@ const useFileOrFetch = (path: PathLike): UseFileResult => {
   return [handle, isLoading, triggerRefresh];
 };
 
-export const useFile = <T>(
+export interface UseFileOtherCallbacks<T, U> {
+  loading: T;
+  error: (error: string) => U;
+}
+
+export const useFile = <T, U, V>(
   path: PathLike,
   success: (handle: FileHandle) => T,
-  {
-    loading,
-    error,
-  }: {
-    loading: T;
-    error: (error: string) => T;
-  },
-): [T, () => void] => {
-  const [handle, isLoading, refresh] = useFileOrFetch(path);
+  { loading, error }: UseFileOtherCallbacks<U, V>,
+  options: UseFileOptions = { noFetch: false },
+): [T | U | V, RefreshTrigger] => {
+  const [handle, isLoading, refresh] = useFileOrFetch(path, options);
 
   if (isLoading) return [loading, refresh];
   if (typeof handle === 'string') return [error(handle), refresh];
 
-  // this should be safe; see the branching in the effect in `useFileRaw` above
+  // this should be safe; see the branching in the effect in `useFileOrFetch` above
   return [success(handle!), refresh];
 };

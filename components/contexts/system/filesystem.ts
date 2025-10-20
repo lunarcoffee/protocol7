@@ -13,9 +13,18 @@ export interface FileHandle {
   // TODO: write, delete, etc
 }
 
-export type FileError = 'not found' | 'unauthorized'; // TODO: etc
+export type OpenFileError = 'not found'; // TODO: etc
 
-export type FileResult = FileHandle | FileError;
+export type OpenFileResult = FileHandle | OpenFileError;
+
+export interface DirectoryHandle {
+  entries: () => string[];
+  entriesAbsolute: () => string[];
+}
+
+export type OpenDirectoryError = 'not found';
+
+export type OpenDirectoryResult = DirectoryHandle | OpenDirectoryError;
 
 interface Skeleton {
   dirs: string[];

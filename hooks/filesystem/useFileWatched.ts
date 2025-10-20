@@ -4,16 +4,13 @@ import { useEffect } from 'react';
 
 import { FileHandle } from '@/components/contexts/system/filesystem';
 
-import { useFile } from './useFile';
+import { RefreshTrigger, useFile, UseFileOtherCallbacks } from './useFile';
 
-export const useFileWatched = <T>(
+export const useFileWatched = <T, U, V>(
   path: PathLike,
   success: (handle: FileHandle) => T,
-  otherCallbacks: {
-    loading: T;
-    error: (error: string) => T;
-  },
-) => {
+  otherCallbacks: UseFileOtherCallbacks<U, V>,
+): [T | U | V, RefreshTrigger] => {
   const [result, refresh] = useFile(path, success, otherCallbacks);
 
   useEffect(() => {

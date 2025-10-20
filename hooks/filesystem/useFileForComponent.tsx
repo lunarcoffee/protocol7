@@ -3,7 +3,7 @@ import { JSX } from 'react';
 
 import { FileHandle } from '@/components/contexts/system/filesystem';
 
-import { useFile } from './useFile';
+import { useFile, UseFileOptions, UseFileOtherCallbacks } from './useFile';
 
 export const useFileForComponent = (
   path: PathLike,
@@ -11,12 +11,15 @@ export const useFileForComponent = (
   {
     loading,
     error,
-  }: {
-    loading?: JSX.Element;
-    error?: (error: string) => JSX.Element;
-  } = {},
+  }: Partial<UseFileOtherCallbacks<JSX.Element, JSX.Element>> = {},
+  options: UseFileOptions = { noFetch: false },
 ) =>
-  useFile(path, success, {
-    loading: loading || <></>,
-    error: error || (() => <></>),
-  });
+  useFile(
+    path,
+    success,
+    {
+      loading: loading || <></>,
+      error: error || (() => <></>),
+    },
+    options,
+  );
