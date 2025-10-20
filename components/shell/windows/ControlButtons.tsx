@@ -1,16 +1,6 @@
 import { PropsWithWindowInfo } from '@/components/contexts/system/windows/WindowManager';
 import { useWindowManager } from '@/hooks/useWindowManager';
 
-interface ControlButtonProps {
-  bgFrom: string;
-  bgTo: string;
-  ring: string;
-  topGlow: string;
-  topShadow: string;
-  bottomGlow: string;
-  onClick: () => void;
-}
-
 const ControlButton = ({
   bgFrom,
   bgTo,
@@ -19,7 +9,15 @@ const ControlButton = ({
   topShadow,
   bottomGlow,
   onClick,
-}: ControlButtonProps) => (
+}: {
+  bgFrom: string;
+  bgTo: string;
+  ring: string;
+  topGlow: string;
+  topShadow: string;
+  bottomGlow: string;
+  onClick: () => void;
+}) => (
   <div
     onClick={onClick}
     // prevent dragging a window by the buttons

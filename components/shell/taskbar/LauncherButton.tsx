@@ -1,18 +1,12 @@
-import Image from 'next/image';
-
 import { PID_SHELL } from '@/components/contexts/system/processes/ProcessManager';
 import { WID_LAUNCHER } from '@/components/contexts/system/windows/WindowManager';
+import { useFileForComponent } from '@/hooks/filesystem/useFileForComponent';
 import { useWindowManager } from '@/hooks/useWindowManager';
-import LauncherIcon from '@/static/localhost/launcher.png';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
 import { Launcher } from './Launcher';
 
-interface ReflectiveOrbProps {
-  isLauncherOpen: boolean;
-}
-
-const ReflectiveOrb = ({ isLauncherOpen }: ReflectiveOrbProps) => (
+const ReflectiveOrb = ({ active }: { active: boolean }) => (
   <>
     {/* upper reflection */}
     <div
@@ -23,7 +17,7 @@ const ReflectiveOrb = ({ isLauncherOpen }: ReflectiveOrbProps) => (
           transition duration-100
           group-hover:from-white/50 group-hover:inset-shadow-white/60
         `,
-        isLauncherOpen && 'inset-shadow-white/50',
+        active && 'inset-shadow-white/50',
       )}
     />
     {/* manual mask to round out the bottom */}
@@ -41,7 +35,7 @@ const ReflectiveOrb = ({ isLauncherOpen }: ReflectiveOrbProps) => (
           from-aero-tint to-transparent to-50% transition duration-100
           group-hover:from-aero-tint-highlight/40
         `,
-        isLauncherOpen &&
+        active &&
           `
             from-aero-tint-highlight/60
             group-hover:from-aero-tint-highlight/60
@@ -50,6 +44,24 @@ const ReflectiveOrb = ({ isLauncherOpen }: ReflectiveOrbProps) => (
     />
   </>
 );
+
+const LauncherIcon = ({ active }: { active: boolean }) =>
+  useFileForComponent('launcher.png', (file) => (
+    <img
+      src={file.readToObjectURL()}
+      alt="launcher icon"
+      draggable={false}
+      className={twMergeClsx(
+        `
+          absolute z-30 mt-1 size-10 opacity-70 drop-shadow-[0_0_0]
+          drop-shadow-transparent transition duration-100
+          group-hover:opacity-100 group-hover:drop-shadow-[0_0_2px]
+          group-hover:drop-shadow-white/50
+        `,
+        active && 'opacity-90 drop-shadow-[0_0_1px] drop-shadow-white/30',
+      )}
+    />
+  ))[0];
 
 export const LauncherButton = () => {
   const wm = useWindowManager();
@@ -86,22 +98,8 @@ export const LauncherButton = () => {
       )}
       onClick={toggleLauncher}
     >
-      <ReflectiveOrb isLauncherOpen={isLauncherOpen} />
-      <Image
-        src={LauncherIcon}
-        alt="launcher icon"
-        className={twMergeClsx(
-          `
-            absolute z-30 mt-1 size-10 opacity-70 drop-shadow-[0_0_0]
-            drop-shadow-transparent transition duration-100
-            group-hover:opacity-100 group-hover:drop-shadow-[0_0_2px]
-            group-hover:drop-shadow-white/50
-          `,
-          isLauncherOpen &&
-            'opacity-90 drop-shadow-[0_0_1px] drop-shadow-white/30',
-        )}
-        draggable={false}
-      />
+      <ReflectiveOrb active={isLauncherOpen} />
+      <LauncherIcon active={isLauncherOpen} />
     </div>
   );
 };

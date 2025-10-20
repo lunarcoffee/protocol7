@@ -20,20 +20,30 @@ import { handleMouseDrag } from '@/utils/handleMouseDrag';
 import { WindowFrame } from '../windows/WindowFrame';
 import { DesktopIcon } from './DesktopIcon';
 
+const Wallpaper = () => (
+  <div
+    className={`
+      absolute size-full bg-aero-tint-darkest object-cover object-center
+    `}
+  >
+    {
+      useFileForComponent('wallpapers/flowers.avif', (file) => (
+        <img
+          src={file.readToObjectURL()}
+          alt="desktop wallpaper"
+          draggable={false}
+          className="absolute size-full object-cover object-center"
+        />
+      ))[0]
+    }
+  </div>
+);
+
 export const Desktop = ({
   windowInfo: { wid, hasFocus },
 }: PropsWithWindowInfo) => {
   const pm = useProcessManager();
   const wm = useWindowManager();
-
-  const [wallpaper] = useFileForComponent('wallpapers/flowers.avif', (file) => (
-    <img
-      src={file.readToObjectURL()}
-      alt="desktop wallpaper"
-      draggable={false}
-      className="absolute size-full object-cover object-center"
-    />
-  ));
 
   // TODO: pull from fs once thats implemented
   const iconData = new Map([
@@ -47,8 +57,30 @@ export const Desktop = ({
     ],
   ]);
 
-  // const iconFilenames = [0, 1].map(
-  //   (i) => `/Users/lunarcoffee/Desktop/icon${i}.json`,
+  // useDirectory(
+  //   'Users/lunarcoffee/Desktop',
+  //   (dir) => {
+  //     // TODO: this of course will not work lol a changing number of hook invocations is a nono.
+  //     // i guess we'll have to just make a useFiles? and i guess stuff the rest of this component
+  //     // into another one unless we wanna draw the ire of the rules of hooks lint. but that feels
+  //     // so flimsy to me...
+  //     const entryFiles = dir
+  //       .entriesAbsolute()
+  //       .map((file) =>
+  //         useFile(file, (handle) => handle, {
+  //           loading: true,
+  //           error: () => false,
+  //         }),
+  //       )
+  //       .filter((file) => file);
+
+  //     if (entryFiles.filter((file) => typeof file === 'boolean').length === 0) {
+  //     }
+  //   },
+  //   {
+  //     loading: null,
+  //     error: () => null,
+  //   },
   // );
 
   // in the latest mouseDown event, was an icon clicked or just the desktop? this value informs the
@@ -148,13 +180,7 @@ export const Desktop = ({
         wasIconClicked.current = false;
       }}
     >
-      <div
-        className={`
-          absolute size-full bg-aero-tint-darkest object-cover object-center
-        `}
-      >
-        {wallpaper}
-      </div>
+      <Wallpaper />
       <div
         onMouseDown={(event) => {
           // clicks directly on the desktop should always deselect icons and prepare for dragging

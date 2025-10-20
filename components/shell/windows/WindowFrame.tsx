@@ -13,11 +13,7 @@ import { PropsWithWindowInfo } from '../../contexts/system/windows/WindowManager
 import { ResizeHandles } from './ResizeHandles';
 import { TitleBar } from './TitleBar';
 
-interface ReflectiveSurfaceProps {
-  size: Dimensions;
-}
-
-const ReflectiveSurface = ({ size }: ReflectiveSurfaceProps) => {
+const ReflectiveSurface = ({ size }: { size: Dimensions }) => {
   // fade out corner glass reflections as the window gets too small
   const cornerReflectionOpacity =
     Math.min(clamp(0, size.x - 350, 150), clamp(0, size.y - 200, 150)) / 150;
