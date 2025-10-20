@@ -5,6 +5,7 @@ import { FileHandle } from '@/components/contexts/system/filesystem';
 
 import { useFile, UseFileOptions, UseFileOtherCallbacks } from './useFile';
 
+// convenience wrapper with empty fragment defaults for non-success states
 export const useFileForComponent = (
   path: PathLike,
   success: (handle: FileHandle) => JSX.Element,

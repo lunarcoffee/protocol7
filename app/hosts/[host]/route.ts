@@ -2,6 +2,8 @@ import { Dirent } from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
 
+import { Skeleton } from '@/components/contexts/system/filesystem';
+
 interface GetParams {
   host: string;
 }
@@ -29,6 +31,13 @@ export const GET = async (
   const dirs = filterToPaths((dirent) => dirent.isDirectory());
   const files = filterToPaths((dirent) => !dirent.isDirectory());
 
+  const manifest = JSON.parse(
+    await fs.readFile(path.join(staticRoot, 'manifest.json'), {
+      encoding: 'utf-8',
+    }),
+  );
+
   //TODO: this will eventually have to include metadata as well
-  return Response.json({ dirs, files });
+  const skeleton: Skeleton = { dirs, files, manifest };
+  return Response.json(skeleton);
 };

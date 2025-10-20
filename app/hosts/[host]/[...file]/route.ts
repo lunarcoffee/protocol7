@@ -21,7 +21,6 @@ export const GET = async (
     const responseData = new FormData();
     // TODO: annoying copy here maybe theres a better solution but im sleepy rn this is good enough
     responseData.append('contents', new Blob([buffer]));
-
     // TODO: (related to comment in other route.ts) eventually may decide this is unnecessary due to
     // already sending metadata in the skeleton (it would be necessary if we want to account for
     // te skeleton metadata and server copy getting out of sync but idk if that's desirable)
