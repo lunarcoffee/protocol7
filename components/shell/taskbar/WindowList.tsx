@@ -67,7 +67,7 @@ export const WindowList = () => {
           initial="transition"
           animate="normal"
           exit="transition"
-          transition={{ duration: 0.06 }}
+          transition={{ duration: 0.08 }}
         >
           <p
             className={`

@@ -120,7 +120,7 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
         exit={['hidden', 'closing']}
         transition={{
           ease: isDisappearing ? 'easeIn' : 'easeOut',
-          duration: 0.2,
+          duration: 0.15,
         }}
         onAnimationComplete={toggleDisappearing}
       >

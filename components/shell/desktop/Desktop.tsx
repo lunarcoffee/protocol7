@@ -4,8 +4,8 @@ import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useImmerReducer } from 'use-immer';
 
 import { PropsWithWindowInfo } from '@/components/contexts/system/windows/WindowManager';
+import { useFileForComponent } from '@/hooks/filesystem/useFileForComponent';
 import { useBoolean } from '@/hooks/useBoolean';
-import { useFile } from '@/hooks/useFile';
 import { useProcessManager } from '@/hooks/useProcessManager';
 import { useWindowManager } from '@/hooks/useWindowManager';
 import Battery from '@/static/localhost/icons/battery.svg';
@@ -26,19 +26,14 @@ export const Desktop = ({
   const pm = useProcessManager();
   const wm = useWindowManager();
 
-  const [wallpaper] = useFile(
-    'wallpapers/flowers.avif',
-    (file) => (
-      <img
-        src={file.readToObjectURL()}
-        alt="desktop wallpaper"
-        draggable={false}
-        className="absolute size-full object-cover object-center"
-      />
-    ),
-    <></>,
-    () => <></>,
-  );
+  const [wallpaper] = useFileForComponent('wallpapers/flowers.avif', (file) => (
+    <img
+      src={file.readToObjectURL()}
+      alt="desktop wallpaper"
+      draggable={false}
+      className="absolute size-full object-cover object-center"
+    />
+  ));
 
   // TODO: pull from fs once thats implemented
   const iconData = new Map([

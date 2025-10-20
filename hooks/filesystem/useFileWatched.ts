@@ -9,10 +9,12 @@ import { useFile } from './useFile';
 export const useFileWatched = <T>(
   path: PathLike,
   success: (handle: FileHandle) => T,
-  loading: T,
-  error: (error: string) => T,
+  otherCallbacks: {
+    loading: T;
+    error: (error: string) => T;
+  },
 ) => {
-  const [result, refresh] = useFile(path, success, loading, error);
+  const [result, refresh] = useFile(path, success, otherCallbacks);
 
   useEffect(() => {
     // TODO: handle rename
