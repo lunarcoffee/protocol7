@@ -17,9 +17,9 @@
     "immer": "^10.1.1",
     "luxon": "^3.7.1",
     "motion": "^12.23.6",
-    "next": "16.0.1",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "next": "16.1.6",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
     "tailwind-merge": "^3.3.1",
     "use-immer": "^0.11.0"
   },
@@ -34,11 +34,11 @@
     "@types/jest": "^30.0.0",
     "@types/luxon": "^3.6.2",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "19.2.10",
+    "@types/react-dom": "19.2.3",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "eslint": "^9.31.0",
-    "eslint-config-next": "15.3.5",
+    "eslint-config-next": "16.1.6",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-better-tailwindcss": "^3.7.4",
     "eslint-plugin-jest": "^29.0.1",
@@ -53,5 +53,9 @@
     "ts-node": "^10.9.2",
     "typescript": "^5",
     "typescript-eslint": "^8.39.1"
+  },
+  "overrides": {
+    "@types/react": "19.2.10",
+    "@types/react-dom": "19.2.3"
   }
 }
