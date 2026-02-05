@@ -4,7 +4,6 @@ import { System } from '../SystemContext';
 import { windowDestroy } from '../windows/updateWindowManager';
 import { WindowID } from '../windows/WindowManager';
 import {
-  PID_SHELL,
   ProcessCreationInfo,
   ProcessID,
   ProcessManager,

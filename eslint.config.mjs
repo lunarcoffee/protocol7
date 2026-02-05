@@ -1,25 +1,21 @@
 import { includeIgnoreFile } from '@eslint/compat';
-import { FlatCompat } from '@eslint/eslintrc';
 import eslint from '@eslint/js';
+import nextVitals from 'eslint-config-next/core-web-vitals';
+import nextTs from 'eslint-config-next/typescript';
 import betterTailwind from 'eslint-plugin-better-tailwindcss';
 import { getDefaultCallees } from 'eslint-plugin-better-tailwindcss/api/defaults';
 import jest from 'eslint-plugin-jest';
 import prettier from 'eslint-plugin-prettier';
 import reactPlugin from 'eslint-plugin-react';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import { dirname } from 'path';
 import tseslint from 'typescript-eslint';
 import { fileURLToPath } from 'url';
-
-const fileName = fileURLToPath(import.meta.url);
-const dirName = dirname(fileName);
-
-const compat = new FlatCompat({ baseDirectory: dirName });
 
 const gitignorePath = fileURLToPath(new URL('.gitignore', import.meta.url));
 
 const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  ...nextVitals,
+  ...nextTs,
 
   reactPlugin.configs.flat.recommended,
   reactPlugin.configs.flat['jsx-runtime'],
