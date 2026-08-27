@@ -9,10 +9,10 @@ import nextJest from 'next/jest.js';
 const createJestConfig = nextJest({ dir: './' });
 
 const config: Config = {
-  collectCoverage: true,
-  coverageProvider: 'v8',
-  errorOnDeprecated: true,
-  testEnvironment: 'jsdom',
+    collectCoverage: true,
+    coverageProvider: 'v8',
+    errorOnDeprecated: true,
+    testEnvironment: 'jsdom',
 };
 
 export default createJestConfig(config);

@@ -1,75 +1,65 @@
 import { WindowManagerDispatchAction } from '@/components/contexts/system/windows/updateWindowManager';
 import {
-  MIN_USER_WID,
-  WindowCreationInfo,
-  WindowID,
-  WindowManager,
+    MIN_USER_WID,
+    WindowCreationInfo,
+    WindowID,
+    WindowManager,
 } from '@/components/contexts/system/windows/WindowManager';
 import { Dimensions } from '@/utils/Dimensions';
 
 import { useSystem } from './useSystem';
 
 export const useWindowManager = () => {
-  const [wm, dispatch] = useWindowManagerRaw();
+    const [wm, dispatch] = useWindowManagerRaw();
 
-  return {
-    nextWindowID: nextWindowID(wm),
-    ...wm,
+    return {
+        nextWindowID: nextWindowID(wm),
+        ...wm,
 
-    create: actionCreate(dispatch),
-    destroy: actionDestroy(dispatch),
-    move: actionMove(dispatch),
-    resize: actionResize(dispatch),
-    minimize: actionMinimize(dispatch),
-    maximize: actionMaximize(dispatch),
-    focus: actionFocus(dispatch),
-  };
+        create: actionCreate(dispatch),
+        destroy: actionDestroy(dispatch),
+        move: actionMove(dispatch),
+        resize: actionResize(dispatch),
+        minimize: actionMinimize(dispatch),
+        maximize: actionMaximize(dispatch),
+        focus: actionFocus(dispatch),
+    };
 };
 
 type WindowManagerDispatch = (action: WindowManagerDispatchAction) => void;
 
 const useWindowManagerRaw = (): [WindowManager, WindowManagerDispatch] => {
-  const [{ wm }, dispatch] = useSystem();
-  return [
-    wm,
-    (action: WindowManagerDispatchAction) =>
-      dispatch({ type: 'window', action }),
-  ];
+    const [{ wm }, dispatch] = useSystem();
+    return [wm, (action: WindowManagerDispatchAction) => dispatch({ type: 'window', action })];
 };
 
 const nextWindowID = ({ windows }: WindowManager) => {
-  let id = MIN_USER_WID;
-  while (windows.get(id)) id++;
-  return id;
+    let id = MIN_USER_WID;
+    while (windows.get(id)) id++;
+    return id;
 };
 
-const actionCreate =
-  (dispatch: WindowManagerDispatch) => (info: WindowCreationInfo) =>
+const actionCreate = (dispatch: WindowManagerDispatch) => (info: WindowCreationInfo) =>
     dispatch({ action: 'create', info });
 
-const actionDestroy = (dispatch: WindowManagerDispatch) => (wid: WindowID) =>
-  dispatch({ action: 'destroy', wid });
+const actionDestroy = (dispatch: WindowManagerDispatch) => (wid: WindowID) => dispatch({ action: 'destroy', wid });
 
-const actionMove =
-  (dispatch: WindowManagerDispatch) => (wid: WindowID, position: Dimensions) =>
+const actionMove = (dispatch: WindowManagerDispatch) => (wid: WindowID, position: Dimensions) =>
     dispatch({ action: 'move', wid, position });
 
 const actionResize =
-  (dispatch: WindowManagerDispatch) =>
-  (wid: WindowID, size: Dimensions, fixRight: boolean, fixBottom: boolean) =>
-    dispatch({
-      action: 'resize',
-      wid,
-      size,
-      fixRight,
-      fixBottom,
-    });
+    (dispatch: WindowManagerDispatch) => (wid: WindowID, size: Dimensions, fixRight: boolean, fixBottom: boolean) =>
+        dispatch({
+            action: 'resize',
+            wid,
+            size,
+            fixRight,
+            fixBottom,
+        });
 
-const actionMinimize = (dispatch: WindowManagerDispatch) => (wid: WindowID) =>
-  dispatch({ action: 'minimize', wid });
+const actionMinimize = (dispatch: WindowManagerDispatch) => (wid: WindowID) => dispatch({ action: 'minimize', wid });
 
 const actionMaximize = (dispatch: WindowManagerDispatch) => (wid: WindowID) =>
-  dispatch({ action: 'toggle_maximized', wid });
+    dispatch({ action: 'toggle_maximized', wid });
 
-const actionFocus = (dispatch: WindowManagerDispatch) => (wid: WindowID) =>
-  dispatch({ action: 'focus', wid });
+const actionFocus = (dispatch: WindowManagerDispatch) => (wid: WindowID) => dispatch({ action: 'focus', wid });

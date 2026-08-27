@@ -14,52 +14,60 @@ import { fileURLToPath } from 'url';
 const gitignorePath = fileURLToPath(new URL('.gitignore', import.meta.url));
 
 const eslintConfig = [
-  ...nextVitals,
-  ...nextTs,
+    ...nextVitals,
+    ...nextTs,
 
-  reactPlugin.configs.flat.recommended,
-  reactPlugin.configs.flat['jsx-runtime'],
+    reactPlugin.configs.flat.recommended,
+    reactPlugin.configs.flat['jsx-runtime'],
 
-  eslint.configs.recommended,
-  ...tseslint.configs.recommended,
+    eslint.configs.recommended,
+    ...tseslint.configs.recommended,
 
-  jest.configs['flat/recommended'],
-  jest.configs['flat/style'],
+    jest.configs['flat/recommended'],
+    jest.configs['flat/style'],
 
-  includeIgnoreFile(gitignorePath),
+    includeIgnoreFile(gitignorePath),
 
-  {
-    plugins: {
-      'simple-import-sort': simpleImportSort,
-      'better-tailwindcss': betterTailwind,
-      prettier,
+    {
+        plugins: {
+            'simple-import-sort': simpleImportSort,
+            'better-tailwindcss': betterTailwind,
+            prettier,
+        },
+        rules: {
+            quotes: ['warn', 'single', { allowTemplateLiterals: false }],
+
+            'react/self-closing-comp': 'warn',
+            'react/jsx-curly-brace-presence': 'warn',
+
+            'simple-import-sort/imports': 'warn',
+            'simple-import-sort/exports': 'warn',
+
+            ...betterTailwind.configs['recommended-warn'].rules,
+            'better-tailwindcss/enforce-consistent-line-wrapping': [
+                'warn',
+                {
+                    printWidth: 110,
+                    indent: 4,
+                    strictness: 'loose',
+                },
+            ],
+
+            'prettier/prettier': 'warn',
+
+            '@next/next/no-img-element': 'off',
+        },
+        settings: {
+            'better-tailwindcss': {
+                entryPoint: 'app/globals.css',
+                callees: [
+                    ...getDefaultCallees(),
+                    // add detection for custom tailwind class helper
+                    ['twMergeClsx', [{ match: 'strings' }, { match: 'objectKeys' }]],
+                ],
+            },
+        },
     },
-    rules: {
-      quotes: ['warn', 'single', { allowTemplateLiterals: false }],
-
-      'react/self-closing-comp': 'warn',
-      'react/jsx-curly-brace-presence': 'warn',
-
-      'simple-import-sort/imports': 'warn',
-      'simple-import-sort/exports': 'warn',
-
-      ...betterTailwind.configs['recommended-warn'].rules,
-
-      'prettier/prettier': 'warn',
-
-      '@next/next/no-img-element': 'off',
-    },
-    settings: {
-      'better-tailwindcss': {
-        entryPoint: 'app/globals.css',
-        callees: [
-          ...getDefaultCallees(),
-          // add detection for custom tailwind class helper
-          ['twMergeClsx', [{ match: 'strings' }, { match: 'objectKeys' }]],
-        ],
-      },
-    },
-  },
 ];
 
 export default eslintConfig;

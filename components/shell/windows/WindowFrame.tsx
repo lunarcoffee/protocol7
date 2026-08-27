@@ -14,128 +14,115 @@ import { ResizeHandles } from './ResizeHandles';
 import { TitleBar } from './TitleBar';
 
 const ReflectiveSurface = ({ size }: { size: Dimensions }) => {
-  // fade out corner glass reflections as the window gets too small
-  const cornerReflectionOpacity =
-    Math.min(clamp(0, size.x - 350, 150), clamp(0, size.y - 200, 150)) / 150;
+    // fade out corner glass reflections as the window gets too small
+    const cornerReflectionOpacity = Math.min(clamp(0, size.x - 350, 150), clamp(0, size.y - 200, 150)) / 150;
 
-  return (
-    <div className="absolute top-0 left-0 z-0 h-2/5 w-full overflow-clip">
-      <div
-        className={`
-          absolute top-0 left-1/4 h-[200%] w-1/5 origin-top-left -rotate-20
-          bg-gradient-to-r via-white/8 via-[3px]
-        `}
-      />
-      <div
-        className={`
-          absolute top-0 left-1/2 h-[200%] w-[max(2rem,8%)] origin-top-left
-          -rotate-20 bg-white/5 shadow-[0_0_3px] shadow-white/10
-        `}
-      />
-      <div style={{ opacity: cornerReflectionOpacity }}>
-        <div
-          className={`
-            absolute top-0 left-2/3 h-[200%] w-1/3 origin-top-left -rotate-20
-            bg-gradient-to-r via-white/10 via-[3px]
-          `}
-        />
-        {/* horizontal upwards edge */}
-        <motion.div
-          className={`
-            absolute bottom-0 left-0 z-0 h-1/3 w-full bg-gradient-to-t
-            from-transparent via-white/40 via-[2px] to-transparent
-          `}
-        />
-      </div>
-    </div>
-  );
+    return (
+        <div className="absolute top-0 left-0 z-0 h-2/5 w-full overflow-clip">
+            <div
+                className={`
+                    absolute top-0 left-1/4 h-[200%] w-1/5 origin-top-left -rotate-20 bg-linear-to-r
+                    via-white/8 via-[3px]
+                `}
+            />
+            <div
+                className={`
+                    absolute top-0 left-1/2 h-[200%] w-[max(2rem,8%)] origin-top-left -rotate-20 bg-white/5
+                    shadow-[0_0_3px] shadow-white/10
+                `}
+            />
+            <div style={{ opacity: cornerReflectionOpacity }}>
+                <div
+                    className={`
+                        absolute top-0 left-2/3 h-[200%] w-1/3 origin-top-left -rotate-20 bg-linear-to-r
+                        via-white/10 via-[3px]
+                    `}
+                />
+                {/* horizontal upwards edge */}
+                <motion.div
+                    className={`
+                        absolute bottom-0 left-0 z-0 h-1/3 w-full bg-linear-to-t from-transparent via-white/40
+                        via-[2px] to-transparent
+                    `}
+                />
+            </div>
+        </div>
+    );
 };
 
 export type WindowFrameProps = PropsWithWindowInfo & PropsWithChildren;
 
 export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
-  const {
-    wid,
-    position,
-    zIndex,
-    size,
-    resizable,
-    isMaximized,
-    isOpen,
-    hasFocus,
-  } = windowInfo;
+    const { wid, position, zIndex, size, resizable, isMaximized, isOpen, hasFocus } = windowInfo;
 
-  const wm = useWindowManager();
+    const wm = useWindowManager();
 
-  const [isDisappearing, toggleDisappearing] = useToggle();
+    const [isDisappearing, toggleDisappearing] = useToggle();
 
-  return (
-    <div
-      className={twMergeClsx(
-        'absolute perspective-midrange',
-        isMaximized && 'top-0 right-0 bottom-10 left-0',
-        isOpen || 'hidden',
-      )}
-      style={{
-        zIndex,
-        ...(!isMaximized && {
-          top: position.y,
-          left: position.x,
-          width: size.x,
-          height: size.y,
-        }),
-      }}
-    >
-      <motion.div
-        onMouseDown={() => wm.focus(wid)}
-        className={twMergeClsx(
-          `
-            absolute top-0 right-0 bottom-0 left-0 flex origin-[50%_-10%]
-            flex-col rounded-md border border-aero-tint-darkest/85
-            bg-gradient-to-tr from-aero-tint-dark/70 to-aero-tint/70 px-1 pb-1
-            shadow-[0_0_20px] inset-shadow-[0_0_2px] shadow-aero-tint-darkest/75
-            inset-shadow-white/80 backdrop-blur-xs
-            text-shadow-aero-tint-darkest/50 text-shadow-md
-          `,
-          hasFocus ||
-            `
-              border-aero-tint-darkest/70 from-aero-tint-dark/50
-              to-aero-tint-dark/50 shadow-aero-tint-darkest/40
-            `,
-          isMaximized && 'rounded-none border-none px-0 pb-0 inset-shadow-none',
-          isDisappearing && 'origin-[50%_110%]',
-        )}
-        variants={{
-          hidden: { opacity: 0 },
-          opening: { rotateX: -30, scale: 0.9 },
-          open: { opacity: 1, rotateX: 0, rotateY: 0, scale: 1 },
-          closing: { rotateX: 30, rotateY: -4, scale: 0.9 },
-        }}
-        initial={['hidden', 'opening']}
-        animate="open"
-        exit={['hidden', 'closing']}
-        transition={{
-          ease: isDisappearing ? 'easeIn' : 'easeOut',
-          duration: 0.15,
-        }}
-        onAnimationComplete={toggleDisappearing}
-      >
-        <TitleBar windowInfo={windowInfo} />
-        <ReflectiveSurface size={size} />
+    return (
         <div
-          className={twMergeClsx(
-            `
-              z-20 grow overflow-clip rounded-sm border
-              border-aero-tint-darkest/85 shadow-[0_0_2px] shadow-white/80
-            `,
-            isMaximized &&
-              'rounded-none border-0 border-t border-t-aero-tint-darkest/85',
-          )}
+            className={twMergeClsx(
+                'absolute perspective-midrange',
+                isMaximized && 'inset-x-0 top-0 bottom-10',
+                isOpen || 'hidden',
+            )}
+            style={{
+                zIndex,
+                ...(!isMaximized && {
+                    top: position.y,
+                    left: position.x,
+                    width: size.x,
+                    height: size.y,
+                }),
+            }}
         >
-          {children}
+            <motion.div
+                onMouseDown={() => wm.focus(wid)}
+                className={twMergeClsx(
+                    `
+                        absolute inset-0 flex origin-[50%_-10%] flex-col rounded-md border
+                        border-aero-tint-darkest/85 bg-linear-to-tr from-aero-tint-dark/70 to-aero-tint/70
+                        px-1 pb-1 shadow-[0_0_20px] inset-shadow-[0_0_2px] shadow-aero-tint-darkest/75
+                        inset-shadow-white/80 backdrop-blur-xs text-shadow-aero-tint-darkest/50 text-shadow-md
+                    `,
+                    hasFocus ||
+                        `
+                            border-aero-tint-darkest/70 from-aero-tint-dark/50 to-aero-tint-dark/50
+                            shadow-aero-tint-darkest/40
+                        `,
+                    isMaximized && 'rounded-none border-none px-0 pb-0 inset-shadow-none',
+                    isDisappearing && 'origin-[50%_110%]',
+                )}
+                variants={{
+                    hidden: { opacity: 0 },
+                    opening: { rotateX: -30, scale: 0.9 },
+                    open: { opacity: 1, rotateX: 0, rotateY: 0, scale: 1 },
+                    closing: { rotateX: 30, rotateY: -4, scale: 0.9 },
+                }}
+                initial={['hidden', 'opening']}
+                animate="open"
+                exit={['hidden', 'closing']}
+                transition={{
+                    ease: isDisappearing ? 'easeIn' : 'easeOut',
+                    duration: 0.15,
+                }}
+                onAnimationComplete={toggleDisappearing}
+            >
+                <TitleBar windowInfo={windowInfo} />
+                <ReflectiveSurface size={size} />
+                <div
+                    className={twMergeClsx(
+                        `
+                            z-20 grow overflow-clip rounded-sm border border-aero-tint-darkest/85
+                            shadow-[0_0_2px] shadow-white/80
+                        `,
+                        isMaximized && 'rounded-none border-0 border-t border-t-aero-tint-darkest/85',
+                    )}
+                >
+                    {children}
+                </div>
+                {resizable && !isMaximized && <ResizeHandles windowInfo={windowInfo} />}
+            </motion.div>
         </div>
-        {resizable && !isMaximized && <ResizeHandles windowInfo={windowInfo} />}
-      </motion.div>
-    </div>
-  );
+    );
 };
