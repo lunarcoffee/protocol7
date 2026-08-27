@@ -27,7 +27,7 @@ const Wallpaper = () => (
     `}
   >
     {
-      useFileForComponent('wallpapers/flowers.avif', (file) => (
+      useFileForComponent('wallpapers/flowers.jpg', (file) => (
         <img
           src={file.readToObjectURL()}
           alt="desktop wallpaper"

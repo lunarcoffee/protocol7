@@ -23,11 +23,11 @@ export const RemoteViewer = () => (
       select-none
     `}
   >
-    {/* maintain 16:10 (8:5) aspect ratio but take up at most 90% of the entire viewport */}
+    {/* maintain 3:2 aspect ratio but take up at most 90% of the entire viewport */}
     <div
       className={`
-        absolute top-0 right-0 bottom-0 left-0 m-auto h-[calc(5/8*90lvw)]
-        max-h-9/10 w-9/10 max-w-[calc(8/5*90lvh)] overflow-clip
+        absolute top-0 right-0 bottom-0 left-0 m-auto h-[calc(2/3*90lvw)]
+        max-h-9/10 w-9/10 max-w-[calc(3/2*90lvh)] overflow-clip
       `}
     >
       <SystemContextProvider fallback={<LoadingFallback />}>
