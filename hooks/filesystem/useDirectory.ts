@@ -1,19 +1,18 @@
 import { promises as fs } from '@zenfs/core';
 import { PathLike } from 'fs';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { DirectoryHandle, OpenDirectoryResult } from '@/components/contexts/system/filesystem';
+import { DirectoryHandle, OpenDirectoryResult } from '@/components/stores/system/filesystem';
 
 import { useBoolean } from '../useBoolean';
-import { useSystem } from '../useSystem';
+import { useSystemHostname } from '../useSystem';
 import { useToggle } from '../useToggle';
 import { RefreshTrigger, UseFileOtherCallbacks } from './useFile';
 
 export type UseDirectoryResult = [OpenDirectoryResult | undefined, boolean, RefreshTrigger];
 
 const useDirectoryRaw = (path: PathLike): UseDirectoryResult => {
-    const [system] = useSystem();
-    const hostname = useMemo(() => system.hostname, [system]);
+    const hostname = useSystemHostname();
     const hostQualifiedPath = `${hostname}/${path}`;
 
     const [handle, setHandle] = useState<OpenDirectoryResult>();

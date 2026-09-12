@@ -1,34 +1,22 @@
-import { ProcessCreationInfo, ProcessID, ProcessManager } from '@/components/contexts/system/processes/ProcessManager';
-import { ProcessManagerDispatchAction } from '@/components/contexts/system/processes/updateProcessManager';
+import { useShallow } from 'zustand/react/shallow';
 
-import { useSystem } from './useSystem';
+import { ProcessID, ProcessInfo } from '@/components/stores/system/processes/ProcessManager';
 
-export const useProcessManager = () => {
-    const [pm, dispatch] = useProcessManagerRaw();
+import { useSystemStore } from './useSystem';
 
-    return {
-        nextProcessID: nextProcessID(pm),
-        ...pm,
+export const useProcess = (pid: ProcessID): ProcessInfo | undefined =>
+    useSystemStore(({ pm }) => pm.processes.get(pid));
 
-        create: actionCreate(dispatch),
-        destroy: actionDestroy(dispatch),
-    };
-};
+export const useProcessIDs = (): ProcessID[] => useSystemStore(useShallow(({ pm }) => Array.from(pm.processes.keys())));
 
-type ProcessManagerDispatch = (action: ProcessManagerDispatchAction) => void;
+export const useCreateProcess = () => useSystemStore(({ createProcess }) => createProcess);
 
-const useProcessManagerRaw = (): [ProcessManager, ProcessManagerDispatch] => {
-    const [{ pm }, dispatch] = useSystem();
-    return [pm, (action: ProcessManagerDispatchAction) => dispatch({ type: 'process', action })];
-};
+export const useDestroyProcess = () => useSystemStore(({ destroyProcess }) => destroyProcess);
 
-const nextProcessID = ({ processes }: ProcessManager) => {
+export const useNextProcessID = () => {
+    const pids = useProcessIDs();
+
     let id = 0;
-    while (processes.get(id)) id++;
+    while (pids.includes(id)) id++;
     return id;
 };
-
-const actionCreate = (dispatch: ProcessManagerDispatch) => (info: ProcessCreationInfo) =>
-    dispatch({ action: 'create', info });
-
-const actionDestroy = (dispatch: ProcessManagerDispatch) => (pid: ProcessID) => dispatch({ action: 'destroy', pid });

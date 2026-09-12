@@ -41,6 +41,7 @@ const directoryDepth = (path: string) => path.split('').filter((c) => c === '/')
 export const createSkeletonForHost = async (hostname: string) => {
     try {
         const response = await fetch('hosts/' + hostname);
+        console.log(response);
         const { dirs, files, manifest } = (await response.json()) as Skeleton;
 
         // create directories before files to avoid problems writing files in nonexistent directories

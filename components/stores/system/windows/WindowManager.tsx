@@ -39,10 +39,6 @@ export interface PropsWithWindowInfo {
     windowInfo: WindowInfo;
 }
 
-type RequiredWindowProps = 'wid' | 'pid' | 'render';
-
-export type WindowCreationInfo = Pick<WindowInfo, RequiredWindowProps> & Partial<Omit<WindowInfo, RequiredWindowProps>>;
-
 export interface WindowManager {
     windows: Map<WindowID, WindowInfo>;
     defaultPosition: (size: Dimensions) => Dimensions;

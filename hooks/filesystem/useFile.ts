@@ -1,16 +1,17 @@
 import { promises as fs } from '@zenfs/core';
 import { PathLike } from 'fs';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
     fetchFileFromHost,
     FileHandle,
     FS_SKELETON_PLACEHOLDER,
     OpenFileResult,
-} from '@/components/contexts/system/filesystem';
+} from '@/components/stores/system/filesystem';
 import { useBoolean } from '@/hooks/useBoolean';
-import { useSystem } from '@/hooks/useSystem';
 import { useToggle } from '@/hooks/useToggle';
+
+import { useSystemHostname } from '../useSystem';
 
 export interface UseFileOptions {
     noFetch?: boolean;
@@ -22,8 +23,7 @@ export type RefreshTrigger = () => void;
 type UseFileResult = [OpenFileResult | undefined, boolean, RefreshTrigger];
 
 const useFileOrFetch = (path: PathLike, { noFetch }: UseFileOptions): UseFileResult => {
-    const [system] = useSystem();
-    const hostname = useMemo(() => system.hostname, [system]);
+    const hostname = useSystemHostname();
     const hostQualifiedPath = `${hostname}/${path}`;
 
     const [handle, setHandle] = useState<OpenFileResult>();

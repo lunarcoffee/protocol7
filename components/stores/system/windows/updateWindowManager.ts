@@ -3,8 +3,8 @@ import { Draft } from 'immer';
 import { Dimensions } from '@/utils/Dimensions';
 
 import { processAttachWindow, processDetachWindow } from '../processes/updateProcessManager';
-import { System } from '../SystemContext';
-import { WindowCreationInfo, WindowID, WindowManager } from './WindowManager';
+import type { System } from '../store';
+import { WindowID, WindowInfo, WindowManager } from './WindowManager';
 
 /* window manager helpers */
 
@@ -23,20 +23,9 @@ const unfocusAll = (system: Draft<System>) => {
 
 /* window manager actions */
 
-export type WindowManagerDispatchAction =
-    | { action: 'create'; info: WindowCreationInfo }
-    | { action: 'destroy'; wid: WindowID }
-    | { action: 'move'; wid: WindowID; position: Dimensions }
-    | {
-          action: 'resize';
-          wid: WindowID;
-          size: Dimensions;
-          fixRight: boolean;
-          fixBottom: boolean;
-      }
-    | { action: 'minimize'; wid: WindowID }
-    | { action: 'toggle_maximized'; wid: WindowID }
-    | { action: 'focus'; wid: WindowID };
+type RequiredWindowProps = 'wid' | 'pid' | 'render';
+
+export type WindowCreationInfo = Pick<WindowInfo, RequiredWindowProps> & Partial<Omit<WindowInfo, RequiredWindowProps>>;
 
 export const windowCreate = (
     system: Draft<System>,
@@ -147,46 +136,4 @@ export const windowFocus = (system: Draft<System>, wid: WindowID) => {
     });
 
     destroyEphemeralWindows(system);
-};
-
-export const updateWindowManager = (system: Draft<System>, action: WindowManagerDispatchAction) => {
-    const { wm } = system;
-
-    switch (action.action) {
-        case 'create': {
-            const { info } = action;
-            windowCreate(system, info);
-            break;
-        }
-        case 'destroy': {
-            const { wid } = action;
-            windowDestroy(system, wid);
-            break;
-        }
-        case 'move': {
-            const { wid, position } = action;
-            windowMove(wm, wid, position);
-            break;
-        }
-        case 'resize': {
-            const { wid, size, fixRight, fixBottom } = action;
-            windowResize(wm, wid, size, fixRight, fixBottom);
-            break;
-        }
-        case 'minimize': {
-            const { wid } = action;
-            windowMinimize(system, wid);
-            break;
-        }
-        case 'toggle_maximized': {
-            const { wid } = action;
-            windowToggleMaximized(system, wid);
-            break;
-        }
-        case 'focus': {
-            const { wid } = action;
-            windowFocus(system, wid);
-            break;
-        }
-    }
 };

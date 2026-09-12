@@ -1,7 +1,9 @@
 import { AnimatePresence, motion } from 'motion/react';
+import { useShallow } from 'zustand/shallow';
 
-import { WID_DESKTOP, WID_LAUNCHER, WID_TASKBAR, WindowInfo } from '@/components/contexts/system/windows/WindowManager';
-import { useWindowManager } from '@/hooks/useWindowManager';
+import { WID_DESKTOP, WID_LAUNCHER, WID_TASKBAR, WindowInfo } from '@/components/stores/system/windows/WindowManager';
+import { useSystemStore } from '@/hooks/useSystem';
+import { useFocusWindow, useMinimizeWindow } from '@/hooks/useWindowManager';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
 // IDs of windows which should not appear in the window list
@@ -12,17 +14,19 @@ export interface WindowListProps {
 }
 
 export const WindowList = () => {
-    const wm = useWindowManager();
-
-    const visibleWindows = wm.windows
-        .values()
-        .filter(({ wid, isEphemeral }) => !(isEphemeral || HIDDEN_WIDS.includes(wid)));
+    const listableWindows = useSystemStore(
+        useShallow(({ wm: { windows } }) =>
+            Array.from(windows.values()).filter(({ wid, isEphemeral }) => !(isEphemeral || HIDDEN_WIDS.includes(wid))),
+        ),
+    );
+    const minimizeWindow = useMinimizeWindow();
+    const focusWindow = useFocusWindow();
 
     return (
         <AnimatePresence>
-            {Array.from(visibleWindows, ({ wid, title, hasFocus }) => (
+            {Array.from(listableWindows, ({ wid, title, hasFocus }) => (
                 <motion.div
-                    onClick={hasFocus ? () => wm.minimize(wid) : () => wm.focus(wid)}
+                    onClick={hasFocus ? () => minimizeWindow(wid) : () => focusWindow(wid)}
                     className={twMergeClsx(
                         `
                             relative flex h-8 min-w-0 shrink basis-40 flex-row items-center overflow-clip

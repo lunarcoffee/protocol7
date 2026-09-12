@@ -4,12 +4,12 @@ import { motion } from 'motion/react';
 import { PropsWithChildren } from 'react';
 
 import { useToggle } from '@/hooks/useToggle';
-import { useWindowManager } from '@/hooks/useWindowManager';
+import { useFocusWindow } from '@/hooks/useWindowManager';
 import { clamp } from '@/utils/clamp';
 import { Dimensions } from '@/utils/Dimensions';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
-import { PropsWithWindowInfo } from '../../contexts/system/windows/WindowManager';
+import { PropsWithWindowInfo } from '../../stores/system/windows/WindowManager';
 import { ResizeHandles } from './ResizeHandles';
 import { TitleBar } from './TitleBar';
 
@@ -55,7 +55,7 @@ export type WindowFrameProps = PropsWithWindowInfo & PropsWithChildren;
 export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
     const { wid, position, zIndex, size, resizable, isMaximized, isOpen, hasFocus } = windowInfo;
 
-    const wm = useWindowManager();
+    const focusWindow = useFocusWindow();
 
     const [isDisappearing, toggleDisappearing] = useToggle();
 
@@ -77,7 +77,7 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
             }}
         >
             <motion.div
-                onMouseDown={() => wm.focus(wid)}
+                onMouseDown={() => focusWindow(wid)}
                 className={twMergeClsx(
                     `
                         absolute inset-0 flex origin-[50%_-10%] flex-col rounded-md border

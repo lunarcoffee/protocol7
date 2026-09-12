@@ -12,8 +12,8 @@ export const GET = async (_: NextRequest, { params }: { params: Promise<GetParam
     const { host, file } = await params;
 
     try {
-        const staticPath = path.join('static', host, ...file);
-        const data = await fs.readFile(staticPath);
+        const filePath = path.join('assets', host, ...file);
+        const data = await fs.readFile(filePath);
         const buffer = Buffer.from(data);
 
         const responseData = new FormData();

@@ -14,11 +14,6 @@ export interface ProcessInfo {
     // TODO: implemenet this behavior
 }
 
-type RequiredProcessProps = 'pid';
-
-export type ProcessCreationInfo = Pick<ProcessInfo, RequiredProcessProps> &
-    Partial<Omit<ProcessInfo, RequiredProcessProps>>;
-
 export interface ProcessManager {
     processes: Map<ProcessID, ProcessInfo>;
 }

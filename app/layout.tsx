@@ -2,6 +2,7 @@ import './globals.css';
 
 import type { Metadata } from 'next';
 import { Manrope, Open_Sans } from 'next/font/google';
+import { ReactNode } from 'react';
 
 const openSans = Open_Sans({
     variable: '--font-open-sans',
@@ -20,11 +21,7 @@ export const metadata: Metadata = {
     description: 'remote shell',
 };
 
-export default function RootLayout({
-    children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
     return (
         <html lang="en">
             <body

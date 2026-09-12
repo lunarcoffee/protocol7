@@ -1,9 +1,9 @@
 import { Draft } from 'immer';
 
-import { System } from '../SystemContext';
+import type { System } from '../store';
 import { windowDestroy } from '../windows/updateWindowManager';
 import { WindowID } from '../windows/WindowManager';
-import { ProcessCreationInfo, ProcessID, ProcessManager } from './ProcessManager';
+import { ProcessID, ProcessInfo, ProcessManager } from './ProcessManager';
 
 /* process manager helpers */
 
@@ -16,16 +16,18 @@ export const processAttachWindow = ({ processes }: Draft<ProcessManager>, pid: P
 export const processDetachWindow = (system: Draft<System>, pid: ProcessID, wid: WindowID) => {
     const process = system.pm.processes.get(pid);
     if (process) {
-        process.windows.splice(process.windows.indexOf(wid), 1);
+        const index = process.windows.indexOf(wid);
+        if (index >= 0) process.windows.splice(index, 1);
         if (!process.windows.length && !process.isHeadless) processDestroy(system, pid);
     }
 };
 
 /* process manager actions */
 
-export type ProcessManagerDispatchAction =
-    | { action: 'create'; info: ProcessCreationInfo }
-    | { action: 'destroy'; pid: ProcessID };
+type RequiredProcessProps = 'pid';
+
+export type ProcessCreationInfo = Pick<ProcessInfo, RequiredProcessProps> &
+    Partial<Omit<ProcessInfo, RequiredProcessProps>>;
 
 export const processCreate = ({ processes }: Draft<ProcessManager>, info: ProcessCreationInfo) => {
     const { pid } = info;
@@ -49,22 +51,5 @@ export const processDestroy = (system: Draft<System>, pid: ProcessID) => {
     if (process) {
         processes.delete(pid);
         process.windows.forEach((wid) => windowDestroy(system, wid));
-    }
-};
-
-export const updateProcessManager = (system: Draft<System>, action: ProcessManagerDispatchAction) => {
-    const { pm } = system;
-
-    switch (action.action) {
-        case 'create': {
-            const { info } = action;
-            processCreate(pm, info);
-            break;
-        }
-        case 'destroy': {
-            const { pid } = action;
-            processDestroy(system, pid);
-            break;
-        }
     }
 };

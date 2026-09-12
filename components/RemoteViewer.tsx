@@ -1,7 +1,7 @@
 'use client';
 
-import { SystemContextProvider } from './contexts/system/SystemContext';
 import { GraphicalShell } from './shell/GraphicalShell';
+import { SystemContextProvider } from './stores/system/SystemContext';
 
 const LoadingFallback = () => (
     <div className="flex size-full items-center justify-center inset-shadow-[0_0_10rem] inset-shadow-white/15">
@@ -18,7 +18,7 @@ export const RemoteViewer = () => (
                 overflow-clip
             `}
         >
-            <SystemContextProvider fallback={<LoadingFallback />}>
+            <SystemContextProvider hostname="localhost" fallback={<LoadingFallback />}>
                 <GraphicalShell />
             </SystemContextProvider>
         </div>

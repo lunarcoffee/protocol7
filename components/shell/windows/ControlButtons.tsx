@@ -1,5 +1,5 @@
-import { PropsWithWindowInfo } from '@/components/contexts/system/windows/WindowManager';
-import { useWindowManager } from '@/hooks/useWindowManager';
+import { PropsWithWindowInfo } from '@/components/stores/system/windows/WindowManager';
+import { useDestroyWindow, useMaximizeWindow, useMinimizeWindow } from '@/hooks/useWindowManager';
 
 const ControlButton = ({
     bgFrom,
@@ -64,7 +64,9 @@ const ControlButton = ({
 );
 
 export const ControlButtons = ({ windowInfo: { wid } }: PropsWithWindowInfo) => {
-    const wm = useWindowManager();
+    const minimizeWindow = useMinimizeWindow();
+    const maximizeWindow = useMaximizeWindow();
+    const destroyWindow = useDestroyWindow();
 
     return (
         <div className="flex flex-row items-center gap-2">
@@ -75,7 +77,7 @@ export const ControlButtons = ({ windowInfo: { wid } }: PropsWithWindowInfo) => 
                 topGlow="from-lime-200"
                 topShadow="inset-shadow-lime-950"
                 bottomGlow="from-lime-300"
-                onClick={() => wm.minimize(wid)}
+                onClick={() => minimizeWindow(wid)}
             />
             <ControlButton
                 bgFrom="from-yellow-400"
@@ -84,7 +86,7 @@ export const ControlButtons = ({ windowInfo: { wid } }: PropsWithWindowInfo) => 
                 topGlow="from-yellow-200"
                 topShadow="inset-shadow-yellow-950"
                 bottomGlow="from-yellow-300"
-                onClick={() => wm.maximize(wid)}
+                onClick={() => maximizeWindow(wid)}
             />
             <ControlButton
                 bgFrom="from-red-500"
@@ -93,7 +95,7 @@ export const ControlButtons = ({ windowInfo: { wid } }: PropsWithWindowInfo) => 
                 topGlow="from-red-200"
                 topShadow="inset-shadow-red-950"
                 bottomGlow="from-red-300"
-                onClick={() => wm.destroy(wid)}
+                onClick={() => destroyWindow(wid)}
             />
         </div>
     );

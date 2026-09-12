@@ -1,10 +1,14 @@
-import { use } from 'react';
+import { useContext } from 'react';
+import { useStore } from 'zustand';
 
-import {
-    System,
-    SystemContext,
-    SystemDispatch,
-    SystemDispatchContext,
-} from '@/components/contexts/system/SystemContext';
+import { SystemStore } from '@/components/stores/system/store';
+import { SystemStoreContext } from '@/components/stores/system/SystemContext';
 
-export const useSystem = (): [System, SystemDispatch] => [use(SystemContext), use(SystemDispatchContext)];
+export const useSystemStore = <T>(selector: (system: SystemStore) => T): T => {
+    const store = useContext(SystemStoreContext);
+    if (!store) throw new Error('system store uninitialized!');
+
+    return useStore(store, selector);
+};
+
+export const useSystemHostname = () => useSystemStore((system) => system.hostname);

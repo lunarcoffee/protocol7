@@ -2,7 +2,7 @@ import { Dirent } from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
 
-import { Skeleton } from '@/components/contexts/system/filesystem';
+import { Skeleton } from '@/components/stores/system/filesystem';
 
 interface GetParams {
     host: string;
@@ -14,8 +14,8 @@ export const GET = async (_: Request, { params }: { params: Promise<GetParams> }
     const { host } = await params;
 
     // TODO: maybe generate this statically for performance
-    const staticRoot = path.join('static', host);
-    const dirents = await fs.readdir(staticRoot, {
+    const fileRoot = path.join('assets', host);
+    const dirents = await fs.readdir(fileRoot, {
         recursive: true,
         withFileTypes: true,
     });
@@ -30,7 +30,7 @@ export const GET = async (_: Request, { params }: { params: Promise<GetParams> }
     const files = filterToPaths((dirent) => !dirent.isDirectory());
 
     const manifest = JSON.parse(
-        await fs.readFile(path.join(staticRoot, 'manifest.json'), {
+        await fs.readFile(path.join(fileRoot, 'manifest.json'), {
             encoding: 'utf-8',
         }),
     );

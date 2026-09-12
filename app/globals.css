@@ -1,37 +1,29 @@
 @import 'tailwindcss';
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #f6f6f6;
+    --background: #0a0a0a;
+    --foreground: #f6f6f6;
 
-  --aero-tint-hue-saturation: 210deg 40%;
+    --aero-tint-hue-saturation: 210deg 40%;
 
-  --aero-tint-regular-lightness: 40%;
-  --aero-tint-dark-lightness: 30%;
-  --aero-tint-darkest-lightness: 7%;
-  --aero-tint-highlight-lightness: 80%;
+    --aero-tint-regular-lightness: 40%;
+    --aero-tint-dark-lightness: 30%;
+    --aero-tint-darkest-lightness: 7%;
+    --aero-tint-highlight-lightness: 80%;
 }
 
 @theme {
-  --color-aero-tint: hsl(
-    var(--aero-tint-hue-saturation) var(--aero-tint-regular-lightness)
-  );
-  --color-aero-tint-dark: hsl(
-    var(--aero-tint-hue-saturation) var(--aero-tint-dark-lightness)
-  );
-  --color-aero-tint-darkest: hsl(
-    var(--aero-tint-hue-saturation) var(--aero-tint-darkest-lightness)
-  );
-  --color-aero-tint-highlight: hsl(
-    var(--aero-tint-hue-saturation) var(--aero-tint-highlight-lightness)
-  );
+    --color-aero-tint: hsl(var(--aero-tint-hue-saturation) var(--aero-tint-regular-lightness));
+    --color-aero-tint-dark: hsl(var(--aero-tint-hue-saturation) var(--aero-tint-dark-lightness));
+    --color-aero-tint-darkest: hsl(var(--aero-tint-hue-saturation) var(--aero-tint-darkest-lightness));
+    --color-aero-tint-highlight: hsl(var(--aero-tint-hue-saturation) var(--aero-tint-highlight-lightness));
 
-  --font-manrope: var(--font-manrope);
-  --font-open-sans: var(--font-open-sans);
+    --font-manrope: var(--font-manrope);
+    --font-open-sans: var(--font-open-sans);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-open-sans), Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-open-sans), Arial, Helvetica, sans-serif;
 }

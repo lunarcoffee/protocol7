@@ -2,7 +2,7 @@ import fs from '@zenfs/core';
 import { PathLike } from 'fs';
 import { useEffect } from 'react';
 
-import { FileHandle } from '@/components/contexts/system/filesystem';
+import { FileHandle } from '@/components/stores/system/filesystem';
 
 import { RefreshTrigger, useFile, UseFileOtherCallbacks } from './useFile';
 

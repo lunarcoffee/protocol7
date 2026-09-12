@@ -3,16 +3,16 @@
 import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useImmerReducer } from 'use-immer';
 
-import { PropsWithWindowInfo } from '@/components/contexts/system/windows/WindowManager';
+import Battery from '@/assets/localhost/icons/battery.svg';
+import Wireless from '@/assets/localhost/icons/wireless.svg';
+import Launcher from '@/assets/localhost/launcher.png';
+import Garden from '@/assets/localhost/pictures/garden.jpg';
+import Maple from '@/assets/localhost/pictures/maple.jpg';
+import { PropsWithWindowInfo } from '@/components/stores/system/windows/WindowManager';
 import { useFileForComponent } from '@/hooks/filesystem/useFileForComponent';
 import { useBoolean } from '@/hooks/useBoolean';
-import { useProcessManager } from '@/hooks/useProcessManager';
-import { useWindowManager } from '@/hooks/useWindowManager';
-import Battery from '@/static/localhost/icons/battery.svg';
-import Wireless from '@/static/localhost/icons/wireless.svg';
-import Launcher from '@/static/localhost/launcher.png';
-import Garden from '@/static/localhost/pictures/garden.jpg';
-import Maple from '@/static/localhost/pictures/maple.jpg';
+import { useCreateProcess, useNextProcessID } from '@/hooks/useProcessManager';
+import { useCreateWindow, useFocusWindow, useNextWindowID } from '@/hooks/useWindowManager';
 import { Dimensions, toScreenPosition } from '@/utils/Dimensions';
 import { doRectanglesIntersect } from '@/utils/doRectanglesIntersect';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
@@ -35,24 +35,27 @@ const Wallpaper = () => (
     </div>
 );
 
-export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) => {
-    const pm = useProcessManager();
-    const wm = useWindowManager();
+// TODO: pull from fs once thats implemented
+const iconData = new Map([
+    ['1.desktop', { icon: Maple, label: 'HPIM_3328.jpg' }],
+    ['2.desktop', { icon: Garden, label: 'HPIM_3329.jpg' }],
+    ['3.desktop', { icon: Battery, label: 'battery indicator.svg' }],
+    ['4.desktop', { icon: Wireless, label: 'signal.jpg' }],
+    [
+        '5.desktop',
+        {
+            icon: Launcher,
+            label: 'hanyu english字典 translation dictionary.txt',
+        },
+    ],
+]);
 
-    // TODO: pull from fs once thats implemented
-    const iconData = new Map([
-        ['1.desktop', { icon: Maple, label: 'HPIM_3328.jpg' }],
-        ['2.desktop', { icon: Garden, label: 'HPIM_3329.jpg' }],
-        ['3.desktop', { icon: Battery, label: 'battery indicator.svg' }],
-        ['4.desktop', { icon: Wireless, label: 'signal.jpg' }],
-        [
-            '5.desktop',
-            {
-                icon: Launcher,
-                label: 'hanyu english字典 translation dictionary.txt',
-            },
-        ],
-    ]);
+export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) => {
+    const nextProcessID = useNextProcessID();
+    const nextWindowID = useNextWindowID();
+    const createProcess = useCreateProcess();
+    const createWindow = useCreateWindow();
+    const focusWindow = useFocusWindow();
 
     // useDirectory(
     //   'Users/lunarcoffee/Desktop',
@@ -167,7 +170,7 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
         <div
             className="absolute inset-0 z-0"
             onMouseDownCapture={() => {
-                wm.focus(wid);
+                focusWindow(wid);
 
                 // reset for the new click event; this happens in the capturing stage so it comes before other
                 // reads/writes
@@ -193,10 +196,10 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
                         {...icon}
                         id={id}
                         onLaunch={() => {
-                            pm.create({ pid: pm.nextProcessID });
-                            wm.create({
-                                pid: pm.nextProcessID,
-                                wid: wm.nextWindowID,
+                            createProcess({ pid: nextProcessID });
+                            createWindow({
+                                pid: nextProcessID,
+                                wid: nextWindowID,
                                 title: icon.label,
                                 size: { x: 800, y: 500 },
                                 render: (windowInfo) => (

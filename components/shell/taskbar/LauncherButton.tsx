@@ -1,7 +1,7 @@
-import { PID_SHELL } from '@/components/contexts/system/processes/ProcessManager';
-import { WID_LAUNCHER } from '@/components/contexts/system/windows/WindowManager';
+import { PID_SHELL } from '@/components/stores/system/processes/ProcessManager';
+import { WID_LAUNCHER } from '@/components/stores/system/windows/WindowManager';
 import { useFileForComponent } from '@/hooks/filesystem/useFileForComponent';
-import { useWindowManager } from '@/hooks/useWindowManager';
+import { useCreateWindow, useDestroyWindow, useWindow } from '@/hooks/useWindowManager';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
 import { Launcher } from './Launcher';
@@ -62,14 +62,16 @@ const LauncherIcon = ({ active }: { active: boolean }) =>
     ))[0];
 
 export const LauncherButton = () => {
-    const wm = useWindowManager();
-    const isLauncherOpen = wm.windows.has(WID_LAUNCHER);
+    const launcherWindow = useWindow(WID_LAUNCHER);
+    const createWindow = useCreateWindow();
+    const destroyWindow = useDestroyWindow();
+    const isLauncherOpen = launcherWindow !== undefined;
 
     const toggleLauncher = () => {
         if (isLauncherOpen) {
-            wm.destroy(WID_LAUNCHER);
+            destroyWindow(WID_LAUNCHER);
         } else {
-            wm.create({
+            createWindow({
                 pid: PID_SHELL,
                 wid: WID_LAUNCHER,
                 title: 'Launcher',
