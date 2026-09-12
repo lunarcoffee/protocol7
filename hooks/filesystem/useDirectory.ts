@@ -4,8 +4,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { DirectoryHandle, OpenDirectoryResult } from '@/utils/filesystem';
 
+import { useSystemHostname } from '../system';
 import { useBoolean } from '../useBoolean';
-import { useSystemHostname } from '../useSystem';
 import { useToggle } from '../useToggle';
 import { RefreshTrigger, UseFileOtherCallbacks } from './useFile';
 

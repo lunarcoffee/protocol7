@@ -1,4 +1,4 @@
-import { useMaximizeWindow, useMoveWindow } from '@/hooks/useWindowManager';
+import { useMaximizeWindow, useMoveWindow } from '@/hooks/windows';
 import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import { Dimensions } from '@/utils/Dimensions';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';

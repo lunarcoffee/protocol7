@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useShallow } from 'zustand/shallow';
 
-import { useSystemStore } from '@/hooks/useSystem';
-import { useFocusWindow, useMinimizeWindow } from '@/hooks/useWindowManager';
+import { useSystemStore } from '@/hooks/system';
+import { useFocusWindow, useMinimizeWindow } from '@/hooks/windows';
 import { WID_DESKTOP, WID_LAUNCHER, WID_TASKBAR, WindowInfo } from '@/stores/system/windows/WindowManager';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 

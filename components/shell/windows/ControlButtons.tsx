@@ -1,4 +1,4 @@
-import { useDestroyWindow, useMaximizeWindow, useMinimizeWindow } from '@/hooks/useWindowManager';
+import { useDestroyWindow, useMaximizeWindow, useMinimizeWindow } from '@/hooks/windows';
 import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 
 const ControlButton = ({

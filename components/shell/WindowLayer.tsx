@@ -2,7 +2,7 @@
 
 import { AnimatePresence } from 'motion/react';
 
-import { useWindow, useWindowIDs } from '@/hooks/useWindowManager';
+import { useWindow, useWindowIDs } from '@/hooks/windows';
 import { WindowID } from '@/stores/system/windows/WindowManager';
 
 const Window = ({ wid }: { wid: WindowID }) => {

@@ -2,7 +2,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { MIN_USER_WID, WindowID, WindowInfo } from '@/stores/system/windows/WindowManager';
 
-import { useSystemStore } from './useSystem';
+import { useSystemStore } from './system';
 
 export const useWindow = (wid: WindowID): WindowInfo | undefined => useSystemStore(({ wm }) => wm.windows.get(wid));
 

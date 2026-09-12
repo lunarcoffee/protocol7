@@ -6,7 +6,7 @@ import { useBoolean } from '@/hooks/useBoolean';
 import { useToggle } from '@/hooks/useToggle';
 import { fetchFileFromHost, FileHandle, FS_SKELETON_PLACEHOLDER, OpenFileResult } from '@/utils/filesystem';
 
-import { useSystemHostname } from '../useSystem';
+import { useSystemHostname } from '../system';
 
 export interface UseFileOptions {
     noFetch?: boolean;

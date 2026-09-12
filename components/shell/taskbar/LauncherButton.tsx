@@ -1,5 +1,5 @@
 import { useFileForComponent } from '@/hooks/filesystem/useFileForComponent';
-import { useCreateWindow, useDestroyWindow, useWindow } from '@/hooks/useWindowManager';
+import { useCreateWindow, useDestroyWindow, useWindow } from '@/hooks/windows';
 import { PID_SHELL } from '@/stores/system/processes/ProcessManager';
 import { WID_LAUNCHER } from '@/stores/system/windows/WindowManager';
 import { twMergeClsx } from '@/utils/twMergeClsx';

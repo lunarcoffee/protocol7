@@ -2,7 +2,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { ProcessID, ProcessInfo } from '@/stores/system/processes/ProcessManager';
 
-import { useSystemStore } from './useSystem';
+import { useSystemStore } from './system';
 
 export const useProcess = (pid: ProcessID): ProcessInfo | undefined =>
     useSystemStore(({ pm }) => pm.processes.get(pid));
