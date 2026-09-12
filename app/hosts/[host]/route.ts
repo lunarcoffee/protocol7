@@ -2,7 +2,7 @@ import { Dirent } from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
 
-import { Skeleton } from '@/components/stores/system/filesystem';
+import { Skeleton } from '@/utils/filesystem';
 
 interface GetParams {
     host: string;

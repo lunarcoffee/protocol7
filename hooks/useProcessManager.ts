@@ -1,6 +1,6 @@
 import { useShallow } from 'zustand/react/shallow';
 
-import { ProcessID, ProcessInfo } from '@/components/stores/system/processes/ProcessManager';
+import { ProcessID, ProcessInfo } from '@/stores/system/processes/ProcessManager';
 
 import { useSystemStore } from './useSystem';
 

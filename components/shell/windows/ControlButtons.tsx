@@ -1,5 +1,5 @@
-import { PropsWithWindowInfo } from '@/components/stores/system/windows/WindowManager';
 import { useDestroyWindow, useMaximizeWindow, useMinimizeWindow } from '@/hooks/useWindowManager';
+import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 
 const ControlButton = ({
     bgFrom,

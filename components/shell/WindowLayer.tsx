@@ -2,8 +2,8 @@
 
 import { AnimatePresence } from 'motion/react';
 
-import { WindowID } from '@/components/stores/system/windows/WindowManager';
 import { useWindow, useWindowIDs } from '@/hooks/useWindowManager';
+import { WindowID } from '@/stores/system/windows/WindowManager';
 
 const Window = ({ wid }: { wid: WindowID }) => {
     const windowInfo = useWindow(wid);

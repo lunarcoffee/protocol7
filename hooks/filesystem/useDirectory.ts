@@ -2,7 +2,7 @@ import { promises as fs } from '@zenfs/core';
 import { PathLike } from 'fs';
 import { useCallback, useEffect, useState } from 'react';
 
-import { DirectoryHandle, OpenDirectoryResult } from '@/components/stores/system/filesystem';
+import { DirectoryHandle, OpenDirectoryResult } from '@/utils/filesystem';
 
 import { useBoolean } from '../useBoolean';
 import { useSystemHostname } from '../useSystem';

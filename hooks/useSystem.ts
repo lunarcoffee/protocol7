@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import { useStore } from 'zustand';
 
-import { SystemStore } from '@/components/stores/system/store';
-import { SystemStoreContext } from '@/components/stores/system/SystemContext';
+import { SystemStoreContext } from '@/components/contexts/SystemContext';
+import { SystemStore } from '@/stores/system/store';
 
 export const useSystemStore = <T>(selector: (system: SystemStore) => T): T => {
     const store = useContext(SystemStoreContext);

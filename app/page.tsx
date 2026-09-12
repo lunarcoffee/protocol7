@@ -1,11 +1,11 @@
 import { StrictMode } from 'react';
 
-import { RemoteViewer } from '@/components/RemoteViewer';
+import { App } from '@/components/App';
 
 export default function Home() {
     return (
         <StrictMode>
-            <RemoteViewer />
+            <App />
         </StrictMode>
     );
 }

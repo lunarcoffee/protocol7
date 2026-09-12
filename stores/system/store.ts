@@ -1,4 +1,3 @@
-import { enableMapSet } from 'immer';
 import { immer } from 'zustand/middleware/immer';
 import { createStore, StoreApi } from 'zustand/vanilla';
 
@@ -17,8 +16,6 @@ import {
     windowToggleMaximized,
 } from './windows/updateWindowManager';
 import { DEFAULT_WINDOW_MANAGER, WindowID, WindowManager } from './windows/WindowManager';
-
-enableMapSet();
 
 export interface System {
     hostname: string;

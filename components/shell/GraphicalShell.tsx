@@ -4,9 +4,9 @@ import { useEffect } from 'react';
 
 import { useCreateProcess, useDestroyProcess } from '@/hooks/useProcessManager';
 import { useCreateWindow } from '@/hooks/useWindowManager';
+import { PID_SHELL } from '@/stores/system/processes/ProcessManager';
+import { WID_DESKTOP, WID_TASKBAR } from '@/stores/system/windows/WindowManager';
 
-import { PID_SHELL } from '../stores/system/processes/ProcessManager';
-import { WID_DESKTOP, WID_TASKBAR } from '../stores/system/windows/WindowManager';
 import { Desktop } from './desktop/Desktop';
 import { Taskbar } from './taskbar/Taskbar';
 import { WindowLayer } from './WindowLayer';

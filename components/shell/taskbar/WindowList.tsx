@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useShallow } from 'zustand/shallow';
 
-import { WID_DESKTOP, WID_LAUNCHER, WID_TASKBAR, WindowInfo } from '@/components/stores/system/windows/WindowManager';
 import { useSystemStore } from '@/hooks/useSystem';
 import { useFocusWindow, useMinimizeWindow } from '@/hooks/useWindowManager';
+import { WID_DESKTOP, WID_LAUNCHER, WID_TASKBAR, WindowInfo } from '@/stores/system/windows/WindowManager';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
 // IDs of windows which should not appear in the window list

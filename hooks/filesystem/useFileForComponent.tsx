@@ -1,7 +1,7 @@
 import { PathLike } from 'fs';
 import { JSX } from 'react';
 
-import { FileHandle } from '@/components/stores/system/filesystem';
+import { FileHandle } from '@/utils/filesystem';
 
 import { useFile, UseFileOptions, UseFileOtherCallbacks } from './useFile';
 

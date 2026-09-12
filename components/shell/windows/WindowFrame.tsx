@@ -5,11 +5,11 @@ import { PropsWithChildren } from 'react';
 
 import { useToggle } from '@/hooks/useToggle';
 import { useFocusWindow } from '@/hooks/useWindowManager';
+import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import { clamp } from '@/utils/clamp';
 import { Dimensions } from '@/utils/Dimensions';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
-import { PropsWithWindowInfo } from '../../stores/system/windows/WindowManager';
 import { ResizeHandles } from './ResizeHandles';
 import { TitleBar } from './TitleBar';
 

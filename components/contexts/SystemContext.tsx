@@ -1,13 +1,10 @@
-import { configureSingle } from '@zenfs/core';
-import { IndexedDB } from '@zenfs/dom';
 import type { JSX, PropsWithChildren } from 'react';
 import { createContext, useEffect, useRef } from 'react';
 import type { StoreApi } from 'zustand/vanilla';
 
 import { useBoolean } from '@/hooks/useBoolean';
-
-import { createSkeletonForHost, eraseHostFiles } from './filesystem';
-import { createSystemStore, SystemStore } from './store';
+import { createSystemStore, SystemStore } from '@/stores/system/store';
+import { createSkeletonForHost, eraseHostFiles } from '@/utils/filesystem';
 
 export const SystemStoreContext = createContext<StoreApi<SystemStore> | null>(null);
 
@@ -18,16 +15,13 @@ export interface SystemContextProviderProps extends PropsWithChildren {
 
 export const SystemContextProvider = ({ hostname, fallback, children }: SystemContextProviderProps) => {
     const storeRef = useRef<StoreApi<SystemStore>>(null);
-    if (!storeRef.current) storeRef.current = createSystemStore(hostname);
+    if (!storeRef.current) storeRef.current = createSystemStore(hostname); // TODO: new store when hostname changes
     const store = storeRef.current;
 
     const [isFsReady, setFsReady, setFsNotReady] = useBoolean();
 
     useEffect(() => {
         const initializeFilesystem = async () => {
-            // TODO: try to only call this once per application, not once per host
-            await configureSingle({ backend: IndexedDB });
-
             await eraseHostFiles(hostname); // TODO: only for debug
             await createSkeletonForHost(hostname);
 

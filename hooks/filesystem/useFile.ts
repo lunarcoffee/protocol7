@@ -2,14 +2,9 @@ import { promises as fs } from '@zenfs/core';
 import { PathLike } from 'fs';
 import { useCallback, useEffect, useState } from 'react';
 
-import {
-    fetchFileFromHost,
-    FileHandle,
-    FS_SKELETON_PLACEHOLDER,
-    OpenFileResult,
-} from '@/components/stores/system/filesystem';
 import { useBoolean } from '@/hooks/useBoolean';
 import { useToggle } from '@/hooks/useToggle';
+import { fetchFileFromHost, FileHandle, FS_SKELETON_PLACEHOLDER, OpenFileResult } from '@/utils/filesystem';
 
 import { useSystemHostname } from '../useSystem';
 

@@ -1,5 +1,5 @@
-import { PropsWithWindowInfo } from '@/components/stores/system/windows/WindowManager';
 import { useResizeWindow } from '@/hooks/useWindowManager';
+import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import { Dimensions } from '@/utils/Dimensions';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 

@@ -1,6 +1,6 @@
 import { useShallow } from 'zustand/react/shallow';
 
-import { MIN_USER_WID, WindowID, WindowInfo } from '@/components/stores/system/windows/WindowManager';
+import { MIN_USER_WID, WindowID, WindowInfo } from '@/stores/system/windows/WindowManager';
 
 import { useSystemStore } from './useSystem';
 
