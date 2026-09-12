@@ -16,7 +16,7 @@ export const processAttachWindow = ({ processes }: Draft<ProcessManager>, pid: P
 export const processDetachWindow = (system: Draft<System>, pid: ProcessID, wid: WindowID) => {
     const process = system.pm.processes.get(pid);
     if (process) {
-        process.windows.splice(process.windows.indexOf(wid));
+        process.windows.splice(process.windows.indexOf(wid), 1);
         if (!process.windows.length && !process.isHeadless) processDestroy(system, pid);
     }
 };
