@@ -4,8 +4,7 @@ import type { StoreApi } from 'zustand/vanilla';
 
 import { useBoolean } from '@/hooks/useBoolean';
 import { createSystemStore, SystemStore } from '@/stores/system/store';
-import { eraseDataForHost } from '@/utils/filesystem';
-import { createSkeletonForHost } from '@/utils/filesystem';
+import { resetHost } from '@/utils/filesystem';
 
 export const SystemStoreContext = createContext<StoreApi<SystemStore> | null>(null);
 
@@ -22,15 +21,18 @@ export const SystemContextProvider = ({ hostname, fallback, children }: SystemCo
     const [isFsReady, setFsReady, setFsNotReady] = useBoolean();
 
     useEffect(() => {
+        let isCancelled = false;
         const initializeFilesystem = async () => {
-            eraseDataForHost(hostname); // TODO: only for debug
-            await createSkeletonForHost(hostname);
-
-            setFsReady();
+            await resetHost(hostname);
+            if (!isCancelled) setFsReady();
         };
 
         setFsNotReady();
         initializeFilesystem();
+
+        return () => {
+            isCancelled = true;
+        };
         // `useBoolean` setters are referentially stable
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hostname]);

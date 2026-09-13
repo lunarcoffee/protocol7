@@ -1,5 +1,5 @@
-import fs from '@zenfs/core';
-import { promises as fsPromises } from '@zenfs/core';
+import { promises as fs } from '@zenfs/core';
+import { Mutex } from 'async-mutex';
 import { PathLike } from 'fs';
 import path from 'path';
 
@@ -18,48 +18,49 @@ export const FS_SKELETON_PLACEHOLDER = 0x94070c01;
 export const FS_SKELETON_PLACEHOLDER_ARRAY = Uint8Array.from([0x94, 0x07, 0x0c, 0x01]);
 
 // fetches and creates a local filesystem skeleton and performs any work specified by the manifest for the given host
-export const createSkeletonForHost = async (hostname: string) => {
+export const createSkeleton = async (hostname: string) => {
     try {
         const response = await fetch('hosts/' + hostname);
         const { dirs, files, manifest } = (await response.json()) as Skeleton;
 
         // create directories before files to avoid problems writing files in nonexistent directories
-        fs.mkdirSync(hostname, { recursive: true });
+        await fs.mkdir(hostname, { recursive: true });
 
         for (const dir of dirs) {
-            fs.mkdirSync(path.join(hostname, dir), { recursive: true });
-        }
-
-        // populate the filesystem with placeholder files
-        for (const file of files) {
-            fs.writeFileSync(path.join(hostname, file), FS_SKELETON_PLACEHOLDER_ARRAY);
+            await fs.mkdir(path.join(hostname, dir), { recursive: true });
         }
 
         await Promise.all(
-            manifest.prefetch.map(async (file) => await fetchFileForHost(hostname, file, { sync: true })),
+            files.map((file) =>
+                manifest.prefetch.includes(file)
+                    ? fetchFileForHost(hostname, file)
+                    : fs.writeFile(path.join(hostname, file), FS_SKELETON_PLACEHOLDER_ARRAY),
+            ),
         );
-
-        console.log('CREATED SKELETON');
-        console.log(fs.readdirSync('/', { recursive: true }));
     } catch (err) {
         console.error('exception while creating skeleton for host!', err);
     }
 };
 
-export const eraseDataForHost = (hostname: string) => {
+export const eraseData = async (hostname: string) => {
     try {
-        if (fs.existsSync(hostname)) fs.rmSync(hostname, { recursive: true });
+        if (await fs.exists(hostname)) await fs.rm(hostname, { recursive: true });
     } catch (err) {
         console.warn('exception while erasing data for host!', err);
     }
 };
 
-export interface FetchFileForHostOptions {
-    sync?: boolean;
-}
+const resetHostMutex = new Mutex();
+
+export const resetHost = async (hostname: string) => {
+    await resetHostMutex.runExclusive(async () => {
+        await eraseData(hostname);
+        await createSkeleton(hostname);
+    });
+};
 
 // fetches a copy of the file at `path` from the server and writes it to the local filesystem
-export const fetchFileForHost = async (hostname: string, path: PathLike, { sync }: FetchFileForHostOptions = {}) => {
+export const fetchFileForHost = async (hostname: string, path: PathLike) => {
     try {
         const hostQualifiedPath = `${hostname}/${path}`;
         const serverFile = await fetch('hosts/' + hostQualifiedPath);
@@ -77,12 +78,7 @@ export const fetchFileForHost = async (hostname: string, path: PathLike, { sync 
         // TODO: parse metadata
         const bytes = await contents.arrayBuffer();
         const buffer = Buffer.from(bytes);
-
-        if (sync) {
-            fs.writeFileSync(hostQualifiedPath, buffer);
-        } else {
-            await fsPromises.writeFile(hostQualifiedPath, buffer);
-        }
+        await fs.writeFile(hostQualifiedPath, buffer);
 
         return buffer;
     } catch (err) {

@@ -16,7 +16,7 @@ export const App = () => {
 
     useEffect(() => {
         const initializeZenFS = async () => {
-            await configureSingle({ backend: IndexedDB });
+            await configureSingle({ backend: IndexedDB, disableAsyncCache: true });
             setZenFsInitialized();
         };
 
