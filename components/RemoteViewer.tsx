@@ -7,18 +7,22 @@ const LoadingFallback = () => (
     </div>
 );
 
-export const RemoteViewer = () => (
-    <div className="flex h-lvh w-lvw items-center justify-center p-10 font-open-sans select-none">
-        {/* maintain 3:2 aspect ratio but take up at most 90% of the entire viewport */}
-        <div
-            className={`
-                absolute inset-0 m-auto h-[calc(2/3*90lvw)] max-h-9/10 w-9/10 max-w-[calc(3/2*90lvh)]
-                overflow-clip
-            `}
-        >
-            <SystemContextProvider hostname="localhost" fallback={<LoadingFallback />}>
-                <GraphicalShell />
-            </SystemContextProvider>
+export const RemoteViewer = () => {
+    const hostname = 'localhost';
+
+    return (
+        <div className="flex h-lvh w-lvw items-center justify-center p-10 font-open-sans select-none">
+            {/* maintain 3:2 aspect ratio but take up at most 90% of the entire viewport */}
+            <div
+                className={`
+                    absolute inset-0 m-auto h-[calc(2/3*90lvw)] max-h-9/10 w-9/10 max-w-[calc(3/2*90lvh)]
+                    overflow-clip
+                `}
+            >
+                <SystemContextProvider key={hostname} hostname={hostname} fallback={<LoadingFallback />}>
+                    <GraphicalShell />
+                </SystemContextProvider>
+            </div>
         </div>
-    </div>
-);
+    );
+};

@@ -1,12 +1,18 @@
 import { promises as fs } from '@zenfs/core';
+import murmurhash from 'murmurhash';
 import path from 'path';
 
 import { fetchFileForHost } from '.';
 import { FS_SKELETON_PLACEHOLDER } from '.';
 
 export interface FileHandle {
-    read: () => Buffer;
-    readToObjectURL: () => string;
+    name: string;
+    extension: string;
+    path: string;
+    pathHash: number;
+
+    contents: Buffer;
+    contentsAsObjectURL: string;
 }
 
 export interface OpenFileError {
@@ -43,9 +49,17 @@ export const openFile = async (
     const blob = new Blob([Buffer.from(buffer)]);
     const objectURL = URL.createObjectURL(blob);
 
+    const realPath = await fs.realpath(filePath);
+
     return {
-        read: () => buffer,
-        readToObjectURL: () => objectURL,
+        name: path.basename(realPath),
+        extension: path.extname(realPath),
+        path: realPath,
+        pathHash: murmurhash.v3(realPath),
+
+        contents: buffer,
+        contentsAsObjectURL: objectURL,
+
         ok: true,
     };
 };

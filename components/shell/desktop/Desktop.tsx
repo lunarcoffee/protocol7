@@ -9,6 +9,7 @@ import { useFocusWindow } from '@/hooks/windows';
 import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import { Dimensions, toScreenPosition } from '@/utils/Dimensions';
 import { doRectanglesIntersect } from '@/utils/doRectanglesIntersect';
+import { DirectoryEntry } from '@/utils/filesystem/openDirectory';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 
 import { DesktopIcon } from './DesktopIcon';
@@ -20,7 +21,7 @@ const Wallpaper = () => {
     return (
         <div className="absolute size-full bg-aero-tint-darkest object-cover object-center">
             <img
-                src={file.readToObjectURL()}
+                src={file.contentsAsObjectURL}
                 alt="desktop wallpaper"
                 draggable={false}
                 className="absolute size-full object-cover object-center"
@@ -29,19 +30,19 @@ const Wallpaper = () => {
     );
 };
 
-type IconStates = Map<string, boolean>;
+type IconStates = Map<DirectoryEntry, boolean>;
 
 type UpdateIconStatesAction =
-    | { action: 'set'; iconPath: string; value: boolean }
+    | { action: 'set'; iconEntry: DirectoryEntry; value: boolean }
     | { action: 'set-all'; value: boolean }
-    | { action: 'toggle'; iconPath: string }
+    | { action: 'toggle'; iconEntry: DirectoryEntry }
     | { action: 'replace'; iconStates: IconStates };
 
 const iconStateReducer = (draft: Draft<IconStates>, action: UpdateIconStatesAction) => {
     switch (action.action) {
         case 'set': {
-            const { iconPath, value } = action;
-            draft.set(iconPath, value);
+            const { iconEntry, value } = action;
+            draft.set(iconEntry, value);
             break;
         }
         case 'set-all': {
@@ -50,8 +51,8 @@ const iconStateReducer = (draft: Draft<IconStates>, action: UpdateIconStatesActi
             break;
         }
         case 'toggle': {
-            const { iconPath } = action;
-            draft.set(iconPath, !draft.get(iconPath));
+            const { iconEntry } = action;
+            draft.set(iconEntry, !draft.get(iconEntry));
             break;
         }
         case 'replace': {
@@ -64,20 +65,21 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
     const focusWindow = useFocusWindow();
 
     const [dir] = useDirectory('/users/lunarcoffee/desktop');
-    const iconPaths = dir?.ok ? dir.entriesAbsolute() : [];
+    const iconFiles = dir?.ok ? dir.entries : [];
 
-    const [iconStates, updateIcons] = useImmerReducer(iconStateReducer, new Map());
+    const [iconStates, updateIcons] = useImmerReducer(iconStateReducer, new Map() as IconStates);
 
     // in the latest mouseDown event, was an icon clicked or just the desktop? this value informs
     // the behavior of mouseDown handlers so they can implement icon selection properly
     const wasIconClicked = useRef(false);
 
-    const [prevIconPaths, setPrevIconPaths] = useState(iconPaths);
-    if (iconPaths.length !== prevIconPaths.length) {
-        setPrevIconPaths(iconPaths);
+    const [prevIconFiles, setPrevIconFiles] = useState(iconFiles);
+    console.log(iconFiles);
+    if (iconFiles.length !== prevIconFiles.length) {
+        setPrevIconFiles(iconFiles);
 
         // desktop directory contents changed, reset icons to new default state
-        const iconStates = new Map([...iconPaths].map((iconPath) => [iconPath, false]));
+        const iconStates = new Map([...iconFiles].map((iconEntry) => [iconEntry, false]));
         updateIcons({ action: 'replace', iconStates });
     }
 
@@ -104,20 +106,20 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
                     height: Math.abs(dy),
                 });
 
-                // only call this after moving to avoid drawing a rectangle if the user ends up only clicking instead of
-                // dragging
+                // we only call this after the cursor moves so we don't draw a rectangle if the user ends up only
+                // clicking instead of dragging
                 startDrag();
 
                 const dragRectElement = document.getElementById('desktop-drag-rect');
                 if (!dragRectElement) return;
 
                 // select all icons which intersect the drag rectangle and deselect all others
-                iconStates.forEach((_, iconPath) => {
-                    const iconElement = document.getElementById(`desktop-icon-${iconPath}`); // TODO: see DesktopIcon
+                iconStates.forEach((_, iconEntry) => {
+                    const iconElement = document.getElementById(`desktop-icon-${iconEntry.pathHash}`);
                     if (iconElement) {
                         const dragRect = dragRectElement.getBoundingClientRect();
                         const iconRect = iconElement.getBoundingClientRect();
-                        updateIcons({ action: 'set', iconPath, value: doRectanglesIntersect(dragRect, iconRect) });
+                        updateIcons({ action: 'set', iconEntry, value: doRectanglesIntersect(dragRect, iconRect) });
                     }
                 });
             },
@@ -125,15 +127,15 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
         });
     };
 
-    const onClickIcon = (iconPath: string) => (event: MouseEvent) => {
+    const onClickIcon = (iconEntry: DirectoryEntry) => (event: MouseEvent) => {
         // clicking an icon in multi-select mode (holding control) toggles the selection state; otherwise,
         // it is always set to true
         const isMultiSelect = event.getModifierState('Control');
         if (!isMultiSelect) {
             updateIcons({ action: 'set-all', value: false });
-            updateIcons({ action: 'set', iconPath, value: true });
+            updateIcons({ action: 'set', iconEntry, value: true });
         } else {
-            updateIcons({ action: 'toggle', iconPath });
+            updateIcons({ action: 'toggle', iconEntry });
         }
 
         wasIconClicked.current = true;
@@ -161,12 +163,12 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
                 }}
                 className="absolute flex size-full flex-row flex-wrap gap-2 p-1"
             >
-                {Array.from(iconStates.entries(), ([iconPath, isSelected]) => (
+                {Array.from(iconStates.entries(), ([iconFile, isSelected]) => (
                     <DesktopIcon
-                        key={iconPath}
-                        iconPath={iconPath}
+                        key={iconFile.path}
+                        iconPath={iconFile.path}
                         isSelected={isSelected}
-                        onClick={onClickIcon(iconPath)}
+                        onClick={onClickIcon(iconFile)}
                     />
                 ))}
             </div>

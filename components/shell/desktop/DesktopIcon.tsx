@@ -1,9 +1,8 @@
-import { MouseEvent, useEffect, useState } from 'react';
+import { MouseEvent } from 'react';
 
+import { useFile } from '@/hooks/filesystem/useFile';
 import { useCreateProcess, useNextProcessID } from '@/hooks/processes';
-import { useSystemHostname } from '@/hooks/system';
 import { useCreateWindow, useNextWindowID } from '@/hooks/windows';
-import { openFile } from '@/utils/filesystem/openFile';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
 import { WindowFrame } from '../windows/WindowFrame';
@@ -17,35 +16,19 @@ export interface DesktopIconProps {
 // TODO: tooltip on hover
 
 export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps) => {
-    const hostname = useSystemHostname();
     const nextProcessID = useNextProcessID();
     const nextWindowID = useNextWindowID();
     const createProcess = useCreateProcess();
     const createWindow = useCreateWindow();
 
-    const [label, setLabel] = useState<string>();
-    const [iconUrl, setIconUrl] = useState<string>();
+    const [iconFile] = useFile(iconPath);
+    if (!iconFile?.ok) return null;
 
-    useEffect(() => {
-        const readDataFromFiles = async () => {
-            const iconDataFile = await openFile(iconPath, hostname);
-            if (!iconDataFile?.ok) return;
-            const { label, icon } = JSON.parse(iconDataFile.read().toString());
-            setLabel(label);
-
-            const iconImageFile = await openFile(icon, hostname);
-            if (!iconImageFile?.ok) return;
-            setIconUrl(iconImageFile.readToObjectURL());
-        };
-
-        readDataFromFiles();
-    }, [hostname, iconPath]);
-
-    if (!label || !iconUrl) return null;
+    const { name: label, pathHash } = iconFile;
 
     return (
         <div
-            id={`desktop-icon-${iconPath}`} // TODO: normalize icon path
+            id={`desktop-icon-${pathHash}`}
             className={twMergeClsx(
                 `
                     flex h-fit w-20 flex-col items-center gap-1.5 overflow-visible rounded-xs pt-1
@@ -83,7 +66,7 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                     flex size-15 items-center justify-center drop-shadow-sm drop-shadow-aero-tint-darkest/70
                 "
             >
-                <img src={iconUrl} alt={label} draggable={false} />
+                <img src={iconFile.contentsAsObjectURL} alt={label} draggable={false} />
             </div>
             <div className="flex w-20 justify-center overflow-visible">
                 <p

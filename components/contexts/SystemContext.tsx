@@ -15,23 +15,23 @@ export interface SystemContextProviderProps extends PropsWithChildren {
 
 export const SystemContextProvider = ({ hostname, fallback, children }: SystemContextProviderProps) => {
     const storeRef = useRef<StoreApi<SystemStore>>(null);
-    if (!storeRef.current) storeRef.current = createSystemStore(hostname); // TODO: new store when hostname changes
+    if (!storeRef.current) storeRef.current = createSystemStore(hostname);
     const store = storeRef.current;
 
     const [isFsReady, setFsReady, setFsNotReady] = useBoolean();
 
     useEffect(() => {
-        let isCancelled = false;
+        let canceled = false;
         const initializeFilesystem = async () => {
             await resetHost(hostname);
-            if (!isCancelled) setFsReady();
+            if (!canceled) setFsReady();
         };
 
         setFsNotReady();
         initializeFilesystem();
 
         return () => {
-            isCancelled = true;
+            canceled = true;
         };
         // `useBoolean` setters are referentially stable
         // eslint-disable-next-line react-hooks/exhaustive-deps

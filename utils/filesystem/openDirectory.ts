@@ -1,9 +1,15 @@
 import { promises as fs } from '@zenfs/core';
+import murmurhash from 'murmurhash';
 import path from 'path';
 
+export interface DirectoryEntry {
+    name: string;
+    path: string;
+    pathHash: number;
+}
+
 export interface DirectoryHandle {
-    entries: () => string[];
-    entriesAbsolute: () => string[];
+    entries: DirectoryEntry[];
 }
 
 export interface OpenDirectoryError {
@@ -20,9 +26,15 @@ export const openDirectory = async (dirPath: string, hostname: string): Promise<
 
     dirents.sort();
 
-    return {
-        entries: () => dirents,
-        entriesAbsolute: () => dirents.map((dirent) => `${dirPath}/${dirent}`),
-        ok: true,
-    };
+    const entries = await Promise.all(
+        dirents.map(async (dirent) => {
+            const realPath = await fs.realpath(path.join(dirPath, dirent));
+            return {
+                name: dirent,
+                path: realPath,
+                pathHash: murmurhash.v3(realPath),
+            };
+        }),
+    );
+    return { entries, ok: true };
 };

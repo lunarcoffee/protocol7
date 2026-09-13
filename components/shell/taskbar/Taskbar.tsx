@@ -37,7 +37,6 @@ const RightIsland = () => (
         `}
     >
         <div className="ml-3 shrink-0">
-            {/* TODO: eventually this module should be attached to a global network manager state thing */}
             <SystemTray
                 items={[
                     {
