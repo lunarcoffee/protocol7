@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useBoolean } from '@/hooks/useBoolean';
 import { useToggle } from '@/hooks/useToggle';
-import { fetchFileFromHost, FileHandle, FS_SKELETON_PLACEHOLDER, OpenFileResult } from '@/utils/filesystem';
+import { fetchFileForHost, FileHandle, FS_SKELETON_PLACEHOLDER, OpenFileResult } from '@/utils/filesystem';
 
 import { useSystemHostname } from '../system';
 
@@ -32,7 +32,7 @@ const useFileOrFetch = (path: PathLike, { noFetch }: UseFileOptions): UseFileRes
 
         // current file is a placeholder from the skeleton; need to fetch actual contents
         if (!noFetch && buffer.readUint32BE() === FS_SKELETON_PLACEHOLDER) {
-            const hostFile = await fetchFileFromHost(hostname, path);
+            const hostFile = await fetchFileForHost(hostname, path);
             if (!hostFile) {
                 await fs.rm(hostQualifiedPath, { force: true });
                 return 'not found';

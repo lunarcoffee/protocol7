@@ -1,4 +1,4 @@
-import { promises as fs } from '@zenfs/core';
+import fs, { promises as fsPromises } from '@zenfs/core';
 import { PathLike } from 'fs';
 import path from 'path';
 
@@ -35,47 +35,40 @@ export interface Skeleton {
 export const FS_SKELETON_PLACEHOLDER = 0x94070c01;
 export const FS_SKELETON_PLACEHOLDER_ARRAY = Uint8Array.from([0x94, 0x07, 0x0c, 0x01]);
 
-const directoryDepth = (path: string) => path.split('').filter((c) => c === '/').length;
-
 // fetches and creates a local filesystem skeleton and performs any work specified by the manifest for the given host
 export const createSkeletonForHost = async (hostname: string) => {
     try {
         const response = await fetch('hosts/' + hostname);
-        console.log(response);
         const { dirs, files, manifest } = (await response.json()) as Skeleton;
 
         // create directories before files to avoid problems writing files in nonexistent directories
-        await fs.mkdir(hostname);
+        fs.mkdirSync(hostname, { recursive: true });
 
-        // also there seems to be an issue with the `recursive` option on `fs.mkdir` throwing exceptions for existing
-        // directories even when set to true; this ordering will ensure we create parent directories before their child
-        // directories
-        dirs.sort((a, b) => directoryDepth(a) - directoryDepth(b));
         for (const dir of dirs) {
-            await fs.mkdir(path.join(hostname, dir));
+            fs.mkdirSync(path.join(hostname, dir), { recursive: true });
         }
 
-        // now we can populate the filesystem with placeholder files
-        await Promise.all(
-            files.map(async (file) => await fs.writeFile(path.join(hostname, file), FS_SKELETON_PLACEHOLDER_ARRAY)),
-        );
+        // populate the filesystem with placeholder files
+        for (const file of files) {
+            fs.writeFileSync(path.join(hostname, file), FS_SKELETON_PLACEHOLDER_ARRAY);
+        }
 
-        await Promise.all(manifest.prefetch.map(async (file) => await fetchFileFromHost(hostname, file)));
+        await Promise.all(manifest.prefetch.map(async (file) => await fetchFileForHost(hostname, file)));
     } catch (err) {
         console.error('exception while creating skeleton for host!', err);
     }
 };
 
-export const eraseHostFiles = async (hostname: string) => {
+export const eraseDataForHost = (hostname: string) => {
     try {
-        await fs.rm(hostname, { recursive: true });
+        if (fs.existsSync(hostname)) fs.rmSync(hostname, { recursive: true });
     } catch (err) {
-        console.warn('exception while erasing files for host!', err);
+        console.warn('exception while erasing data for host!', err);
     }
 };
 
 // fetches a copy of the file at `path` from the server and writes it to the local filesystem
-export const fetchFileFromHost = async (hostname: string, path: PathLike) => {
+export const fetchFileForHost = async (hostname: string, path: PathLike) => {
     try {
         const hostQualifiedPath = `${hostname}/${path}`;
         const serverFile = await fetch('hosts/' + hostQualifiedPath);
@@ -93,10 +86,10 @@ export const fetchFileFromHost = async (hostname: string, path: PathLike) => {
         // TODO: parse metadata
         const bytes = await contents.arrayBuffer();
         const buffer = Buffer.from(bytes);
-        await fs.writeFile(hostQualifiedPath, buffer);
+        await fsPromises.writeFile(hostQualifiedPath, buffer);
 
         return buffer;
     } catch (err) {
-        console.warn('exception while fetching file from host!', err);
+        console.warn('exception while fetching file from server!', err);
     }
 };

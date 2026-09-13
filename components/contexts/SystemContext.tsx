@@ -4,7 +4,7 @@ import type { StoreApi } from 'zustand/vanilla';
 
 import { useBoolean } from '@/hooks/useBoolean';
 import { createSystemStore, SystemStore } from '@/stores/system/store';
-import { createSkeletonForHost, eraseHostFiles } from '@/utils/filesystem';
+import { createSkeletonForHost, eraseDataForHost } from '@/utils/filesystem';
 
 export const SystemStoreContext = createContext<StoreApi<SystemStore> | null>(null);
 
@@ -22,7 +22,7 @@ export const SystemContextProvider = ({ hostname, fallback, children }: SystemCo
 
     useEffect(() => {
         const initializeFilesystem = async () => {
-            await eraseHostFiles(hostname); // TODO: only for debug
+            eraseDataForHost(hostname); // TODO: only for debug
             await createSkeletonForHost(hostname);
 
             setFsReady();

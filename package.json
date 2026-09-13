@@ -11,8 +11,8 @@
         "lint:fix": "npx eslint . --fix"
     },
     "dependencies": {
-        "@zenfs/core": "^2.6.5",
-        "@zenfs/dom": "^1.2.11",
+        "@zenfs/core": "^2.7.6",
+        "@zenfs/dom": "^1.2.14",
         "clsx": "^2.1.1",
         "immer": "^10.1.1",
         "luxon": "^3.7.1",
