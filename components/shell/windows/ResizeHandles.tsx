@@ -32,7 +32,7 @@ export const ResizeHandles = ({ windowInfo: { wid, size } }: PropsWithWindowInfo
                 <div
                     onMouseDown={(event) => onWindowResizeStart({ x: event.clientX, y: event.clientY }, ...args)}
                     className={`
-                        absolute
+                        absolute z-20
                         ${style}
                     `}
                     style={{ cursor: args[2] }}
