@@ -1,5 +1,3 @@
-'use client';
-
 import { AnimatePresence } from 'motion/react';
 
 import { useWindow, useWindowIDs } from '@/hooks/windows';

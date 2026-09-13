@@ -1,5 +1,3 @@
-'use client';
-
 import Image from 'next/image';
 
 import NetworkIcon from '@/assets/localhost/icons/network.svg';

@@ -1,5 +1,3 @@
-'use client';
-
 import { SystemContextProvider } from './contexts/SystemContext';
 import { GraphicalShell } from './shell/GraphicalShell';
 

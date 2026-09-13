@@ -1,5 +1,3 @@
-'use client';
-
 import { Draft } from 'immer';
 import { MouseEvent, useEffect, useRef, useState } from 'react';
 import { useImmerReducer } from 'use-immer';
