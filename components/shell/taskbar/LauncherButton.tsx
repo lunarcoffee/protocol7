@@ -45,7 +45,7 @@ const ReflectiveOrb = ({ active }: { active: boolean }) => (
 );
 
 const LauncherIcon = ({ active }: { active: boolean }) => {
-    const [file] = useFile('launcher.png');
+    const [file] = useFile('/system/icons/launcher.png');
     if (!file?.ok) return null;
 
     return (

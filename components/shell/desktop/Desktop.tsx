@@ -14,7 +14,7 @@ import { handleMouseDrag } from '@/utils/handleMouseDrag';
 import { DesktopIcon } from './DesktopIcon';
 
 const Wallpaper = () => {
-    const [file] = useFile('wallpapers/flowers.jpg');
+    const [file] = useFile('/users/lunarcoffee/pictures/wallpapers/flowers.jpg');
     if (!file?.ok) return null;
 
     return (
@@ -63,7 +63,7 @@ const iconStateReducer = (draft: Draft<IconStates>, action: UpdateIconStatesActi
 export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) => {
     const focusWindow = useFocusWindow();
 
-    const [dir] = useDirectory('Users/lunarcoffee/Desktop');
+    const [dir] = useDirectory('/users/lunarcoffee/desktop');
     const iconPaths = dir?.ok ? dir.entriesAbsolute() : [];
 
     const [iconStates, updateIcons] = useImmerReducer(iconStateReducer, new Map());

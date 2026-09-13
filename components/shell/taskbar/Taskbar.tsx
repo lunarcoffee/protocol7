@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
-import NetworkIcon from '@/assets/localhost/icons/network.svg';
-import VolumeHighIcon from '@/assets/localhost/icons/volume-high.svg';
+import NetworkIcon from '@/assets/localhost/system/icons/network.svg';
+import VolumeHighIcon from '@/assets/localhost/system/icons/volume-high.svg';
 
 import { Clock } from './Clock';
 import { LauncherButton } from './LauncherButton';

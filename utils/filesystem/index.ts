@@ -1,6 +1,5 @@
 import { promises as fs } from '@zenfs/core';
 import { Mutex } from 'async-mutex';
-import { PathLike } from 'fs';
 import path from 'path';
 
 export interface Skeleton {
@@ -57,9 +56,9 @@ export const resetHost = async (hostname: string) => {
 };
 
 // fetches a copy of the file at `path` from the server and writes it to the local filesystem
-export const fetchFileForHost = async (hostname: string, path: PathLike) => {
+export const fetchFileForHost = async (hostname: string, filePath: string) => {
     try {
-        const hostQualifiedPath = `${hostname}/${path}`;
+        const hostQualifiedPath = path.join(hostname, filePath);
         const serverFile = await fetch('hosts/' + hostQualifiedPath);
 
         if (!serverFile.ok) return;

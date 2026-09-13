@@ -1,5 +1,5 @@
 import { promises as fs } from '@zenfs/core';
-import { PathLike } from 'fs';
+import path from 'path';
 
 import { fetchFileForHost } from '.';
 import { FS_SKELETON_PLACEHOLDER } from '.';
@@ -20,18 +20,18 @@ export interface OpenFileOptions {
 }
 
 export const openFile = async (
-    path: PathLike,
+    filePath: string,
     hostname: string,
     { noFetch }: OpenFileOptions = {},
 ): Promise<OpenFileResult> => {
-    const hostQualifiedPath = `${hostname}/${path}`;
+    const hostQualifiedPath = path.join(hostname, filePath);
 
     let buffer = await fs.readFile(hostQualifiedPath).catch(() => null);
     if (!buffer) return { error: 'not found', ok: false };
 
     // current file is a placeholder from the skeleton; need to fetch actual contents
     if (!noFetch && buffer.readUint32BE() === FS_SKELETON_PLACEHOLDER) {
-        const hostFile = await fetchFileForHost(hostname, path);
+        const hostFile = await fetchFileForHost(hostname, filePath);
         if (!hostFile) {
             await fs.rm(hostQualifiedPath, { force: true });
             return { error: 'not found', ok: false };

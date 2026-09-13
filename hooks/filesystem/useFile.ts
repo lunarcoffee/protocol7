@@ -1,4 +1,3 @@
-import { PathLike } from 'fs';
 import { useEffect, useState } from 'react';
 
 import { useSystemHostname } from '@/hooks/system';
@@ -14,7 +13,7 @@ export type RefreshTrigger = () => void;
 
 type UseFileResult = [OpenFileResult | undefined, RefreshTrigger];
 
-export const useFile = (path: PathLike, options: UseFileOptions = {}): UseFileResult => {
+export const useFile = (filePath: string, options: UseFileOptions = {}): UseFileResult => {
     const hostname = useSystemHostname();
 
     const [handle, setHandle] = useState<OpenFileResult>();
@@ -24,7 +23,7 @@ export const useFile = (path: PathLike, options: UseFileOptions = {}): UseFileRe
         let canceled = false;
 
         const loadHandle = async () => {
-            const file = await openFile(path, hostname, options);
+            const file = await openFile(filePath, hostname, options);
             if (!canceled) setHandle(file);
         };
         loadHandle();
@@ -32,7 +31,7 @@ export const useFile = (path: PathLike, options: UseFileOptions = {}): UseFileRe
         return () => {
             canceled = true;
         };
-    }, [path, hostname, options, refreshSignal]);
+    }, [filePath, hostname, options, refreshSignal]);
 
     return [handle, triggerRefresh];
 };

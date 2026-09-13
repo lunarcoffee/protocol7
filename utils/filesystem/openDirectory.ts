@@ -1,5 +1,5 @@
 import { promises as fs } from '@zenfs/core';
-import { PathLike } from 'fs';
+import path from 'path';
 
 export interface DirectoryHandle {
     entries: () => string[];
@@ -12,15 +12,17 @@ export interface OpenDirectoryError {
 
 export type OpenDirectoryResult = (DirectoryHandle & { ok: true }) | (OpenDirectoryError & { ok: false });
 
-export const openDirectory = async (path: PathLike, hostname: string): Promise<OpenDirectoryResult> => {
-    const dirents = await fs.readdir(`${hostname}/${path}`).catch(() => null);
+export const openDirectory = async (dirPath: string, hostname: string): Promise<OpenDirectoryResult> => {
+    const hostQualifiedPath = path.join(hostname, dirPath);
+
+    const dirents = await fs.readdir(hostQualifiedPath).catch(() => null);
     if (!dirents) return { error: 'not found', ok: false };
 
     dirents.sort();
 
     return {
         entries: () => dirents,
-        entriesAbsolute: () => dirents.map((dirent) => `${path}/${dirent}`),
+        entriesAbsolute: () => dirents.map((dirent) => `${dirPath}/${dirent}`),
         ok: true,
     };
 };
