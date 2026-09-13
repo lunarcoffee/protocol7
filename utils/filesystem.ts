@@ -5,21 +5,24 @@ import path from 'path';
 export interface FileHandle {
     read: () => Buffer;
     readToObjectURL: () => string;
-    // TODO: write, delete, etc
 }
 
-export type OpenFileError = 'not found'; // TODO: etc
+export interface OpenFileError {
+    error: 'not found';
+}
 
-export type OpenFileResult = FileHandle | OpenFileError;
+export type OpenFileResult = (FileHandle & { ok: true }) | (OpenFileError & { ok: false });
 
 export interface DirectoryHandle {
     entries: () => string[];
     entriesAbsolute: () => string[];
 }
 
-export type OpenDirectoryError = 'not found';
+export interface OpenDirectoryError {
+    error: 'not found';
+}
 
-export type OpenDirectoryResult = DirectoryHandle | OpenDirectoryError;
+export type OpenDirectoryResult = (DirectoryHandle & { ok: true }) | (OpenDirectoryError & { ok: false });
 
 export interface Skeleton {
     dirs: string[];

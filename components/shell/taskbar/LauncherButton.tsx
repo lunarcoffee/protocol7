@@ -1,4 +1,4 @@
-import { useFileForComponent } from '@/hooks/filesystem/useFileForComponent';
+import { useFile } from '@/hooks/filesystem/useFile';
 import { useCreateWindow, useDestroyWindow, useWindow } from '@/hooks/windows';
 import { PID_SHELL } from '@/stores/system/processes/ProcessManager';
 import { WID_LAUNCHER } from '@/stores/system/windows/WindowManager';
@@ -44,8 +44,11 @@ const ReflectiveOrb = ({ active }: { active: boolean }) => (
     </>
 );
 
-const LauncherIcon = ({ active }: { active: boolean }) =>
-    useFileForComponent('launcher.png', (file) => (
+const LauncherIcon = ({ active }: { active: boolean }) => {
+    const [file] = useFile('launcher.png');
+    if (!file?.ok) return null;
+
+    return (
         <img
             src={file.readToObjectURL()}
             alt="launcher icon"
@@ -59,7 +62,8 @@ const LauncherIcon = ({ active }: { active: boolean }) =>
                 active && 'opacity-90 drop-shadow-[0_0_1px] drop-shadow-white/30',
             )}
         />
-    ))[0];
+    );
+};
 
 export const LauncherButton = () => {
     const launcherWindow = useWindow(WID_LAUNCHER);

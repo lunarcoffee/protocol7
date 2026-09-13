@@ -2,11 +2,10 @@ import { promises as fs } from '@zenfs/core';
 import { PathLike } from 'fs';
 import { useCallback, useEffect, useState } from 'react';
 
-import { useBoolean } from '@/hooks/useBoolean';
+import { useSystemHostname } from '@/hooks/system';
 import { useToggle } from '@/hooks/useToggle';
-import { fetchFileForHost, FileHandle, FS_SKELETON_PLACEHOLDER, OpenFileResult } from '@/utils/filesystem';
 
-import { useSystemHostname } from '../system';
+import { fetchFileForHost, FS_SKELETON_PLACEHOLDER, OpenFileResult } from '../../utils/filesystem';
 
 export interface UseFileOptions {
     noFetch?: boolean;
@@ -14,28 +13,25 @@ export interface UseFileOptions {
 
 export type RefreshTrigger = () => void;
 
-// actual file loading result, loading flag, and refresh trigger
-type UseFileResult = [OpenFileResult | undefined, boolean, RefreshTrigger];
+type UseFileResult = [OpenFileResult | undefined, RefreshTrigger];
 
-const useFileOrFetch = (path: PathLike, { noFetch }: UseFileOptions): UseFileResult => {
+export const useFile = (path: PathLike, { noFetch }: UseFileOptions = {}): UseFileResult => {
     const hostname = useSystemHostname();
     const hostQualifiedPath = `${hostname}/${path}`;
 
     const [handle, setHandle] = useState<OpenFileResult>();
-    const [isLoading, setLoading, setDone] = useBoolean(true);
-
     const [refreshSignal, triggerRefresh] = useToggle();
 
-    const openFile = useCallback(async () => {
+    const openFile = useCallback(async (): Promise<OpenFileResult> => {
         let buffer = await fs.readFile(hostQualifiedPath).catch(() => null);
-        if (!buffer) return 'not found';
+        if (!buffer) return { error: 'not found', ok: false };
 
         // current file is a placeholder from the skeleton; need to fetch actual contents
         if (!noFetch && buffer.readUint32BE() === FS_SKELETON_PLACEHOLDER) {
             const hostFile = await fetchFileForHost(hostname, path);
             if (!hostFile) {
                 await fs.rm(hostQualifiedPath, { force: true });
-                return 'not found';
+                return { error: 'not found', ok: false };
             }
             buffer = hostFile;
         }
@@ -47,6 +43,7 @@ const useFileOrFetch = (path: PathLike, { noFetch }: UseFileOptions): UseFileRes
         return {
             read: () => buffer,
             readToObjectURL: () => objectURL,
+            ok: true,
         };
         // `refreshSignal` allows a consumer to manually trigger a reread of the file contents
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,41 +54,14 @@ const useFileOrFetch = (path: PathLike, { noFetch }: UseFileOptions): UseFileRes
 
         const loadHandle = async () => {
             const file = await openFile();
-            if (!canceled) {
-                setHandle(file);
-                setDone();
-            }
+            if (!canceled) setHandle(file);
         };
-
-        setLoading();
         loadHandle();
 
         return () => {
             canceled = true;
         };
-        // `useBoolean` setters are referentially stable
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [openFile]);
 
-    return [handle, isLoading, triggerRefresh];
-};
-
-export interface UseFileOtherCallbacks<T, U> {
-    loading: T;
-    error: (error: string) => U;
-}
-
-export const useFile = <T, U, V>(
-    path: PathLike,
-    success: (handle: FileHandle) => T,
-    { loading, error }: UseFileOtherCallbacks<U, V>,
-    options: UseFileOptions = { noFetch: false },
-): [T | U | V, RefreshTrigger] => {
-    const [handle, isLoading, refresh] = useFileOrFetch(path, options);
-
-    if (isLoading) return [loading, refresh];
-    if (typeof handle === 'string') return [error(handle), refresh];
-
-    // this should be safe; see the branching in the effect in `useFileOrFetch` above
-    return [success(handle!), refresh];
+    return [handle, triggerRefresh];
 };

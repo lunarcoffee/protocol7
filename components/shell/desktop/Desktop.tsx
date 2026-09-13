@@ -1,124 +1,122 @@
 'use client';
 
-import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { Draft } from 'immer';
+import { MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmerReducer } from 'use-immer';
 
-import Battery from '@/assets/localhost/icons/battery.svg';
-import Wireless from '@/assets/localhost/icons/wireless.svg';
-import Launcher from '@/assets/localhost/launcher.png';
-import Garden from '@/assets/localhost/pictures/garden.jpg';
-import Maple from '@/assets/localhost/pictures/maple.jpg';
-import { useFileForComponent } from '@/hooks/filesystem/useFileForComponent';
-import { useCreateProcess, useNextProcessID } from '@/hooks/processes';
+import { useDirectory } from '@/hooks/filesystem/useDirectory';
+import { useFile } from '@/hooks/filesystem/useFile';
 import { useBoolean } from '@/hooks/useBoolean';
-import { useCreateWindow, useFocusWindow, useNextWindowID } from '@/hooks/windows';
+import { useFocusWindow } from '@/hooks/windows';
 import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import { Dimensions, toScreenPosition } from '@/utils/Dimensions';
 import { doRectanglesIntersect } from '@/utils/doRectanglesIntersect';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 
-import { WindowFrame } from '../windows/WindowFrame';
-import { DesktopIcon } from './DesktopIcon';
+import { DesktopIcon, DesktopIconProps } from './DesktopIcon';
 
-const Wallpaper = () => (
-    <div className="absolute size-full bg-aero-tint-darkest object-cover object-center">
-        {
-            useFileForComponent('wallpapers/flowers.jpg', (file) => (
-                <img
-                    src={file.readToObjectURL()}
-                    alt="desktop wallpaper"
-                    draggable={false}
-                    className="absolute size-full object-cover object-center"
-                />
-            ))[0]
+const Wallpaper = () => {
+    const [file] = useFile('wallpapers/flowers.jpg');
+    if (!file?.ok) return null;
+
+    return (
+        <div className="absolute size-full bg-aero-tint-darkest object-cover object-center">
+            <img
+                src={file.readToObjectURL()}
+                alt="desktop wallpaper"
+                draggable={false}
+                className="absolute size-full object-cover object-center"
+            />
+        </div>
+    );
+};
+
+// const iconData = new Map([
+//     ['1.desktop', { icon: Maple, label: 'HPIM_3328.jpg' }],
+//     ['2.desktop', { icon: Garden, label: 'HPIM_3329.jpg' }],
+//     ['3.desktop', { icon: Battery, label: 'battery indicator.svg' }],
+//     ['4.desktop', { icon: Wireless, label: 'signal.jpg' }],
+//     [
+//         '5.desktop',
+//         {
+//             icon: Launcher,
+//             label: 'hanyu english字典 translation dictionary.txt',
+//         },
+//     ],
+// ]);
+
+type IconStates = Map<string, Pick<DesktopIconProps, 'isSelected' | 'onClick'>>;
+type UpdateIconAction =
+    | { action: 'set'; iconPath: string; value: boolean }
+    | { action: 'toggle'; iconPath: string }
+    | { action: 'reset'; iconStates: IconStates };
+
+const iconStateReducer = (draft: Draft<IconStates>, action: UpdateIconAction) => {
+    switch (action.action) {
+        case 'set': {
+            const { iconPath, value } = action;
+            draft.get(iconPath)!.isSelected = value;
+            break;
         }
-    </div>
-);
-
-// TODO: pull from fs once thats implemented
-const iconData = new Map([
-    ['1.desktop', { icon: Maple, label: 'HPIM_3328.jpg' }],
-    ['2.desktop', { icon: Garden, label: 'HPIM_3329.jpg' }],
-    ['3.desktop', { icon: Battery, label: 'battery indicator.svg' }],
-    ['4.desktop', { icon: Wireless, label: 'signal.jpg' }],
-    [
-        '5.desktop',
-        {
-            icon: Launcher,
-            label: 'hanyu english字典 translation dictionary.txt',
-        },
-    ],
-]);
+        case 'toggle': {
+            const { iconPath } = action;
+            draft.get(iconPath)!.isSelected = !draft.get(iconPath)!.isSelected;
+            break;
+        }
+        case 'reset': {
+            return action.iconStates;
+        }
+    }
+};
 
 export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) => {
-    const nextProcessID = useNextProcessID();
-    const nextWindowID = useNextWindowID();
-    const createProcess = useCreateProcess();
-    const createWindow = useCreateWindow();
     const focusWindow = useFocusWindow();
 
-    // useDirectory(
-    //   'Users/lunarcoffee/Desktop',
-    //   (dir) => {
-    //     // TODO: this of course will not work lol a changing number of hook invocations is a nono.
-    //     // i guess we'll have to just make a useFiles? and i guess stuff the rest of this component
-    //     // into another one unless we wanna draw the ire of the rules of hooks lint. but that feels
-    //     // so flimsy to me...
-    //     const entryFiles = dir
-    //       .entriesAbsolute()
-    //       .map((file) =>
-    //         useFile(file, (handle) => handle, {
-    //           loading: true,
-    //           error: () => false,
-    //         }),
-    //       )
-    //       .filter((file) => file);
+    const [dir] = useDirectory('Users/lunarcoffee/Desktop');
+    const iconPaths = dir?.ok ? dir.entriesAbsolute() : [];
+    console.log('paths', iconPaths);
 
-    //     if (entryFiles.filter((file) => typeof file === 'boolean').length === 0) {
-    //     }
-    //   },
-    //   {
-    //     loading: null,
-    //     error: () => null,
-    //   },
-    // );
+    const [icons, updateIcons] = useImmerReducer(iconStateReducer, new Map());
+
+    const deselectAllIcons = useCallback(
+        () => icons.forEach((_, iconPath) => updateIcons({ action: 'set', iconPath, value: false })),
+        // `updateIcon` is a reducer dispatch and is referentially stable
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [icons],
+    );
 
     // in the latest mouseDown event, was an icon clicked or just the desktop? this value informs
     // the behavior of mouseDown handlers so they can implement icon selection properly
     const wasIconClicked = useRef(false);
 
-    const initialIconStates = new Map(
-        [...iconData].map(([id, icon]) => [
-            id,
-            {
-                ...icon,
-                isSelected: false,
-                onClick: (event: MouseEvent) => {
-                    // clicking an icon in multi-select mode (holding control) toggles the selection state; otherwise,
-                    // it is always set to true
-                    const isMultiSelect = event.getModifierState('Control');
-                    if (!isMultiSelect) deselectAllIcons();
-                    updateIcon({ id, value: !isMultiSelect || 'toggle' });
+    const [prevIconPaths, setPrevIconPaths] = useState(iconPaths);
+    console.log('prev', prevIconPaths);
+    if (iconPaths.length !== prevIconPaths.length) {
+        setPrevIconPaths(iconPaths);
+        const iconStates = new Map(
+            [...iconPaths].map((iconPath) => [
+                iconPath,
+                {
+                    isSelected: false,
+                    onClick: (event: MouseEvent) => {
+                        // clicking an icon in multi-select mode (holding control) toggles the selection state; otherwise,
+                        // it is always set to true
+                        const isMultiSelect = event.getModifierState('Control');
+                        if (!isMultiSelect) {
+                            deselectAllIcons();
+                            updateIcons({ action: 'set', iconPath, value: true });
+                        } else {
+                            updateIcons({ action: 'toggle', iconPath });
+                        }
 
-                    wasIconClicked.current = true;
+                        wasIconClicked.current = true;
+                    },
                 },
-            },
-        ]),
-    );
+            ]),
+        );
 
-    type UpdateIconAction = { id: string; value: boolean | 'toggle' };
-
-    const [icons, updateIcon] = useImmerReducer((draft, { id, value }: UpdateIconAction) => {
-        const icon = draft.get(id);
-        if (icon) icon.isSelected = value === 'toggle' ? !icon.isSelected : value;
-    }, initialIconStates);
-
-    const deselectAllIcons = useCallback(
-        () => icons.forEach((_, id) => updateIcon({ id, value: false })),
-        // `updateIcon` is a reducer dispatch and is referentially stable
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [icons],
-    );
+        updateIcons({ action: 'reset', iconStates });
+    }
 
     // deselect icons on losing focus
     useEffect(() => {
@@ -149,11 +147,12 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
                 if (!dragRectElement) return;
 
                 // select all icons which intersect the drag rectangle and deselect all others
-                icons.forEach((_, id) => {
-                    const iconElement = document.getElementById(`desktop-icon-${id}`);
+                icons.forEach((_, iconPath) => {
+                    const iconElement = document.getElementById(`desktop-icon-${iconPath}`); // TODO: see DesktopIcon
                     if (iconElement) {
-                        updateIcon({
-                            id,
+                        updateIcons({
+                            action: 'set',
+                            iconPath,
                             value: doRectanglesIntersect(
                                 dragRectElement.getBoundingClientRect(),
                                 iconElement.getBoundingClientRect(),
@@ -165,6 +164,8 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
             onDragEnd: endDrag,
         });
     };
+
+    console.log('what', icons);
 
     return (
         <div
@@ -183,37 +184,15 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
                     // clicks directly on the desktop should always deselect icons and prepare for dragging
                     if (!wasIconClicked.current) {
                         deselectAllIcons();
-                        onDesktopDragStart({
-                            x: event.clientX,
-                            y: event.clientY,
-                        });
+                        onDesktopDragStart({ x: event.clientX, y: event.clientY });
                     }
                 }}
                 className="absolute flex size-full flex-row flex-wrap gap-2 p-1"
             >
-                {Array.from(icons.entries(), ([id, icon]) => (
-                    <DesktopIcon
-                        {...icon}
-                        id={id}
-                        onLaunch={() => {
-                            createProcess({ pid: nextProcessID });
-                            createWindow({
-                                pid: nextProcessID,
-                                wid: nextWindowID,
-                                title: icon.label,
-                                size: { x: 800, y: 500 },
-                                render: (windowInfo) => (
-                                    <WindowFrame windowInfo={windowInfo}>
-                                        <div className="size-full bg-gray-100 p-4">
-                                            <p className="text-sm text-blue-900 text-shadow-none">this is a window!</p>
-                                        </div>
-                                    </WindowFrame>
-                                ),
-                            });
-                        }}
-                        key={id}
-                    />
-                ))}
+                {Array.from(icons.entries(), ([path, state]) => {
+                    console.log(path);
+                    return <DesktopIcon {...state} iconPath={path} key={path} />;
+                })}
             </div>
             {isDragging && (
                 <div

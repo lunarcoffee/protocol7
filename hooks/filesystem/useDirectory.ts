@@ -2,33 +2,31 @@ import { promises as fs } from '@zenfs/core';
 import { PathLike } from 'fs';
 import { useCallback, useEffect, useState } from 'react';
 
-import { DirectoryHandle, OpenDirectoryResult } from '@/utils/filesystem';
+import { OpenDirectoryResult } from '@/utils/filesystem';
 
 import { useSystemHostname } from '../system';
-import { useBoolean } from '../useBoolean';
 import { useToggle } from '../useToggle';
-import { RefreshTrigger, UseFileOtherCallbacks } from './useFile';
+import { RefreshTrigger } from './useFile';
 
-export type UseDirectoryResult = [OpenDirectoryResult | undefined, boolean, RefreshTrigger];
+export type UseDirectoryResult = [OpenDirectoryResult | undefined, RefreshTrigger];
 
-const useDirectoryRaw = (path: PathLike): UseDirectoryResult => {
+export const useDirectory = (path: PathLike): UseDirectoryResult => {
     const hostname = useSystemHostname();
     const hostQualifiedPath = `${hostname}/${path}`;
 
     const [handle, setHandle] = useState<OpenDirectoryResult>();
-    const [isLoading, setLoading, setDone] = useBoolean(true);
-
     const [refreshSignal, triggerRefresh] = useToggle();
 
-    const openDirectory = useCallback(async () => {
+    const openDirectory = useCallback(async (): Promise<OpenDirectoryResult> => {
         const dirents = await fs.readdir(hostQualifiedPath).catch(() => null);
-        if (!dirents) return 'not found';
+        if (!dirents) return { error: 'not found', ok: false };
 
         dirents.sort();
 
         return {
             entries: () => dirents,
             entriesAbsolute: () => dirents.map((dirent) => `${path}/${dirent}`),
+            ok: true,
         };
         // `refreshSignal` allows a consumer to manually trigger a reread of the directory contents
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -39,35 +37,14 @@ const useDirectoryRaw = (path: PathLike): UseDirectoryResult => {
 
         const loadHandle = async () => {
             const file = await openDirectory();
-            if (!canceled) {
-                setHandle(file);
-                setDone();
-            }
+            if (!canceled) setHandle(file);
         };
-
-        setLoading();
         loadHandle();
 
         return () => {
             canceled = true;
         };
-        // `useBoolean` setters are referentially stable
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [openDirectory]);
 
-    return [handle, isLoading, triggerRefresh];
-};
-
-export const useDirectory = <T, U, V>(
-    path: PathLike,
-    success: (handle: DirectoryHandle) => T,
-    { loading, error }: UseFileOtherCallbacks<U, V>,
-): [T | U | V, () => void] => {
-    const [handle, isLoading, refresh] = useDirectoryRaw(path);
-
-    if (isLoading) return [loading, refresh];
-    if (typeof handle === 'string') return [error(handle), refresh];
-
-    // this should be safe; see the branching in the effect in `useDirectoryRaw` above
-    return [success(handle!), refresh];
+    return [handle, triggerRefresh];
 };
