@@ -4,7 +4,8 @@ import type { StoreApi } from 'zustand/vanilla';
 
 import { useBoolean } from '@/hooks/useBoolean';
 import { createSystemStore, SystemStore } from '@/stores/system/store';
-import { createSkeletonForHost, eraseDataForHost } from '@/utils/filesystem';
+import { eraseDataForHost } from '@/utils/filesystem';
+import { createSkeletonForHost } from '@/utils/filesystem';
 
 export const SystemStoreContext = createContext<StoreApi<SystemStore> | null>(null);
 

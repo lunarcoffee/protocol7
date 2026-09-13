@@ -1,28 +1,7 @@
-import fs, { promises as fsPromises } from '@zenfs/core';
+import fs from '@zenfs/core';
+import { promises as fsPromises } from '@zenfs/core';
 import { PathLike } from 'fs';
 import path from 'path';
-
-export interface FileHandle {
-    read: () => Buffer;
-    readToObjectURL: () => string;
-}
-
-export interface OpenFileError {
-    error: 'not found';
-}
-
-export type OpenFileResult = (FileHandle & { ok: true }) | (OpenFileError & { ok: false });
-
-export interface DirectoryHandle {
-    entries: () => string[];
-    entriesAbsolute: () => string[];
-}
-
-export interface OpenDirectoryError {
-    error: 'not found';
-}
-
-export type OpenDirectoryResult = (DirectoryHandle & { ok: true }) | (OpenDirectoryError & { ok: false });
 
 export interface Skeleton {
     dirs: string[];
@@ -56,7 +35,12 @@ export const createSkeletonForHost = async (hostname: string) => {
             fs.writeFileSync(path.join(hostname, file), FS_SKELETON_PLACEHOLDER_ARRAY);
         }
 
-        await Promise.all(manifest.prefetch.map(async (file) => await fetchFileForHost(hostname, file)));
+        await Promise.all(
+            manifest.prefetch.map(async (file) => await fetchFileForHost(hostname, file, { sync: true })),
+        );
+
+        console.log('CREATED SKELETON');
+        console.log(fs.readdirSync('/', { recursive: true }));
     } catch (err) {
         console.error('exception while creating skeleton for host!', err);
     }
@@ -70,8 +54,12 @@ export const eraseDataForHost = (hostname: string) => {
     }
 };
 
+export interface FetchFileForHostOptions {
+    sync?: boolean;
+}
+
 // fetches a copy of the file at `path` from the server and writes it to the local filesystem
-export const fetchFileForHost = async (hostname: string, path: PathLike) => {
+export const fetchFileForHost = async (hostname: string, path: PathLike, { sync }: FetchFileForHostOptions = {}) => {
     try {
         const hostQualifiedPath = `${hostname}/${path}`;
         const serverFile = await fetch('hosts/' + hostQualifiedPath);
@@ -89,7 +77,12 @@ export const fetchFileForHost = async (hostname: string, path: PathLike) => {
         // TODO: parse metadata
         const bytes = await contents.arrayBuffer();
         const buffer = Buffer.from(bytes);
-        await fsPromises.writeFile(hostQualifiedPath, buffer);
+
+        if (sync) {
+            fs.writeFileSync(hostQualifiedPath, buffer);
+        } else {
+            await fsPromises.writeFile(hostQualifiedPath, buffer);
+        }
 
         return buffer;
     } catch (err) {

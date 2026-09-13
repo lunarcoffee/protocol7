@@ -1,9 +1,9 @@
-import Image from 'next/image';
-import { MouseEvent } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 
-import { useFile } from '@/hooks/filesystem/useFile';
 import { useCreateProcess, useNextProcessID } from '@/hooks/processes';
+import { useSystemHostname } from '@/hooks/system';
 import { useCreateWindow, useNextWindowID } from '@/hooks/windows';
+import { openFile } from '@/utils/filesystem/openFile';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
 import { WindowFrame } from '../windows/WindowFrame';
@@ -17,20 +17,31 @@ export interface DesktopIconProps {
 // TODO: tooltip on hover
 
 export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps) => {
+    const hostname = useSystemHostname();
     const nextProcessID = useNextProcessID();
     const nextWindowID = useNextWindowID();
     const createProcess = useCreateProcess();
     const createWindow = useCreateWindow();
 
-    // TODO: this API is absolute garbage here lemme just also expose raw promises for fs interactions
-    const [iconFile] = useFile(iconPath);
+    const [label, setLabel] = useState<string>();
+    const [iconUrl, setIconUrl] = useState<string>();
 
-    const iconData = iconFile?.ok && JSON.parse(iconFile.read().toString());
+    useEffect(() => {
+        const readDataFromFiles = async () => {
+            const iconDataFile = await openFile(iconPath, hostname);
+            if (!iconDataFile?.ok) return;
+            const { label, icon } = JSON.parse(iconDataFile.read().toString());
+            setLabel(label);
 
-    const [iconImage] = useFile(iconData ? iconData.icon : '');
-    if (!iconImage?.ok) return null;
+            const iconImageFile = await openFile(icon, hostname);
+            if (!iconImageFile?.ok) return;
+            setIconUrl(iconImageFile.readToObjectURL());
+        };
 
-    const iconImageUrl = iconImage.readToObjectURL();
+        readDataFromFiles();
+    }, [hostname, iconPath]);
+
+    if (!label || !iconUrl) return null;
 
     return (
         <div
@@ -55,7 +66,7 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                 createWindow({
                     pid: nextProcessID,
                     wid: nextWindowID,
-                    title: iconData.label,
+                    title: label,
                     size: { x: 800, y: 500 },
                     render: (windowInfo) => (
                         <WindowFrame windowInfo={windowInfo}>
@@ -72,7 +83,7 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                     flex size-15 items-center justify-center drop-shadow-sm drop-shadow-aero-tint-darkest/70
                 "
             >
-                <img src={iconImageUrl} alt={iconData.label} draggable={false} />
+                <img src={iconUrl} alt={label} draggable={false} />
             </div>
             <div className="flex w-20 justify-center overflow-visible">
                 <p
@@ -84,7 +95,7 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                         isSelected ? 'line-clamp-4' : 'line-clamp-2',
                     )}
                 >
-                    {iconData.label}
+                    {label}
                 </p>
             </div>
         </div>
