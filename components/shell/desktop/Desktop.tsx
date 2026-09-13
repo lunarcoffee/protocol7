@@ -1,7 +1,7 @@
 'use client';
 
 import { Draft } from 'immer';
-import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { MouseEvent, useEffect, useRef, useState } from 'react';
 import { useImmerReducer } from 'use-immer';
 
 import { useDirectory } from '@/hooks/filesystem/useDirectory';
@@ -33,16 +33,22 @@ const Wallpaper = () => {
 
 type IconStates = Map<string, boolean>;
 
-type UpdateIconAction =
+type UpdateIconStatesAction =
     | { action: 'set'; iconPath: string; value: boolean }
+    | { action: 'set-all'; value: boolean }
     | { action: 'toggle'; iconPath: string }
-    | { action: 'reset'; iconStates: IconStates };
+    | { action: 'replace'; iconStates: IconStates };
 
-const iconStateReducer = (draft: Draft<IconStates>, action: UpdateIconAction) => {
+const iconStateReducer = (draft: Draft<IconStates>, action: UpdateIconStatesAction) => {
     switch (action.action) {
         case 'set': {
             const { iconPath, value } = action;
             draft.set(iconPath, value);
+            break;
+        }
+        case 'set-all': {
+            const { value } = action;
+            draft.forEach((_, icon) => draft.set(icon, value));
             break;
         }
         case 'toggle': {
@@ -50,7 +56,7 @@ const iconStateReducer = (draft: Draft<IconStates>, action: UpdateIconAction) =>
             draft.set(iconPath, !draft.get(iconPath));
             break;
         }
-        case 'reset': {
+        case 'replace': {
             return action.iconStates;
         }
     }
@@ -64,13 +70,6 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
 
     const [iconStates, updateIcons] = useImmerReducer(iconStateReducer, new Map());
 
-    const deselectAllIcons = useCallback(
-        () => iconStates.forEach((_, iconPath) => updateIcons({ action: 'set', iconPath, value: false })),
-        // `updateIcons` is a reducer dispatch and is referentially stable
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [iconStates],
-    );
-
     // in the latest mouseDown event, was an icon clicked or just the desktop? this value informs
     // the behavior of mouseDown handlers so they can implement icon selection properly
     const wasIconClicked = useRef(false);
@@ -79,14 +78,17 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
     if (iconPaths.length !== prevIconPaths.length) {
         setPrevIconPaths(iconPaths);
 
+        // desktop directory contents changed, reset icons to new default state
         const iconStates = new Map([...iconPaths].map((iconPath) => [iconPath, false]));
-        updateIcons({ action: 'reset', iconStates });
+        updateIcons({ action: 'replace', iconStates });
     }
 
     // deselect icons on losing focus
     useEffect(() => {
-        if (!hasFocus) deselectAllIcons();
-    }, [hasFocus, deselectAllIcons]);
+        if (!hasFocus) updateIcons({ action: 'set-all', value: false });
+        // reducer dispatches are referentially stable
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [hasFocus]);
 
     const [isDragging, startDrag, endDrag] = useBoolean(false);
     const [dragRect, setDragRect] = useState({});
@@ -130,7 +132,7 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
         // it is always set to true
         const isMultiSelect = event.getModifierState('Control');
         if (!isMultiSelect) {
-            deselectAllIcons();
+            updateIcons({ action: 'set-all', value: false });
             updateIcons({ action: 'set', iconPath, value: true });
         } else {
             updateIcons({ action: 'toggle', iconPath });
@@ -155,7 +157,7 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
                 onMouseDown={(event) => {
                     // clicks directly on the desktop should always deselect icons and prepare for dragging
                     if (!wasIconClicked.current) {
-                        deselectAllIcons();
+                        updateIcons({ action: 'set-all', value: false });
                         onDesktopDragStart({ x: event.clientX, y: event.clientY });
                     }
                 }}

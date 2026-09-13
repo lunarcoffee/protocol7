@@ -25,10 +25,7 @@ export const createSkeleton = async (hostname: string) => {
 
         // create directories before files to avoid problems writing files in nonexistent directories
         await fs.mkdir(hostname, { recursive: true });
-
-        for (const dir of dirs) {
-            await fs.mkdir(path.join(hostname, dir), { recursive: true });
-        }
+        await Promise.all(dirs.map((dir) => fs.mkdir(path.join(hostname, dir), { recursive: true })));
 
         await Promise.all(
             files.map((file) =>
