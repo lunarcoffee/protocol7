@@ -7,12 +7,12 @@ import { fetchManifest, resetLocalFilesystem } from '@/utils/filesystem';
 
 export let systemStore: SystemStoreAPI | null = null;
 
-export interface SystemContextProviderProps extends PropsWithChildren {
+export interface SystemStoreProviderProps extends PropsWithChildren {
     hostname: string;
     fallback: JSX.Element;
 }
 
-export const SystemStoreProvider = ({ hostname, fallback, children }: SystemContextProviderProps) => {
+export const SystemStoreProvider = ({ hostname, fallback, children }: SystemStoreProviderProps) => {
     const [isSystemReady, setSystemReady, setSystemNotReady] = useBoolean();
 
     useEffect(() => {

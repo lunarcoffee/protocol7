@@ -8,5 +8,3 @@ export const useSystemStore = <T>(selector: (system: SystemStore) => T): T => {
 
     return useStore(systemStore, selector);
 };
-
-export const useSystemHostname = () => useSystemStore(({ hostname }) => hostname);
