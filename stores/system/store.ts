@@ -2,7 +2,7 @@ import { immer } from 'zustand/middleware/immer';
 import { createStore, StoreApi } from 'zustand/vanilla';
 
 import { Dimensions } from '@/utils/Dimensions';
-import { RemoteFsManifest } from '@/utils/filesystem';
+import { RemoteFsManifest } from '@/utils/filesystem/manifest';
 
 import { DEFAULT_PROCESS_MANAGER, ProcessID, ProcessManager } from './processes/ProcessManager';
 import { processCreate, ProcessCreationInfo, processDestroy } from './processes/updateProcessManager';

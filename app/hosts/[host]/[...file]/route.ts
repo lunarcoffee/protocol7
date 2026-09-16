@@ -8,6 +8,7 @@ import { toDataPath } from '../route';
 
 const mimeTypeCache = new Map<string, string>();
 
+// returns file contents with Content-Type determined using the actual contents, instead of just the extension
 export const GET = async (_: NextRequest, { params }: RouteContext<'/hosts/[host]/[...file]'>) => {
     const { host, file } = await params;
 

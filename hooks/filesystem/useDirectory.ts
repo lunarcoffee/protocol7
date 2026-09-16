@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { readDirectory, ReadDirectoryResult } from '@/utils/filesystem/api';
+import { ReadDirectoryResult } from '@/utils/filesystem/api/readDirectory';
+import { readDirectory } from '@/utils/filesystem/api/readDirectory';
 
 import { useSystemHostname } from '../system';
 import { useToggle } from '../useToggle';

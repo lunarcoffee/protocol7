@@ -3,7 +3,8 @@ import { useEffect } from 'react';
 
 import { useBoolean } from '@/hooks/useBoolean';
 import { createSystemStore, SystemStoreAPI } from '@/stores/system/store';
-import { fetchManifest, resetLocalFilesystem } from '@/utils/filesystem';
+import { resetOverlay } from '@/utils/filesystem';
+import { fetchManifest } from '@/utils/filesystem/manifest';
 
 export let systemStore: SystemStoreAPI | null = null;
 
@@ -18,7 +19,7 @@ export const SystemStoreProvider = ({ hostname, fallback, children }: SystemStor
     useEffect(() => {
         let canceled = false;
         const initializeFilesystem = async () => {
-            await resetLocalFilesystem(hostname);
+            await resetOverlay(hostname);
             const fileManifest = await fetchManifest(hostname);
 
             if (!canceled && fileManifest) {

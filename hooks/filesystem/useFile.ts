@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { useSystemHostname } from '@/hooks/system';
 import { useToggle } from '@/hooks/useToggle';
-import { readFile, ReadFileResult } from '@/utils/filesystem/api';
+import { ReadFileResult } from '@/utils/filesystem/api/readFile';
+import { readFile } from '@/utils/filesystem/api/readFile';
 
 export type RefreshTrigger = () => void;
 
