@@ -1,38 +1,31 @@
+import { fileTypeFromBuffer } from 'file-type';
 import fs from 'fs/promises';
+import mime from 'mime/lite';
 import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 
-interface GetParams {
-    host: string;
-    file: string[];
-}
+import { toDataPath } from '../route';
 
-// TODO: investigate routecontext? doesnt seem to work currently
-export const GET = async (_: NextRequest, { params }: { params: Promise<GetParams> }) => {
+const mimeTypeCache = new Map<string, string>();
+
+export const GET = async (_: NextRequest, { params }: RouteContext<'/hosts/[host]/[...file]'>) => {
     const { host, file } = await params;
 
     try {
-        const filePath = path.join('assets', host, ...file);
-        const data = await fs.readFile(filePath);
-        const buffer = Buffer.from(data);
+        const clientPath = path.join(...file);
+        const filePath = path.join('public', host, toDataPath(clientPath));
+        const data = new Uint8Array(await fs.readFile(filePath));
 
-        const responseData = new FormData();
-        // TODO: annoying copy here maybe theres a better solution but im sleepy rn this is good enough
-        responseData.append('contents', new Blob([buffer]));
-        // TODO: (related to comment in other route.ts) eventually may decide this is unnecessary due to already sending
-        // metadata in the skeleton (it would be necessary if we want to account for te skeleton metadata and server
-        // copy getting out of sync but idk if that's desirable)
-        responseData.append(
-            'metadata',
-            JSON.stringify({
-                name: file[file.length - 1],
-                // TODO: date modified etc (actually fetch from metadata files)
-            }),
-        );
+        let mimeType = mimeTypeCache.get(filePath);
+        if (!mimeType) {
+            // determine file type from contents, falling back to name-based detection
+            const fileType = await fileTypeFromBuffer(data);
+            mimeType = fileType?.mime || mime.getType(clientPath) || 'application/octet-stream';
+            mimeTypeCache.set(filePath, mimeType);
+        }
 
-        return new NextResponse(responseData);
+        return new NextResponse(data, { headers: { 'Content-Type': mimeType } });
     } catch {
-        // TODO: make more nuanced
         return new NextResponse(null, { status: 404 });
     }
 };

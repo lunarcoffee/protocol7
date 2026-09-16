@@ -1,41 +1,64 @@
-import { Dirent } from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
 
-import { Skeleton } from '@/utils/filesystem';
+import { FsDirectoryMetadata, FsFileMetadata, FsManifest, FsManifestEntryMetadata } from '@/utils/filesystem';
 
-interface GetParams {
-    host: string;
-}
+export const toDataPath = (filePath: string): string =>
+    filePath.replaceAll(/(?<!^)\//g, '.data/').replace(/(?<!\/)$/, '.data');
 
-// serves filesystem skeleton
-// TODO: investigate routecontext? doesnt seem to work currently
-export const GET = async (_: Request, { params }: { params: Promise<GetParams> }) => {
-    const { host } = await params;
+const toMetadataPath = (filePath: string): string => toDataPath(filePath).replace(/\.data\/?$/, '.metadata');
 
-    // TODO: maybe generate this statically for performance
-    const fileRoot = path.join('assets', host);
-    const dirents = await fs.readdir(fileRoot, {
-        recursive: true,
-        withFileTypes: true,
-    });
+// path expected by the client (without .data or .metadata extensions)
+const toClientPath = (filePath: string): string => filePath.replaceAll(/\.(data|metadata)(?:\/|$)/g, '');
 
-    const filterToPaths = (fn: (dirent: Dirent) => boolean) =>
-        dirents.filter(fn).map((dirent) => {
-            const dirSegments = dirent.parentPath.split('/');
-            return path.join(...dirSegments.slice(2), dirent.name);
+const readMetadataOrDefault = async (fileRoot: string, clientPath: string): Promise<FsManifestEntryMetadata> => {
+    const metadataPath = path.join(fileRoot, toMetadataPath(clientPath));
+
+    try {
+        const metadataFile = await fs.readFile(metadataPath);
+        const metadata = JSON.parse(metadataFile.toString()) as FsFileMetadata | FsDirectoryMetadata;
+
+        if (metadata.type === 'file') return metadata;
+        return { ...metadata, type: 'directory-list', entries: await generateManifest(fileRoot, clientPath) };
+    } catch {
+        // assume metadata file doesn't exist, use actual data file metadata as fallback
+        const dataPath = path.join(fileRoot, toDataPath(clientPath));
+        const stats = await fs.stat(dataPath);
+
+        const commonMetadata = {
+            name: path.basename(clientPath),
+            path: clientPath,
+            created: stats.ctime.toISOString(),
+            modified: stats.mtime.toISOString(),
+        };
+
+        if (stats.isFile()) return { ...commonMetadata, type: 'file', extension: path.extname(clientPath) };
+        return { ...commonMetadata, type: 'directory-list', entries: await generateManifest(fileRoot, clientPath) };
+    }
+};
+
+const generateManifest = async (fileRoot: string, dirPath: string): Promise<FsManifest> => {
+    const dirDataPath = path.join(fileRoot, toDataPath(dirPath));
+    const dirents = await fs.readdir(dirDataPath, { withFileTypes: true });
+
+    const entries = dirents
+        .filter(({ name }) => name.endsWith('.data'))
+        .map(async (dirent) => {
+            const name = toClientPath(dirent.name);
+            const clientPath = path.join(dirPath, name);
+            return [name, await readMetadataOrDefault(fileRoot, clientPath)];
         });
 
-    const dirs = filterToPaths((dirent) => dirent.isDirectory());
-    const files = filterToPaths((dirent) => !dirent.isDirectory());
+    return Object.fromEntries(await Promise.all(entries));
+};
 
-    const manifest = JSON.parse(
-        await fs.readFile(path.join(fileRoot, 'manifest.json'), {
-            encoding: 'utf-8',
-        }),
-    );
+// serves base filesystem manifest
+export const GET = async (_: Request, { params }: RouteContext<'/hosts/[host]'>) => {
+    const { host } = await params;
 
-    //TODO: this will eventually have to include metadata as well
-    const skeleton: Skeleton = { dirs, files, manifest };
-    return Response.json(skeleton);
+    // TODO: cache this or generate statically for performance
+    const fileRoot = path.join('public', host);
+    const entries = await generateManifest(fileRoot, '/');
+
+    return Response.json(entries);
 };

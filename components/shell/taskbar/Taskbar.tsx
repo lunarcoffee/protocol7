@@ -1,8 +1,9 @@
 import Image from 'next/image';
 
-import NetworkIcon from '@/assets/localhost/system/icons/network.svg';
-import VolumeHighIcon from '@/assets/localhost/system/icons/volume-high.svg';
+import { useFile } from '@/hooks/filesystem/useFile';
 
+// import NetworkIcon from '@/public/localhost/system/icons/network.svg';
+// import VolumeHighIcon from '@/public/localhost/system/icons/volume-high.svg';
 import { Clock } from './Clock';
 import { LauncherButton } from './LauncherButton';
 import { SystemTray } from './SystemTray';
@@ -29,32 +30,42 @@ const CenterIsland = () => (
 );
 
 // includes right dark background gradient
-const RightIsland = () => (
-    <div
-        className={`
-            flex h-full flex-none flex-row items-center bg-linear-to-l from-aero-tint-darkest/15
-            via-aero-tint-darkest/20 via-[calc(100%-1.5rem)] pr-2 pl-5
-        `}
-    >
-        <div className="ml-3 shrink-0">
-            <SystemTray
-                items={[
-                    {
-                        renderIcon: () => <Image src={VolumeHighIcon} alt="network icon" className="w-7 p-[0.27rem]" />,
-                        renderPane: () => <p />,
-                    },
-                    {
-                        renderIcon: () => <Image src={NetworkIcon} alt="network icon" className="w-7 p-[0.4rem]" />,
-                        renderPane: () => <p />,
-                    },
-                ]}
-            />
+const RightIsland = () => {
+    const [volumeIcon] = useFile('/system/icons/volume-high.svg');
+    const [networkIcon] = useFile('/system/icons/network.svg');
+    if (!volumeIcon?.ok || !networkIcon?.ok) return null;
+
+    return (
+        <div
+            className={`
+                flex h-full flex-none flex-row items-center bg-linear-to-l from-aero-tint-darkest/15
+                via-aero-tint-darkest/20 via-[calc(100%-1.5rem)] pr-2 pl-5
+            `}
+        >
+            <div className="ml-3 shrink-0">
+                <SystemTray
+                    items={[
+                        {
+                            renderIcon: () => (
+                                <img src={volumeIcon.objectURL} alt="volume icon" className="w-7 p-[0.27rem]" />
+                            ),
+                            renderPane: () => <p />,
+                        },
+                        {
+                            renderIcon: () => (
+                                <img src={networkIcon.objectURL} alt="network icon" className="w-7 p-[0.4rem]" />
+                            ),
+                            renderPane: () => <p />,
+                        },
+                    ]}
+                />
+            </div>
+            <div className="z-30 ml-1 h-full shrink-0">
+                <Clock />
+            </div>
         </div>
-        <div className="z-30 ml-1 h-full shrink-0">
-            <Clock />
-        </div>
-    </div>
-);
+    );
+};
 
 export const Taskbar = () => {
     return (

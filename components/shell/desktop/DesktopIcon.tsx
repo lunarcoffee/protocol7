@@ -24,11 +24,13 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
     const [iconFile] = useFile(iconPath);
     if (!iconFile?.ok) return null;
 
-    const { name: label, pathHash } = iconFile;
+    const {
+        metadata: { name: label, path },
+    } = iconFile;
 
     return (
         <div
-            id={`desktop-icon-${pathHash}`}
+            id={`desktop-icon-${path}`} // TODO: hash
             className={twMergeClsx(
                 `
                     flex h-fit w-20 flex-col items-center gap-1.5 overflow-visible rounded-xs pt-1
@@ -66,7 +68,7 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                     flex size-15 items-center justify-center drop-shadow-sm drop-shadow-aero-tint-darkest/70
                 "
             >
-                <img src={iconFile.contentsAsObjectURL} alt={label} draggable={false} />
+                <img src={iconFile.objectURL} alt={label} draggable={false} />
             </div>
             <div className="flex w-20 justify-center overflow-visible">
                 <p

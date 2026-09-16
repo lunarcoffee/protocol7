@@ -50,7 +50,7 @@ const LauncherIcon = ({ active }: { active: boolean }) => {
 
     return (
         <img
-            src={file.contentsAsObjectURL}
+            src={file.objectURL}
             alt="launcher icon"
             draggable={false}
             className={twMergeClsx(

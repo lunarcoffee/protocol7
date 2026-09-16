@@ -2,28 +2,23 @@ import { useEffect, useState } from 'react';
 
 import { useSystemHostname } from '@/hooks/system';
 import { useToggle } from '@/hooks/useToggle';
-import { openFile } from '@/utils/filesystem/openFile';
-import { OpenFileResult } from '@/utils/filesystem/openFile';
-
-export interface UseFileOptions {
-    noFetch?: boolean;
-}
+import { readFile, ReadFileResult } from '@/utils/filesystem/api';
 
 export type RefreshTrigger = () => void;
 
-type UseFileResult = [OpenFileResult | undefined, RefreshTrigger];
+type UseFileResult = [ReadFileResult | undefined, RefreshTrigger];
 
-export const useFile = (filePath: string, options: UseFileOptions = {}): UseFileResult => {
+export const useFile = (filePath: string): UseFileResult => {
     const hostname = useSystemHostname();
 
-    const [handle, setHandle] = useState<OpenFileResult>();
+    const [handle, setHandle] = useState<ReadFileResult>();
     const [refreshSignal, triggerRefresh] = useToggle();
 
     useEffect(() => {
         let canceled = false;
 
         const loadHandle = async () => {
-            const file = await openFile(filePath, hostname, options);
+            const file = await readFile(filePath);
             if (!canceled) setHandle(file);
         };
         loadHandle();
@@ -31,7 +26,7 @@ export const useFile = (filePath: string, options: UseFileOptions = {}): UseFile
         return () => {
             canceled = true;
         };
-    }, [filePath, hostname, options, refreshSignal]);
+    }, [filePath, hostname, refreshSignal]);
 
     return [handle, triggerRefresh];
 };

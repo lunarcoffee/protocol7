@@ -1,24 +1,24 @@
 import { useEffect, useState } from 'react';
 
-import { openDirectory, OpenDirectoryResult } from '@/utils/filesystem/openDirectory';
+import { readDirectory, ReadDirectoryResult } from '@/utils/filesystem/api';
 
 import { useSystemHostname } from '../system';
 import { useToggle } from '../useToggle';
 import { RefreshTrigger } from './useFile';
 
-export type UseDirectoryResult = [OpenDirectoryResult | undefined, RefreshTrigger];
+export type UseDirectoryResult = [ReadDirectoryResult | undefined, RefreshTrigger];
 
 export const useDirectory = (dirPath: string): UseDirectoryResult => {
     const hostname = useSystemHostname();
 
-    const [handle, setHandle] = useState<OpenDirectoryResult>();
+    const [handle, setHandle] = useState<ReadDirectoryResult>();
     const [refreshSignal, triggerRefresh] = useToggle();
 
     useEffect(() => {
         let canceled = false;
 
         const loadHandle = async () => {
-            const file = await openDirectory(dirPath, hostname);
+            const file = await readDirectory(dirPath);
             if (!canceled) setHandle(file);
         };
         loadHandle();

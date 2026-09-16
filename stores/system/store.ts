@@ -2,6 +2,7 @@ import { immer } from 'zustand/middleware/immer';
 import { createStore, StoreApi } from 'zustand/vanilla';
 
 import { Dimensions } from '@/utils/Dimensions';
+import { RemoteFsManifest } from '@/utils/filesystem';
 
 import { DEFAULT_PROCESS_MANAGER, ProcessID, ProcessManager } from './processes/ProcessManager';
 import { processCreate, ProcessCreationInfo, processDestroy } from './processes/updateProcessManager';
@@ -19,6 +20,7 @@ import { DEFAULT_WINDOW_MANAGER, WindowID, WindowManager } from './windows/Windo
 
 export interface System {
     hostname: string;
+    fileManifest: RemoteFsManifest;
 
     pm: ProcessManager;
     wm: WindowManager;
@@ -39,17 +41,18 @@ export interface SystemStore extends System {
 
 export type SystemStoreAPI = StoreApi<SystemStore>;
 
-const createInitialSystem = (hostname: string): System => ({
+const createInitialSystem = (hostname: string, fileManifest: RemoteFsManifest): System => ({
     hostname,
+    fileManifest,
 
     pm: DEFAULT_PROCESS_MANAGER,
     wm: DEFAULT_WINDOW_MANAGER,
 });
 
-export const createSystemStore = (hostname: string): SystemStoreAPI =>
+export const createSystemStore = (hostname: string, fileManifest: RemoteFsManifest): SystemStoreAPI =>
     createStore<SystemStore>()(
         immer((set) => ({
-            ...createInitialSystem(hostname),
+            ...createInitialSystem(hostname, fileManifest),
 
             createProcess: (info) => set((system) => processCreate(system.pm, info)),
             destroyProcess: (pid) => set((system) => processDestroy(system, pid)),

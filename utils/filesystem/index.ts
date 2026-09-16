@@ -1,83 +1,79 @@
 import { promises as fs } from '@zenfs/core';
 import { Mutex } from 'async-mutex';
-import path from 'path';
 
-export interface Skeleton {
-    dirs: string[];
-    files: string[];
-    manifest: {
-        // files that should be fetched before displaying the shell
-        prefetch: string[];
-    };
+/*
+ * both the remote and local filesystems contain a metadata and data file (or just the directory) for each entry:
+ *
+ * [hostname]/
+ *  |- file1.metadata
+ *  |- file1.data
+ *  |- dir1.metadata
+ *  |- dir1.dir/
+ *  |   |- file2.metadata
+ *  |   +- file2.data
+ *  |- dir2.metadata
+ *  +- dir2.data/
+ *      |- file4.metadata
+ *      |- file4.data
+ *      |- dir3.metadata
+ *      +- dir3.data/
+ */
+
+export interface RemoteFsManifest {
+    getMetadata: (filePath: string) => FsManifestEntryMetadata | undefined;
 }
 
-// a file containing this value indicates it was generated as part of the skeleton; the real contents need to be fetched
-// from the server
-export const FS_SKELETON_PLACEHOLDER = 0x94070c01;
-export const FS_SKELETON_PLACEHOLDER_ARRAY = Uint8Array.from([0x94, 0x07, 0x0c, 0x01]);
+export type FsCommonMetadata = { name: string; path: string };
+export type FsTimeMetadata = { created: string; modified: string };
 
-// fetches and creates a local filesystem skeleton and performs any work specified by the manifest for the given host
-export const createSkeleton = async (hostname: string) => {
+// { type: 'deleted' } is only used to override the existence of an entry (i.e., only for entries in the manifest)
+export type FsFileMetadata = { type: 'file'; extension: string } & FsCommonMetadata & FsTimeMetadata;
+export type FsDirectoryMetadata = { type: 'directory' } & FsCommonMetadata & FsTimeMetadata;
+export type FsDeletedMetadata = { type: 'deleted' } & FsCommonMetadata;
+
+export type FsEntryMetadata = FsFileMetadata | FsDirectoryMetadata | FsDeletedMetadata;
+
+// only used in the remote filesystem manifest
+export type FsDirectoryListingMetadata = {
+    type: 'directory-list';
+    entries: Record<string, FsManifestEntryMetadata>;
+} & FsCommonMetadata &
+    FsTimeMetadata;
+
+export type FsManifestEntryMetadata = FsFileMetadata | FsDirectoryListingMetadata;
+
+// fetched from the remote server; contains metadata for the entire base filesystem
+export type FsManifest = Record<string, FsManifestEntryMetadata>;
+
+const getMetadataFromManifest = (manifest: FsManifest, filePath: string) => {
+    const [segment, ...rest] = filePath.split('/').filter((segment) => segment.length > 0);
+    if (rest.length === 0) return manifest[segment];
+
+    const dir = manifest[segment];
+    if (!dir || dir.type !== 'directory-list') return;
+    return getMetadataFromManifest(dir.entries, rest.join('/'));
+};
+
+export const fetchManifest = async (hostname: string): Promise<RemoteFsManifest | undefined> => {
     try {
         const response = await fetch('hosts/' + hostname);
-        const { dirs, files, manifest } = (await response.json()) as Skeleton;
+        const manifest = (await response.json()) as FsManifest;
 
-        // create directories before files to avoid problems writing files in nonexistent directories
-        await fs.mkdir(hostname, { recursive: true });
-        await Promise.all(dirs.map((dir) => fs.mkdir(path.join(hostname, dir), { recursive: true })));
-
-        await Promise.all(
-            files.map((file) =>
-                manifest.prefetch.includes(file)
-                    ? fetchFileForHost(hostname, file)
-                    : fs.writeFile(path.join(hostname, file), FS_SKELETON_PLACEHOLDER_ARRAY),
-            ),
-        );
+        return { getMetadata: (filePath: string) => getMetadataFromManifest(manifest, filePath) };
     } catch (err) {
-        console.error('exception while creating skeleton for host!', err);
+        console.error('exception while fetching remote filesystem manifest!', err);
     }
 };
 
-export const eraseData = async (hostname: string) => {
+const resetLocalFilesystemMutex = new Mutex();
+
+export const resetLocalFilesystem = async (hostname: string) => {
     try {
-        if (await fs.exists(hostname)) await fs.rm(hostname, { recursive: true });
+        await resetLocalFilesystemMutex.runExclusive(async () => {
+            if (await fs.exists(hostname)) await fs.rm(hostname, { recursive: true });
+            await fs.mkdir(hostname);
+        });
     } catch (err) {
-        console.warn('exception while erasing data for host!', err);
-    }
-};
-
-const resetHostMutex = new Mutex();
-
-export const resetHost = async (hostname: string) => {
-    await resetHostMutex.runExclusive(async () => {
-        await eraseData(hostname);
-        await createSkeleton(hostname);
-    });
-};
-
-// fetches a copy of the file at `path` from the server and writes it to the local filesystem
-export const fetchFileForHost = async (hostname: string, filePath: string) => {
-    try {
-        const hostQualifiedPath = path.join(hostname, filePath);
-        const serverFile = await fetch('hosts/' + hostQualifiedPath);
-
-        if (!serverFile.ok) return;
-
-        const data = await serverFile.formData();
-        const metadata = data.get('metadata');
-        const contents = data.get('contents');
-
-        if (!metadata || !contents || !(typeof metadata === 'string') || !(contents instanceof File)) {
-            return;
-        }
-
-        // TODO: parse metadata
-        const bytes = await contents.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        await fs.writeFile(hostQualifiedPath, buffer);
-
-        return buffer;
-    } catch (err) {
-        console.warn('exception while fetching file from server!', err);
+        console.warn(`exception while resetting local filesystem for host ${hostname}!`, err);
     }
 };

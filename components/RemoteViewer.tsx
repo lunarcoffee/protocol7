@@ -1,4 +1,4 @@
-import { SystemContextProvider } from './contexts/SystemContext';
+import { SystemStoreProvider } from '../stores/system/SystemStoreProvider';
 import { GraphicalShell } from './shell/GraphicalShell';
 
 const LoadingFallback = () => (
@@ -19,9 +19,9 @@ export const RemoteViewer = () => {
                     overflow-clip
                 `}
             >
-                <SystemContextProvider key={hostname} hostname={hostname} fallback={<LoadingFallback />}>
+                <SystemStoreProvider key={hostname} hostname={hostname} fallback={<LoadingFallback />}>
                     <GraphicalShell />
-                </SystemContextProvider>
+                </SystemStoreProvider>
             </div>
         </div>
     );
