@@ -1,9 +1,5 @@
-import Image from 'next/image';
-
 import { useFile } from '@/hooks/filesystem/useFile';
 
-// import NetworkIcon from '@/public/localhost/system/icons/network.svg';
-// import VolumeHighIcon from '@/public/localhost/system/icons/volume-high.svg';
 import { Clock } from './Clock';
 import { LauncherButton } from './LauncherButton';
 import { SystemTray } from './SystemTray';

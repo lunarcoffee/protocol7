@@ -5,7 +5,7 @@ import path from 'path';
 import { err, ok, Result } from '@/utils/Result';
 
 import { FsDirectoryMetadata, FsEntryMetadata } from '..';
-import { pathToData, pathToMetadata, withMetadata } from '.';
+import { pathToData, pathToMetadata, withMetadata } from './internal';
 
 export const direntToMetadata = async (parentPath: string, dirent: Dirent) => {
     const metadata = await fs.readFile(pathToMetadata(path.join(parentPath, dirent.name)));

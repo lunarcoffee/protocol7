@@ -3,7 +3,7 @@ import { promises as fs } from '@zenfs/core';
 import { err, ok, Result } from '@/utils/Result';
 
 import { FsFileMetadata } from '..';
-import { fetchFileContents, pathToData, pathToRemoteURL, withMetadata } from '.';
+import { fetchFileContents, pathToData, pathToRemoteURL, withMetadata } from './internal';
 
 export type ReadFileResult = Result<
     {

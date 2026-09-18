@@ -9,6 +9,7 @@ const RESIZE_HANDLES: [string, number, number, string][] = [
     ['-right-0.5 top-0 w-1.5 h-full', 1, 0, 'e-resize'],
     ['-bottom-0.5 left-0 w-full h-1.5', 0, 1, 's-resize'],
     ['-left-0.5 top-0 w-1.5 h-full', -1, 0, 'w-resize'],
+
     // top left, top right, bottom right, bottom left
     ['-top-0.5 -left-0.5 size-3 rounded-br-full', -1, -1, 'nwse-resize'],
     ['-top-0.5 -right-0.5 size-3 rounded-bl-full', 1, -1, 'nesw-resize'],
