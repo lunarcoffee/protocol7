@@ -15,7 +15,7 @@ import { handleMouseDrag } from '@/utils/handleMouseDrag';
 import { DesktopIcon } from './DesktopIcon';
 
 const Wallpaper = () => {
-    const [file] = useFile('/users/lunarcoffee/pictures/wallpapers/flowers.jpg');
+    const [file] = useFile('/users/lunarcoffee/desktop/GR016575.jpg');
     if (!file?.ok) return null;
 
     return (
@@ -155,7 +155,7 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
             <div
                 onMouseDown={(event) => {
                     // clicks directly on the desktop should always deselect icons and prepare for dragging
-                    if (!wasIconClicked.current) {
+                    if (!wasIconClicked.current && event.button === 0) {
                         updateIcons({ action: 'set-all', value: false });
                         onDesktopDragStart({ x: event.clientX, y: event.clientY });
                     }
