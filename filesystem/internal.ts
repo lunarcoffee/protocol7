@@ -1,3 +1,4 @@
+import murmurhash from 'murmurhash';
 import path from 'path-browserify';
 
 import { systemStore } from '@/stores/system/SystemStoreProvider';
@@ -45,6 +46,7 @@ export const toFileMetadata = (filePath: string, timeMetadata: FsTimeMetadata): 
     name: path.basename(filePath),
     path: filePath,
     extension: path.extname(filePath),
+    uid: murmurhash.v3(filePath),
     ...timeMetadata,
 });
 
@@ -52,6 +54,7 @@ export const toDirectoryMetadata = (dirPath: string, timeMetadata: FsTimeMetadat
     type: 'directory',
     name: path.basename(dirPath),
     path: dirPath,
+    uid: murmurhash.v3(dirPath),
     ...timeMetadata,
 });
 

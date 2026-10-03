@@ -25,12 +25,12 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
     if (!iconFile?.ok) return null;
 
     const {
-        metadata: { name: label, path },
+        metadata: { name: label, uid },
     } = iconFile;
 
     return (
         <div
-            id={`desktop-icon-${path}`} // TODO: hash
+            id={`desktop-icon-${uid}`}
             className={twMergeClsx(
                 `
                     flex h-fit w-20 flex-col items-center gap-1.5 overflow-visible rounded-xs pt-1

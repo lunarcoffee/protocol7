@@ -114,7 +114,7 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
 
                 // select all icons which intersect the drag rectangle and deselect all others
                 iconStates.forEach((_, iconEntry) => {
-                    const iconElement = document.getElementById(`desktop-icon-${iconEntry.path}`); //TODO: hash
+                    const iconElement = document.getElementById(`desktop-icon-${iconEntry.uid}`);
                     if (iconElement) {
                         const dragRect = dragRectElement.getBoundingClientRect();
                         const iconRect = iconElement.getBoundingClientRect();

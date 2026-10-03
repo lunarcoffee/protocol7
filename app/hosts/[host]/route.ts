@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import murmurhash from 'murmurhash';
 import path from 'path';
 
 import { FsDirectoryMetadata, FsFileMetadata } from '@/filesystem';
@@ -18,6 +19,7 @@ const readMetadataOrDefault = async (fileRoot: string, clientPath: string): Prom
     try {
         const metadataFile = await fs.readFile(metadataPath);
         const metadata = JSON.parse(metadataFile.toString()) as FsFileMetadata | FsDirectoryMetadata;
+        // TODO: allow partial metadata and fill in missing fields if computable (e.g., uid)
 
         if (metadata.type === 'file') return metadata;
         return { ...metadata, type: 'directory-list', entries: await generateManifest(fileRoot, clientPath) };
@@ -29,6 +31,8 @@ const readMetadataOrDefault = async (fileRoot: string, clientPath: string): Prom
         const commonMetadata = {
             name: path.basename(clientPath),
             path: clientPath,
+            uid: murmurhash.v3(clientPath),
+
             created: stats.ctime.toISOString(),
             modified: stats.mtime.toISOString(),
         };

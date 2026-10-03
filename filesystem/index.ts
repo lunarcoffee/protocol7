@@ -62,7 +62,7 @@
 
 /* client-facing metadata types */
 
-export type FsCommonMetadata = { name: string; path: string };
+export type FsCommonMetadata = { name: string; path: string; uid: number };
 export type FsTimeMetadata = { created: string; modified: string };
 
 export type FsFileMetadata = { type: 'file'; extension: string } & FsCommonMetadata & FsTimeMetadata;
