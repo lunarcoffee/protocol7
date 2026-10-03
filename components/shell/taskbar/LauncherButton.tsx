@@ -89,14 +89,14 @@ export const LauncherButton = () => {
         <div
             className={twMergeClsx(
                 `
-                    group z-0 flex size-12 cursor-pointer flex-row justify-center rounded-full
-                    bg-aero-tint-dark shadow-[0_0_0.3rem] ring shadow-white/60 ring-aero-tint-darkest
+                    group z-0 box-content flex size-12 cursor-pointer flex-row justify-center rounded-full
+                    border border-aero-tint-darkest bg-aero-tint-dark shadow-[0_0_0.3rem] shadow-white/50
                     transition duration-100
-                    hover:shadow-[0_0_0.5rem] hover:shadow-white/70
+                    hover:shadow-[0_0_0.5rem] hover:shadow-white/65
                 `,
                 isLauncherOpen &&
                     `
-                        shadow-[0_0_0.4rem] shadow-white/70
+                        shadow-[0_0_0.4rem] shadow-white/60
                         hover:shadow-white/80
                     `,
             )}
