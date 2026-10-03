@@ -34,15 +34,15 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
             className={twMergeClsx(
                 `
                     flex h-fit w-20 flex-col items-center gap-1.5 overflow-visible rounded-xs pt-1
-                    hover:bg-aero-tint-highlight/25 hover:shadow-[0_0_4px] hover:ring
-                    hover:shadow-aero-tint-highlight/25 hover:ring-aero-tint-highlight/25
+                    hover:bg-aero-tint-highlight/25 hover:shadow-[0_0_4px] hover:outline
+                    hover:shadow-aero-tint-highlight/25 hover:outline-aero-tint-highlight/25
                 `,
                 isSelected &&
                     `
-                        bg-aero-tint-highlight/45 shadow-[0_0_4px] ring shadow-aero-tint-highlight/45
-                        ring-aero-tint-highlight/45
-                        hover:bg-aero-tint-highlight/55 hover:ring hover:shadow-aero-tint-highlight/55
-                        hover:ring-aero-tint-highlight/55
+                        bg-aero-tint-highlight/45 shadow-[0_0_4px] outline shadow-aero-tint-highlight/45
+                        outline-aero-tint-highlight/45
+                        hover:bg-aero-tint-highlight/55 hover:outline hover:shadow-aero-tint-highlight/55
+                        hover:outline-aero-tint-highlight/55
                     `,
             )}
             onMouseDown={onClick}

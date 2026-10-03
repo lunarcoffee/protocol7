@@ -7,8 +7,8 @@ export interface HoverableProps extends PropsWithChildren {
 export const Hoverable = ({ glow = true, children }: HoverableProps) => (
     <div
         className={`
-            group relative h-full rounded-xs ring-aero-tint-darkest/80 transition duration-100
-            hover:ring hover:inset-shadow-[0_2px_6px] hover:inset-shadow-white/30
+            group relative h-full rounded-xs outline outline-transparent transition duration-100
+            hover:inset-shadow-[0_2px_6px] hover:inset-shadow-white/30 hover:outline-aero-tint-darkest/80
         `}
     >
         {glow && (

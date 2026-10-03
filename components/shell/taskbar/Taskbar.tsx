@@ -86,7 +86,7 @@ export const Taskbar = () => {
             `}
         >
             {/* white top highlight */}
-            <div className="absolute top-0 left-0 z-20 h-0.5 w-full bg-linear-to-b from-white/30" />
+            <div className="absolute top-0 left-0 z-20 h-[0.1rem] w-full bg-linear-to-b from-white/30" />
             <LeftIsland />
             <CenterIsland />
             <RightIsland />

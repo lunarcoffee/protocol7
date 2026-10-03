@@ -80,7 +80,7 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
                     `
                         absolute inset-0 flex origin-[50%_-10%] flex-col rounded-md border
                         border-aero-tint-darkest/85 bg-linear-to-tr from-aero-tint-dark/70 to-aero-tint/70
-                        px-1 pb-1 shadow-[0_0_20px] inset-shadow-[0_0_2px] shadow-aero-tint-darkest/75
+                        px-1 pb-1 shadow-[0_0_20px] inset-shadow-[0_0_0.1rem] shadow-aero-tint-darkest/75
                         inset-shadow-white/80 backdrop-blur-xs text-shadow-aero-tint-darkest/50 text-shadow-md
                     `,
                     hasFocus ||

@@ -4,7 +4,7 @@ import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 const ControlButton = ({
     bgFrom,
     bgTo,
-    ring,
+    outline,
     topGlow,
     topShadow,
     bottomGlow,
@@ -12,7 +12,7 @@ const ControlButton = ({
 }: {
     bgFrom: string;
     bgTo: string;
-    ring: string;
+    outline: string;
     topGlow: string;
     topShadow: string;
     bottomGlow: string;
@@ -26,8 +26,8 @@ const ControlButton = ({
             size-4 rounded-full bg-linear-to-t
             ${bgFrom}
             ${bgTo}
-            ring inset-shadow-sm inset-shadow-black/70
-            ${ring}
+            inset-shadow-sm inset-shadow-black/70 outline
+            ${outline}
             group overflow-clip shadow-sm shadow-white/80 transition duration-75
             hover:shadow-white hover:brightness-125
             active:shadow-white active:brightness-80
@@ -73,7 +73,7 @@ export const ControlButtons = ({ windowInfo: { wid } }: PropsWithWindowInfo) => 
             <ControlButton
                 bgFrom="from-lime-500"
                 bgTo="to-lime-900"
-                ring="ring-lime-950"
+                outline="outline-lime-950"
                 topGlow="from-lime-200"
                 topShadow="inset-shadow-lime-950"
                 bottomGlow="from-lime-300"
@@ -82,7 +82,7 @@ export const ControlButtons = ({ windowInfo: { wid } }: PropsWithWindowInfo) => 
             <ControlButton
                 bgFrom="from-yellow-400"
                 bgTo="to-yellow-800"
-                ring="ring-yellow-950"
+                outline="outline-yellow-950"
                 topGlow="from-yellow-200"
                 topShadow="inset-shadow-yellow-950"
                 bottomGlow="from-yellow-300"
@@ -91,7 +91,7 @@ export const ControlButtons = ({ windowInfo: { wid } }: PropsWithWindowInfo) => 
             <ControlButton
                 bgFrom="from-red-500"
                 bgTo="to-red-900"
-                ring="ring-red-950"
+                outline="outline-red-950"
                 topGlow="from-red-200"
                 topShadow="inset-shadow-red-950"
                 bottomGlow="from-red-300"
