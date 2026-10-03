@@ -18,16 +18,8 @@ export const GraphicalShell = () => {
     useEffect(() => {
         createProcess({ pid: PID_SHELL, isHeadless: true });
 
-        createWindow({
-            pid: PID_SHELL,
-            wid: WID_TASKBAR,
-            render: () => <Taskbar />,
-        });
-        createWindow({
-            pid: PID_SHELL,
-            wid: WID_DESKTOP,
-            render: (windowInfo) => <Desktop windowInfo={windowInfo} />,
-        });
+        createWindow({ pid: PID_SHELL, wid: WID_TASKBAR, render: () => <Taskbar /> });
+        createWindow({ pid: PID_SHELL, wid: WID_DESKTOP, render: (windowInfo) => <Desktop windowInfo={windowInfo} /> });
 
         return () => destroyProcess(PID_SHELL);
         // store actions are referentially stable

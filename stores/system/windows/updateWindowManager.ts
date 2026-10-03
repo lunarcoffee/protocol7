@@ -37,7 +37,7 @@ export const windowCreate = (
 
     const { wid, pid } = info;
 
-    if (windows.has(wid)) console.warn('recreating existing wid:', wid);
+    if (windows.has(wid)) console.warn(`wm: recreating existing wid ${wid}`);
 
     unfocusAll(system);
 

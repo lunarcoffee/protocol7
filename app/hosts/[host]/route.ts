@@ -1,8 +1,8 @@
 import fs from 'fs/promises';
 import path from 'path';
 
-import { FsDirectoryMetadata, FsFileMetadata } from '@/utils/filesystem';
-import { FsManifest, FsManifestEntryMetadata } from '@/utils/filesystem/manifest';
+import { FsDirectoryMetadata, FsFileMetadata } from '@/filesystem';
+import { FsManifest, FsManifestEntryMetadata } from '@/filesystem/manifest';
 
 export const toDataPath = (filePath: string): string =>
     filePath.replaceAll(/(?<!^)\//g, '.data/').replace(/(?<!\/)$/, '.data');

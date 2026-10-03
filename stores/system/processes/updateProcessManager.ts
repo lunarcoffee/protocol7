@@ -32,7 +32,7 @@ export type ProcessCreationInfo = Pick<ProcessInfo, RequiredProcessProps> &
 export const processCreate = ({ processes }: Draft<ProcessManager>, info: ProcessCreationInfo) => {
     const { pid } = info;
 
-    if (processes.has(pid)) console.warn('recreating existing pid:', pid);
+    if (processes.has(pid)) console.warn(`pm: recreating existing pid ${pid}`);
 
     processes.set(pid, {
         windows: [],

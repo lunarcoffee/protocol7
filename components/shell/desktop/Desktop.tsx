@@ -2,6 +2,7 @@ import { Draft } from 'immer';
 import { MouseEvent, useEffect, useRef, useState } from 'react';
 import { useImmerReducer } from 'use-immer';
 
+import { FsEntryMetadata } from '@/filesystem';
 import { useDirectory } from '@/hooks/filesystem/useDirectory';
 import { useFile } from '@/hooks/filesystem/useFile';
 import { useBoolean } from '@/hooks/useBoolean';
@@ -9,7 +10,6 @@ import { useFocusWindow } from '@/hooks/windows';
 import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import { Dimensions, toScreenPosition } from '@/utils/Dimensions';
 import { doRectanglesIntersect } from '@/utils/doRectanglesIntersect';
-import { FsEntryMetadata } from '@/utils/filesystem';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 
 import { DesktopIcon } from './DesktopIcon';
@@ -21,7 +21,7 @@ const Wallpaper = () => {
     return (
         <div className="absolute size-full bg-aero-tint-darkest object-cover object-center">
             <img
-                src={file.objectURL}
+                src={file.getObjectURL()}
                 alt="desktop wallpaper"
                 draggable={false}
                 className="absolute size-full object-cover object-center"

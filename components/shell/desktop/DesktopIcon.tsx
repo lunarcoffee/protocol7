@@ -68,7 +68,7 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                     flex size-15 items-center justify-center drop-shadow-sm drop-shadow-aero-tint-darkest/70
                 "
             >
-                <img src={iconFile.objectURL} alt={label} draggable={false} />
+                <img src={iconFile.getObjectURL()} alt={label} draggable={false} />
             </div>
             <div className="flex w-20 justify-center overflow-visible">
                 <p

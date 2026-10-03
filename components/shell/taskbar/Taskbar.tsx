@@ -29,7 +29,6 @@ const CenterIsland = () => (
 const RightIsland = () => {
     const [volumeIcon] = useFile('/system/icons/volume-high.svg');
     const [networkIcon] = useFile('/system/icons/network.svg');
-    if (!volumeIcon?.ok || !networkIcon?.ok) return null;
 
     return (
         <div
@@ -42,15 +41,29 @@ const RightIsland = () => {
                 <SystemTray
                     items={[
                         {
-                            renderIcon: () => (
-                                <img src={volumeIcon.objectURL} alt="volume icon" className="w-7 p-[0.27rem]" />
-                            ),
+                            renderIcon: () =>
+                                volumeIcon?.ok ? (
+                                    <img
+                                        src={volumeIcon.getObjectURL()}
+                                        alt="volume icon"
+                                        className="w-7 p-[0.27rem]"
+                                    />
+                                ) : (
+                                    <></>
+                                ),
                             renderPane: () => <p />,
                         },
                         {
-                            renderIcon: () => (
-                                <img src={networkIcon.objectURL} alt="network icon" className="w-7 p-[0.4rem]" />
-                            ),
+                            renderIcon: () =>
+                                networkIcon?.ok ? (
+                                    <img
+                                        src={networkIcon.getObjectURL()}
+                                        alt="network icon"
+                                        className="w-7 p-[0.4rem]"
+                                    />
+                                ) : (
+                                    <></>
+                                ),
                             renderPane: () => <p />,
                         },
                     ]}

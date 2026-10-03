@@ -1,10 +1,10 @@
 import type { JSX, PropsWithChildren } from 'react';
 import { useEffect } from 'react';
 
+import { eraseOverlay } from '@/filesystem/api/eraseOverlay';
+import { fetchManifest } from '@/filesystem/manifest';
 import { useBoolean } from '@/hooks/useBoolean';
 import { createSystemStore, SystemStoreAPI } from '@/stores/system/store';
-import { resetOverlay } from '@/utils/filesystem';
-import { fetchManifest } from '@/utils/filesystem/manifest';
 
 export let systemStore: SystemStoreAPI | null = null;
 
@@ -19,7 +19,12 @@ export const SystemStoreProvider = ({ hostname, fallback, children }: SystemStor
     useEffect(() => {
         let canceled = false;
         const initializeFilesystem = async () => {
-            await resetOverlay(hostname);
+            try {
+                await eraseOverlay(hostname);
+            } catch (err) {
+                console.error(`fs: exception while erasing overlay for host ${hostname}!`, err);
+                // TODO: tf do we do here lol reload the page?
+            }
             const fileManifest = await fetchManifest(hostname);
 
             if (!canceled && fileManifest) {

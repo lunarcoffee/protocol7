@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
+import { ReadFileResult } from '@/filesystem/api/readFile';
+import { readFile } from '@/filesystem/api/readFile';
 import { useSystemHostname } from '@/hooks/system';
 import { useToggle } from '@/hooks/useToggle';
-import { ReadFileResult } from '@/utils/filesystem/api/readFile';
-import { readFile } from '@/utils/filesystem/api/readFile';
 
 export type RefreshTrigger = () => void;
 
@@ -19,6 +19,7 @@ export const useFile = (filePath: string): UseFileResult => {
         let canceled = false;
 
         const loadHandle = async () => {
+            // TODO: maybe return a proxy to stop leaking object URLs
             const file = await readFile(filePath);
             if (!canceled) setHandle(file);
         };

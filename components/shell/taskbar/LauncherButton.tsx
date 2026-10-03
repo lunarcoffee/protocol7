@@ -50,7 +50,7 @@ const LauncherIcon = ({ active }: { active: boolean }) => {
 
     return (
         <img
-            src={file.objectURL}
+            src={file.getObjectURL()}
             alt="launcher icon"
             draggable={false}
             className={twMergeClsx(
@@ -69,7 +69,7 @@ export const LauncherButton = () => {
     const launcherWindow = useWindow(WID_LAUNCHER);
     const createWindow = useCreateWindow();
     const destroyWindow = useDestroyWindow();
-    const isLauncherOpen = launcherWindow !== undefined;
+    const isLauncherOpen = !!launcherWindow;
 
     const toggleLauncher = () => {
         if (isLauncherOpen) {
