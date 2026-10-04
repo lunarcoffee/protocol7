@@ -8,9 +8,10 @@ import { useFile } from '@/hooks/filesystem/useFile';
 import { useBoolean } from '@/hooks/useBoolean';
 import { useFocusWindow } from '@/hooks/windows';
 import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
-import { Dimensions, toScreenPosition } from '@/utils/Dimensions';
+import { Dimensions } from '@/utils/Dimensions';
 import { doRectanglesIntersect } from '@/utils/doRectanglesIntersect';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
+import { toScreenPosition } from '@/utils/toScreenPosition';
 
 import { DesktopIcon } from './DesktopIcon';
 

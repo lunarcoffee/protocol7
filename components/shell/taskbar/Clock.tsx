@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import { DateTime } from 'luxon';
 
 import { useCurrentTime } from '@/hooks/useCurrentTime';
@@ -10,7 +11,11 @@ export const Clock = () => {
 
     const time = currentTime.toLocaleString(DateTime.TIME_SIMPLE);
     const date = currentTime.toLocaleString(DateTime.DATE_SHORT);
-    const fullDate = currentTime.toLocaleString(DateTime.DATETIME_FULL);
+
+    const fullDate = dedent`
+        ${currentTime.toLocaleString(DateTime.DATE_HUGE)}
+        ${currentTime.toLocaleString(DateTime.TIME_WITH_LONG_OFFSET)}
+    `;
 
     return (
         <Tooltip label={fullDate} className="h-full">

@@ -6,6 +6,7 @@ import { enableMapSet } from 'immer';
 import { useEffect } from 'react';
 
 import { useBoolean } from '@/hooks/useBoolean';
+import { addMousePositionListener } from '@/utils/getMousePosition';
 
 import { RemoteViewer } from './RemoteViewer';
 
@@ -22,6 +23,8 @@ export const App = () => {
 
         setZenFsNotInitialized();
         initializeZenFS();
+
+        addMousePositionListener();
         // `useBoolean` setters are referentially stable
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

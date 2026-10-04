@@ -33,7 +33,7 @@ const readMetadataOrDefault = async (fileRoot: string, clientPath: string): Prom
             path: clientPath,
             uid: murmurhash.v3(clientPath),
 
-            created: stats.ctime.toISOString(),
+            created: stats.birthtime.toISOString(),
             modified: stats.mtime.toISOString(),
         };
 

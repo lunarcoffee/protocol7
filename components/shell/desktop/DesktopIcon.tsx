@@ -27,11 +27,13 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
 
     const { name: label, uid, created, modified } = iconFile.metadata;
 
+    const createdTime = formatTimestamp(created);
+    const modifiedTime = formatTimestamp(modified);
     const tooltipLabel = dedent`
         *${label}*
 
-        **Created:** ${formatTimestamp(created)}
-        **Modified:** ${formatTimestamp(modified)}
+        **Created** on ${createdTime}
+        ${modifiedTime !== createdTime ? `**Last modified** on ${modifiedTime}` : ''}
     `;
 
     return (
