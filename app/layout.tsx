@@ -7,7 +7,8 @@ import { ReactNode } from 'react';
 const openSans = Open_Sans({
     variable: '--font-open-sans',
     subsets: ['latin'],
-    weight: ['400'],
+    weight: ['400', '700'],
+    style: ['normal', 'italic'],
 });
 
 const manrope = Manrope({

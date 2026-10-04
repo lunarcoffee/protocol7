@@ -26,5 +26,9 @@ export const GraphicalShell = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    return <WindowLayer />;
+    return (
+        <div id="shell">
+            <WindowLayer />
+        </div>
+    );
 };

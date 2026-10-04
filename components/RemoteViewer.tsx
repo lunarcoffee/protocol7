@@ -18,7 +18,7 @@ export const RemoteViewer = () => {
                     absolute inset-0 m-auto h-[calc(2/3*90lvw)] max-h-9/10 w-9/10 max-w-[calc(3/2*90lvh)]
                     overflow-clip
                 `}
-                onContextMenu={(e) => e.preventDefault()}
+                onContextMenu={(event) => event.preventDefault()}
             >
                 <SystemStoreProvider key={hostname} hostname={hostname} fallback={<LoadingFallback />}>
                     <GraphicalShell />

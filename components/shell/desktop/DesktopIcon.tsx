@@ -1,8 +1,11 @@
+import dedent from 'dedent';
 import { MouseEvent } from 'react';
 
+import { Tooltip } from '@/components/shell/controls/Tooltip';
 import { useFile } from '@/hooks/filesystem/useFile';
 import { useCreateProcess, useNextProcessID } from '@/hooks/processes';
 import { useCreateWindow, useNextWindowID } from '@/hooks/windows';
+import { formatTimestamp } from '@/utils/formatTimestamp';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
 import { WindowFrame } from '../windows/WindowFrame';
@@ -13,8 +16,6 @@ export interface DesktopIconProps {
     onClick: (event: MouseEvent) => void;
 }
 
-// TODO: tooltip on hover
-
 export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps) => {
     const nextProcessID = useNextProcessID();
     const nextWindowID = useNextWindowID();
@@ -24,24 +25,30 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
     const [iconFile] = useFile(iconPath);
     if (!iconFile?.ok) return null;
 
-    const {
-        metadata: { name: label, uid },
-    } = iconFile;
+    const { name: label, uid, created, modified } = iconFile.metadata;
+
+    const tooltipLabel = dedent`
+        *${label}*
+
+        **Created:** ${formatTimestamp(created)}
+        **Modified:** ${formatTimestamp(modified)}
+    `;
 
     return (
+        <Tooltip label={tooltipLabel} className="h-fit">
         <div
             id={`desktop-icon-${uid}`}
             className={twMergeClsx(
                 `
-                    flex h-fit w-20 flex-col items-center gap-1.5 overflow-visible rounded-xs pt-1
-                    hover:bg-aero-tint-highlight/25 hover:shadow-[0_0_4px] hover:outline
-                    hover:shadow-aero-tint-highlight/25 hover:outline-aero-tint-highlight/25
+                        flex w-20 flex-col items-center gap-1.5 overflow-visible rounded-xs pt-1
+                        hover:bg-aero-tint-highlight/25 hover:shadow-[0_0_4px]
+                        hover:shadow-aero-tint-highlight/25 hover:outline hover:outline-aero-tint-highlight/25
                 `,
                 isSelected &&
                     `
-                        bg-aero-tint-highlight/45 shadow-[0_0_4px] outline shadow-aero-tint-highlight/45
+                            bg-aero-tint-highlight/45 shadow-[0_0_4px] shadow-aero-tint-highlight/45 outline
                         outline-aero-tint-highlight/45
-                        hover:bg-aero-tint-highlight/55 hover:outline hover:shadow-aero-tint-highlight/55
+                            hover:bg-aero-tint-highlight/55 hover:shadow-aero-tint-highlight/55 hover:outline
                         hover:outline-aero-tint-highlight/55
                     `,
             )}
@@ -65,7 +72,8 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
         >
             <div
                 className="
-                    flex size-15 items-center justify-center drop-shadow-sm drop-shadow-aero-tint-darkest/70
+                        flex size-15 items-center justify-center drop-shadow-sm
+                        drop-shadow-aero-tint-darkest/70
                 "
             >
                 <img src={iconFile.getObjectURL()} alt={label} draggable={false} />
@@ -74,8 +82,8 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                 <p
                     className={twMergeClsx(
                         `
-                            px-0.5 pb-0.5 text-center text-xs wrap-break-word text-shadow-aero-tint-darkest
-                            text-shadow-md
+                                px-0.5 pb-0.5 text-center text-xs wrap-break-word
+                                text-shadow-aero-tint-darkest text-shadow-md
                         `,
                         isSelected ? 'line-clamp-4' : 'line-clamp-2',
                     )}
@@ -84,5 +92,6 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                 </p>
             </div>
         </div>
+        </Tooltip>
     );
 };
