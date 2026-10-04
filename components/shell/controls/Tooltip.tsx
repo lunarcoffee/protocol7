@@ -16,7 +16,7 @@ export interface TooltipProps extends PropsWithChildren {
     className?: string;
 }
 
-export const Tooltip = ({ label, children, className }: TooltipProps) => {
+export const Tooltip = ({ label, className, children }: TooltipProps) => {
     const [isVisible, setVisible, setNotVisible] = useBoolean();
 
     const timeoutRef = useRef<NodeJS.Timeout>(null);
@@ -32,7 +32,7 @@ export const Tooltip = ({ label, children, className }: TooltipProps) => {
     };
 
     return (
-        <div onMouseMove={resetShowAfterDelay} onMouseLeave={cancelShow} className={className}>
+        <div onMouseMove={resetShowAfterDelay} onClick={cancelShow} onMouseLeave={cancelShow} className={className}>
             {children}
             {isVisible &&
                 createPortal(
