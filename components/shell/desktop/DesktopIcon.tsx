@@ -2,10 +2,12 @@ import dedent from 'dedent';
 import { MouseEvent } from 'react';
 
 import { Tooltip } from '@/components/shell/controls/Tooltip';
-import { useFile } from '@/hooks/filesystem/useFile';
+import { readMetadata } from '@/filesystem/api/readMetadata';
 import { useCreateProcess, useNextProcessID } from '@/hooks/processes';
+import { usePromise } from '@/hooks/usePromise';
 import { useCreateWindow, useNextWindowID } from '@/hooks/windows';
 import { formatTimestamp } from '@/utils/formatTimestamp';
+import { getIconForEntry } from '@/utils/getIconForEntry';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
 import { WindowFrame } from '../windows/WindowFrame';
@@ -22,7 +24,9 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
     const createProcess = useCreateProcess();
     const createWindow = useCreateWindow();
 
-    const [iconFile] = useFile(iconPath);
+    const [iconImageUrl] = usePromise(() => getIconForEntry(iconPath), [iconPath]);
+    const [iconFile] = usePromise(() => readMetadata(iconPath), [iconPath]);
+
     if (!iconFile?.ok) return null;
 
     const { name: label, uid, created, modified } = iconFile.metadata;
@@ -78,7 +82,7 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                         drop-shadow-aero-tint-darkest/70
                 "
             >
-                <img src={iconFile.getObjectURL()} alt={label} draggable={false} />
+                    {iconImageUrl && <img src={iconImageUrl} alt={label} draggable={false} />}
             </div>
             <div className="flex w-20 justify-center overflow-visible">
                 <p

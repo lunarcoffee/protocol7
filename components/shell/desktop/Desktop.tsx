@@ -3,9 +3,10 @@ import { MouseEvent, useEffect, useRef, useState } from 'react';
 import { useImmerReducer } from 'use-immer';
 
 import { FsEntryMetadata } from '@/filesystem';
-import { useDirectory } from '@/hooks/filesystem/useDirectory';
-import { useFile } from '@/hooks/filesystem/useFile';
+import { readDirectory } from '@/filesystem/api/readDirectory';
+import { readFile } from '@/filesystem/api/readFile';
 import { useBoolean } from '@/hooks/useBoolean';
+import { usePromise } from '@/hooks/usePromise';
 import { useFocusWindow } from '@/hooks/windows';
 import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import { Dimensions } from '@/utils/Dimensions';
@@ -16,7 +17,8 @@ import { toScreenPosition } from '@/utils/toScreenPosition';
 import { DesktopIcon } from './DesktopIcon';
 
 const Wallpaper = () => {
-    const [file] = useFile('/users/lunarcoffee/desktop/GR016575.jpg');
+    // TODO: get wallpaper from system settings eventually
+    const [file] = usePromise(() => readFile('/users/lunarcoffee/pictures/wallpapers/leaves.jpg'), []);
     if (!file?.ok) return null;
 
     return (
@@ -65,7 +67,8 @@ const iconStateReducer = (draft: Draft<IconStates>, action: UpdateIconStatesActi
 export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) => {
     const focusWindow = useFocusWindow();
 
-    const [dir] = useDirectory('/users/lunarcoffee/desktop');
+    // TODO: can use refresh trigger to implement refresh context menu option
+    const [dir] = usePromise(() => readDirectory('/users/lunarcoffee/desktop'), []);
     const iconFiles = dir?.ok ? Object.values(dir.entries) : [];
 
     const [iconStates, updateIcons] = useImmerReducer(iconStateReducer, new Map() as IconStates);

@@ -1,4 +1,5 @@
-import { useFile } from '@/hooks/filesystem/useFile';
+import { readFile } from '@/filesystem/api/readFile';
+import { usePromise } from '@/hooks/usePromise';
 import { useCreateWindow, useDestroyWindow, useWindow } from '@/hooks/windows';
 import { PID_SHELL } from '@/stores/system/processes/ProcessManager';
 import { WID_LAUNCHER } from '@/stores/system/windows/WindowManager';
@@ -45,7 +46,7 @@ const ReflectiveOrb = ({ active }: { active: boolean }) => (
 );
 
 const LauncherIcon = ({ active }: { active: boolean }) => {
-    const [file] = useFile('/system/icons/launcher.png');
+    const [file] = usePromise(() => readFile('/system/icons/launcher.png'), []);
     if (!file?.ok) return null;
 
     return (

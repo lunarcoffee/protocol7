@@ -53,7 +53,7 @@
  *  |       |- wilt - nothing special.mp3
  *  |       +- wilt - without you.mp3
  *  +- var/                                    (`/var/lock` is gone)
- *      +- lib                                 (a regular file; note that `/var/lib/logrotate.stats` is gone)
+ *      +- lib                                 (a regular file; note that `/var/lib/logrotate.status` is gone)
  *
  * note: functions in this module which take paths as arguments will identify the expected type of entry in the
  * parameter name; `filePath` indicates a file, `dirPath` indicates a directory, and `entryPath` indicates that either

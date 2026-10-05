@@ -1,4 +1,5 @@
-import { useFile } from '@/hooks/filesystem/useFile';
+import { readFile } from '@/filesystem/api/readFile';
+import { usePromise } from '@/hooks/usePromise';
 
 import { Clock } from './Clock';
 import { LauncherButton } from './LauncherButton';
@@ -27,8 +28,8 @@ const CenterIsland = () => (
 
 // includes right dark background gradient
 const RightIsland = () => {
-    const [volumeIcon] = useFile('/system/icons/volume-high.svg');
-    const [networkIcon] = useFile('/system/icons/network.svg');
+    const [volumeIcon] = usePromise(() => readFile('/system/icons/volume-high.svg'), []);
+    const [networkIcon] = usePromise(() => readFile('/system/icons/network.svg'), []);
 
     return (
         <div
