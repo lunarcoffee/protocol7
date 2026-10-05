@@ -42,20 +42,20 @@ export const isSameOrDescendant = (entryPath: string, ancestorPath: string) =>
 export const nowTimestamp = () => new Date().toISOString();
 
 export const toFileMetadata = (filePath: string, timeMetadata: FsTimeMetadata): FsFileMetadata => ({
+    ...timeMetadata,
     type: 'file',
     name: path.basename(filePath),
     path: filePath,
     extension: path.extname(filePath),
     uid: murmurhash.v3(filePath),
-    ...timeMetadata,
 });
 
 export const toDirectoryMetadata = (dirPath: string, timeMetadata: FsTimeMetadata): FsDirectoryMetadata => ({
+    ...timeMetadata,
     type: 'directory',
     name: path.basename(dirPath),
     path: dirPath,
     uid: murmurhash.v3(dirPath),
-    ...timeMetadata,
 });
 
 /* base access utilities */

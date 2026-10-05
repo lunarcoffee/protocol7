@@ -39,7 +39,7 @@ export const Tooltip = ({ label, className, children }: TooltipProps) => {
                     <PositionAnchor offsetForCursor className="z-[calc(infinity)]">
                         <div
                             className="
-                                max-w-lg rounded-sm border border-aero-tint-dark bg-linear-to-b from-gray-200
+                                max-w-lg rounded-sm border border-aero-tint-dark bg-linear-to-b from-gray-100
                                 to-aero-tint-highlight shadow-md shadow-aero-tint-darkest/30
                             "
                             // this shouldn't be necessary but i somehow got a stuck tooltip once while testing; if that

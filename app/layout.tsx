@@ -7,7 +7,7 @@ import { ReactNode } from 'react';
 const openSans = Open_Sans({
     variable: '--font-open-sans',
     subsets: ['latin'],
-    weight: ['400', '700'],
+    weight: ['400', '500', '700'],
     style: ['normal', 'italic'],
 });
 

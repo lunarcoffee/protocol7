@@ -83,7 +83,7 @@ export const Taskbar = () => {
             className={`
                 absolute bottom-0 z-[calc(infinity)] flex h-10 w-full max-w-full flex-row items-center
                 border-t border-t-aero-tint-darkest/85 bg-linear-to-t from-aero-tint-dark/80
-                to-aero-tint-dark/70 backdrop-blur-xs
+                to-aero-tint-dark/70 backdrop-blur-[2px]
             `}
         >
             {/* white top highlight */}

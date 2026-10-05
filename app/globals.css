@@ -4,12 +4,12 @@
     --background: #0a0a0a;
     --foreground: #f6f6f6;
 
-    --aero-tint-hue-saturation: 210deg 40%;
+    --aero-tint-hue-saturation: 220deg 30%;
 
-    --aero-tint-regular-lightness: 40%;
-    --aero-tint-dark-lightness: 30%;
-    --aero-tint-darkest-lightness: 7%;
-    --aero-tint-highlight-lightness: 80%;
+    --aero-tint-regular-lightness: 45%;
+    --aero-tint-dark-lightness: 35%;
+    --aero-tint-darkest-lightness: 10%;
+    --aero-tint-highlight-lightness: 85%;
 }
 
 @theme {

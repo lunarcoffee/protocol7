@@ -66,22 +66,18 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
             )}
             style={{
                 zIndex,
-                ...(!isMaximized && {
-                    top: position.y,
-                    left: position.x,
-                    width: size.x,
-                    height: size.y,
-                }),
+                ...(!isMaximized && { top: position.y, left: position.x, width: size.x, height: size.y }),
             }}
         >
             <motion.div
                 onMouseDown={() => focusWindow(wid)}
                 className={twMergeClsx(
                     `
-                        absolute inset-0 flex origin-[50%_-10%] flex-col rounded-md border
+                        absolute inset-0 flex origin-[50%_-10%] flex-col overflow-hidden rounded-md border
                         border-aero-tint-darkest/85 bg-linear-to-tr from-aero-tint-dark/70 to-aero-tint/70
-                        px-1 pb-1 shadow-[0_0_20px] inset-shadow-[0_0_0.1rem] shadow-aero-tint-darkest/75
-                        inset-shadow-white/80 backdrop-blur-xs text-shadow-aero-tint-darkest/50 text-shadow-md
+                        px-1 pb-1 shadow-[0_0_24px] inset-shadow-[0_0_0.1rem] shadow-aero-tint-darkest/60
+                        inset-shadow-white/80 backdrop-blur-[2px] text-shadow-aero-tint-darkest/50
+                        text-shadow-md
                     `,
                     hasFocus ||
                         `
@@ -111,11 +107,12 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
                 <div
                     className={twMergeClsx(
                         `
-                            z-20 grow overflow-clip rounded-sm border border-aero-tint-darkest/85
-                            shadow-[0_0_2px] shadow-white/80
+                            z-20 min-h-0 min-w-0 grow overflow-clip rounded-sm border
+                            border-aero-tint-darkest/85 shadow-[0_0_2px] shadow-white/80
                         `,
                         isMaximized && 'rounded-none border-0 border-t border-t-aero-tint-darkest/85',
                     )}
+                    {...(!isMaximized && { style: { maxWidth: size.x, maxHeight: size.y } })}
                 >
                     {children}
                 </div>
