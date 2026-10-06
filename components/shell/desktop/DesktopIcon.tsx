@@ -2,7 +2,7 @@ import dedent from 'dedent';
 import { MouseEvent } from 'react';
 
 import { Tooltip } from '@/components/shell/controls/Tooltip';
-import { FileManager } from '@/components/shell/programs/FileManager';
+import { FileManager } from '@/components/shell/programs/fileManager/FileManager';
 import { readMetadata } from '@/filesystem/api/readMetadata';
 import { useCreateProcess, useNextProcessID } from '@/hooks/processes';
 import { usePromise } from '@/hooks/usePromise';
@@ -63,9 +63,9 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                     createWindow({
                         pid: nextProcessID,
                         wid: nextWindowID,
-                        title: label,
+                        title: 'File Manager',
                         size: { x: 800, y: 500 },
-                        minSize: { x: 500, y: 300 },
+                        minSize: { x: 600, y: 300 },
                         render: (windowInfo) => <FileManager windowInfo={windowInfo} />,
                     });
                 }}

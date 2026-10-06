@@ -18,7 +18,8 @@ import { DesktopIcon } from './DesktopIcon';
 
 const Wallpaper = () => {
     // TODO: get wallpaper from system settings eventually
-    const [file] = usePromise(() => readFile('/users/lunarcoffee/pictures/wallpapers/leaves.jpg'), []);
+    const name = 'flowers';
+    const [file] = usePromise(() => readFile(`/users/lunarcoffee/Pictures/wallpapers/${name}.jpg`), [name]);
     if (!file?.ok) return null;
 
     return (
@@ -68,7 +69,7 @@ export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) 
     const focusWindow = useFocusWindow();
 
     // TODO: can use refresh trigger to implement refresh context menu option
-    const [dir] = usePromise(() => readDirectory('/users/lunarcoffee/desktop'), []);
+    const [dir] = usePromise(() => readDirectory('/users/lunarcoffee/Desktop'), []);
     const iconFiles = dir?.ok ? Object.values(dir.entries) : [];
 
     const [iconStates, updateIcons] = useImmerReducer(iconStateReducer, new Map() as IconStates);
