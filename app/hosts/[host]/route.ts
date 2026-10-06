@@ -37,7 +37,7 @@ const readMetadataOrDefault = async (fileRoot: string, clientPath: string): Prom
             modified: stats.mtime.toISOString(),
         };
 
-        if (stats.isFile()) return { ...commonMetadata, type: 'file', extension: path.extname(clientPath) };
+        if (stats.isFile()) return { ...commonMetadata, type: 'file', size: stats.size };
         return { ...commonMetadata, type: 'directory-list', entries: await generateManifest(fileRoot, clientPath) };
     }
 };

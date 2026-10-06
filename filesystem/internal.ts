@@ -3,7 +3,7 @@ import path from 'path-browserify';
 
 import { systemStore } from '@/stores/system/SystemStoreProvider';
 
-import { FsDirectoryMetadata, FsFileMetadata, FsTimeMetadata } from '.';
+import { FsDirectoryMetadata, FsFileMetadata, FsSizeMetadata, FsTimeMetadata } from '.';
 
 const pathWithHostname = (entryPath: string) => path.join(systemStore!.getState().hostname, entryPath);
 
@@ -41,17 +41,16 @@ export const isSameOrDescendant = (entryPath: string, ancestorPath: string) =>
 
 export const nowTimestamp = () => new Date().toISOString();
 
-export const toFileMetadata = (filePath: string, timeMetadata: FsTimeMetadata): FsFileMetadata => ({
-    ...timeMetadata,
+export const toFileMetadata = (filePath: string, metadata: FsTimeMetadata & FsSizeMetadata): FsFileMetadata => ({
+    ...metadata,
     type: 'file',
     name: path.basename(filePath),
     path: filePath,
-    extension: path.extname(filePath),
     uid: murmurhash.v3(filePath),
 });
 
-export const toDirectoryMetadata = (dirPath: string, timeMetadata: FsTimeMetadata): FsDirectoryMetadata => ({
-    ...timeMetadata,
+export const toDirectoryMetadata = (dirPath: string, metadata: FsTimeMetadata): FsDirectoryMetadata => ({
+    ...metadata,
     type: 'directory',
     name: path.basename(dirPath),
     path: dirPath,

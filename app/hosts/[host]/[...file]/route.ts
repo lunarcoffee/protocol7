@@ -25,7 +25,8 @@ export const GET = async (_: NextRequest, { params }: RouteContext<'/hosts/[host
             mimeTypeCache.set(filePath, mimeType);
         }
 
-        return new NextResponse(data, { headers: { 'Content-Type': mimeType } });
+        // TODO: proper cache control between debug/release
+        return new NextResponse(data, { headers: { 'Content-Type': mimeType, 'Cache-Control': 'max-age=60' } });
     } catch {
         return new NextResponse(null, { status: 404 });
     }

@@ -9,18 +9,22 @@ import { overlayMutex, writeOverlayMetadata } from '../overlay';
 import { copyDirectoryToOverlay, eraseOverlayData, removeOverlayEntry, touchOverlayEntry } from '../overlay';
 import { resolve, ResolvedEntry } from '../resolve';
 
-// generate new metadata for `entry` so that it appears at `destPath`; an entry whose contents are in the base keeps
-// referring to their previous location instead of copying them into the overlay
-const movedMetadata = (entry: ResolvedEntry, destPath: string): OverlayEntryMetadata => {
+// generate new metadata for `entry`; an entry whose contents are in the base keeps referring to their previous location
+// instead of copying them into the overlay
+const movedMetadata = (entry: ResolvedEntry): OverlayEntryMetadata => {
     const { created, modified } = entry.metadata;
 
     if (entry.type === 'file') {
-        const { contentBasePath } = entry;
+        const {
+            contentBasePath,
+            metadata: { size },
+        } = entry;
+
         return {
             type: 'file',
-            extension: path.extname(destPath),
             created,
             modified,
+            size,
             ...(contentBasePath && { source: contentBasePath }),
         };
     }
@@ -81,7 +85,7 @@ export const move = async (
         }
 
         // then, move the metadata
-        await writeOverlayMetadata(destPath, movedMetadata(srcEntry, destPath));
+        await writeOverlayMetadata(destPath, movedMetadata(srcEntry));
         await removeOverlayEntry(srcPath);
 
         await touchOverlayEntry(srcParentPath);

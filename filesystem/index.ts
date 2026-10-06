@@ -64,15 +64,16 @@
 
 export type FsCommonMetadata = { name: string; path: string; uid: number };
 export type FsTimeMetadata = { created: string; modified: string };
+export type FsSizeMetadata = { size: number };
 
-export type FsFileMetadata = { type: 'file'; extension: string } & FsCommonMetadata & FsTimeMetadata;
+export type FsFileMetadata = { type: 'file' } & FsCommonMetadata & FsTimeMetadata & FsSizeMetadata;
 export type FsDirectoryMetadata = { type: 'directory' } & FsCommonMetadata & FsTimeMetadata;
 
 export type FsEntryMetadata = FsFileMetadata | FsDirectoryMetadata;
 
 /* metadata as stored in the overlay */
 
-export type OverlayFileMetadata = { type: 'file'; extension: string; source?: string } & FsTimeMetadata;
+export type OverlayFileMetadata = { type: 'file'; source?: string } & FsTimeMetadata & FsSizeMetadata;
 export type OverlayDirectoryMetadata = { type: 'directory'; isOpaque?: boolean; source?: string } & FsTimeMetadata;
 export type OverlayDeletedMetadata = { type: 'deleted' };
 

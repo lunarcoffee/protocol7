@@ -44,12 +44,14 @@ export const writeFile = (
         await eraseOverlayData(filePath);
         await fs.writeFile(pathToData(filePath), contents);
 
+        const { size } = await fs.stat(pathToData(filePath));
         const modified = nowTimestamp();
+
         const newMetadata = {
             type: 'file',
-            extension: path.extname(filePath),
             created: existingEntry?.metadata.created ?? modified,
             modified,
+            size,
         } as const;
 
         await writeOverlayMetadata(filePath, newMetadata);
