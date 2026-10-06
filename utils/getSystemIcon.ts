@@ -1,16 +1,14 @@
 import path from 'path-browserify';
 
 import { exists } from '@/filesystem/api/exists';
-import { readFile } from '@/filesystem/api/readFile';
+import { pathToRemoteURL } from '@/filesystem/internal';
 
 import { DEFAULT_ICON_PATH, SYSTEM_ICONS_ROOT } from './getIconForEntry';
 
-export const getIcon = async (iconPath: string) => {
+// bypasses filesystem API, directly compute URL to icon
+export const getSystemIcon = (iconPath: string) => {
     iconPath = path.join(SYSTEM_ICONS_ROOT, iconPath);
     if (!exists(iconPath)) iconPath = DEFAULT_ICON_PATH;
 
-    const readFileResult = await readFile(iconPath);
-    if (!readFileResult.ok) return;
-
-    return readFileResult.getObjectURL();
+    return pathToRemoteURL(iconPath);
 };
