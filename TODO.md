@@ -1,0 +1,49 @@
+# todos
+
+- graphical shell
+  - desktop
+    - configurable icon layout
+      - relative to sides/quadrant? if yes we probably want automatic reflow if the viewport is too small
+    - widgets?
+  - file manager
+    - breadcrumbs allow direct editing when clicked
+    - search functionality
+    - distribute columns better
+      - customizable columns
+    - (multi-)select functionality (extract from desktop)
+    - grid view
+    - history
+    - customizable favorite locations
+    - details pane?
+  - filesystem
+    - soft links?
+    - also most of the API is practically untested lol
+  - programs
+    - config persistence conventions
+    - subsystem for 'launching programs'
+      - 'executable' file format
+    - autolaunch scripts (e.g., for a welcome program)
+  - windows
+    - window icons (also on taskbar)
+    - snap to sides
+      - maybe consider snap-based layouting
+    - dialog/alert API?
+  - generic controls and layouts
+    - buttons, text inputs, text styles, etc. (lots will prob come from file manager work)
+    - dialogs
+  - system clipboard
+  - context menus
+    - on desktop, in file manager, on taskbar, etc.
+  - custom cursor icons
+  - app launcher menu
+  - text editor, terminal, web browser, etc.
+  - network simulation
+  - volume simulation
+  - buncha other stuff i haven't thought of yet :)
+- remote viewer UI
+  - fullscreen button
+  - reset host button
+    - toggle for convenience?
+  - host selector
+  - host info
+  - debug menu (can probably incorporate a lot of the above stuff)
