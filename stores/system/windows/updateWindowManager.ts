@@ -137,3 +137,8 @@ export const windowFocus = (system: Draft<System>, wid: WindowID) => {
 
     destroyEphemeralWindows(system);
 };
+
+export const windowSetTitle = ({ windows }: Draft<WindowManager>, wid: WindowID, title: string) => {
+    const window = windows.get(wid);
+    if (window) window.title = title;
+};

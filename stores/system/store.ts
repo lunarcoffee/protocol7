@@ -14,6 +14,7 @@ import {
     windowMinimize,
     windowMove,
     windowResize,
+    windowSetTitle,
     windowToggleMaximized,
 } from './windows/updateWindowManager';
 import { DEFAULT_WINDOW_MANAGER, WindowID, WindowManager } from './windows/WindowManager';
@@ -27,16 +28,17 @@ export interface System {
 }
 
 export interface SystemStore extends System {
-    createProcess(info: ProcessCreationInfo): void;
-    destroyProcess(pid: ProcessID): void;
+    createProcess: (info: ProcessCreationInfo) => void;
+    destroyProcess: (pid: ProcessID) => void;
 
-    createWindow(info: WindowCreationInfo): void;
-    destroyWindow(wid: WindowID): void;
-    moveWindow(wid: WindowID, position: Dimensions): void;
-    resizeWindow(wid: WindowID, size: Dimensions, fixRight: boolean, fixBottom: boolean): void;
-    minimizeWindow(wid: WindowID): void;
-    toggleMaximizedWindow(wid: WindowID): void;
-    focusWindow(wid: WindowID): void;
+    createWindow: (info: WindowCreationInfo) => void;
+    destroyWindow: (wid: WindowID) => void;
+    moveWindow: (wid: WindowID, position: Dimensions) => void;
+    resizeWindow: (wid: WindowID, size: Dimensions, fixRight: boolean, fixBottom: boolean) => void;
+    minimizeWindow: (wid: WindowID) => void;
+    toggleMaximizedWindow: (wid: WindowID) => void;
+    focusWindow: (wid: WindowID) => void;
+    setTitleWindow: (wid: WindowID, title: string) => void;
 }
 
 export type SystemStoreAPI = StoreApi<SystemStore>;
@@ -54,16 +56,17 @@ export const createSystemStore = (hostname: string, fileManifest: RemoteFsManife
         immer((set) => ({
             ...createInitialSystem(hostname, fileManifest),
 
-            createProcess: (info) => set((system) => processCreate(system.pm, info)),
+            createProcess: (info) => set(({ pm }) => processCreate(pm, info)),
             destroyProcess: (pid) => set((system) => processDestroy(system, pid)),
 
             createWindow: (info) => set((system) => windowCreate(system, info)),
             destroyWindow: (wid) => set((system) => windowDestroy(system, wid)),
-            moveWindow: (wid, position) => set((system) => windowMove(system.wm, wid, position)),
+            moveWindow: (wid, position) => set(({ wm }) => windowMove(wm, wid, position)),
             resizeWindow: (wid, size, fixRight, fixBottom) =>
-                set((system) => windowResize(system.wm, wid, size, fixRight, fixBottom)),
+                set(({ wm }) => windowResize(wm, wid, size, fixRight, fixBottom)),
             minimizeWindow: (wid) => set((system) => windowMinimize(system, wid)),
             toggleMaximizedWindow: (wid) => set((system) => windowToggleMaximized(system, wid)),
             focusWindow: (wid) => set((system) => windowFocus(system, wid)),
+            setTitleWindow: (wid, title) => set(({ wm }) => windowSetTitle(wm, wid, title)),
         })),
     );
