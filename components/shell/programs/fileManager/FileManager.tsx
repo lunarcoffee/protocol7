@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { readDirectory } from '@/filesystem/api/readDirectory';
 import { readFile } from '@/filesystem/api/readFile';
+import { readMetadata } from '@/filesystem/api/readMetadata';
 import { usePromise } from '@/hooks/usePromise';
 import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 
@@ -16,10 +17,16 @@ export type FavoriteLocations = Map<string, FavoriteLocation>;
 export const FAVORITE_LOCATIONS_PATH = '/system/programs/fileManager/locations.json';
 
 export const FileManager = ({ windowInfo }: PropsWithWindowInfo) => {
+    // `cwd` is the actual current working directory; children call `setNextCwd` to request a new `cwd`
     const [cwd, setCwd] = useState('/');
+    const [nextCwd, setNextCwd] = useState(cwd);
 
-    // subcomponents always assume this will eventually resolve to a valid directory
-    // TODO: ensure this never gets set to a directory that doesn't exist
+    // before updating the actual `cwd`, check if `nextCwd` is a valid directoy; it has to happen this way because
+    // reading metadata is async
+    const [nextCwdMetadata] = usePromise(() => readMetadata(nextCwd), [nextCwd]);
+    if (cwd !== nextCwd && nextCwdMetadata?.ok && nextCwdMetadata.metadata.type === 'directory') setCwd(nextCwd);
+
+    // meanwhile, this value is always pending or valid
     const [dir] = usePromise(() => readDirectory(cwd), [cwd]);
 
     const [locations] = usePromise(async () => {
@@ -34,10 +41,10 @@ export const FileManager = ({ windowInfo }: PropsWithWindowInfo) => {
     return (
         <WindowFrame windowInfo={windowInfo}>
             <div className="flex size-full min-h-0 min-w-0 flex-col bg-gray-100">
-                <ControlBar cwd={cwd} setCwd={setCwd} />
+                <ControlBar cwd={cwd} setCwd={setNextCwd} />
                 <div className="flex size-full min-h-0 flex-row">
-                    <LocationsPane setCwd={setCwd} locations={locations} />
-                    <FileTable setCwd={setCwd} dir={dir} locations={locations} />
+                    <LocationsPane setCwd={setNextCwd} locations={locations} />
+                    <FileTable setCwd={setNextCwd} dir={dir} locations={locations} />
                 </div>
             </div>
         </WindowFrame>
