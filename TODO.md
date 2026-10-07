@@ -6,15 +6,16 @@
       - relative to sides/quadrant? if yes we probably want automatic reflow if the viewport is too small
     - widgets?
   - file manager
-    - breadcrumbs allow direct editing when clicked
+    - ~~breadcrumbs allow direct editing when clicked~~
+    - ~~breadcrumbs overflow handling~~
     - search functionality
     - distribute columns better
       - customizable columns
     - (multi-)select functionality (extract from desktop)
     - grid view
     - history
+    - status bar
     - customizable favorite locations
-    - details pane?
   - filesystem
     - soft links?
     - also most of the API is practically untested lol
@@ -31,6 +32,7 @@
   - generic controls and layouts
     - buttons, text inputs, text styles, etc. (lots will prob come from file manager work)
     - dialogs
+    - scrollbars
   - system clipboard
   - context menus
     - on desktop, in file manager, on taskbar, etc.

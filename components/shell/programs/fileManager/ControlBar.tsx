@@ -15,8 +15,8 @@ const SearchBar = () => {
             placeholder="Search..."
             className={clsx(
                 `
-                    h-6 w-80 rounded-xs border border-aero-tint-dark/70 border-b-aero-tint/50 bg-white p-1
-                    text-xs text-aero-tint-darkest outline outline-white/70
+                    h-6 w-50 shrink-0 rounded-full border border-aero-tint-dark/70 border-b-aero-tint/50
+                    bg-white px-2 py-1 text-xs text-aero-tint-darkest outline outline-white/70
                 `,
                 query === '' && 'italic',
             )}
@@ -53,8 +53,9 @@ export const ControlBar = ({ cwd, setCwd }: ControlBarProps) => {
     return (
         <div
             className="
-                flex items-center gap-2 border-b border-aero-tint-dark/40 bg-linear-to-b from-gray-100
-                from-30% to-aero-tint-highlight p-1.5
+                z-10 flex items-center gap-2 rounded-b-xl border-b border-aero-tint-dark/40 bg-linear-to-b
+                from-gray-100 from-30% to-aero-tint-highlight px-2 pt-1.75 pb-1.5 shadow-xs
+                shadow-aero-tint-highlight
             "
         >
             <ControlBarButton iconPath="actions/go-up.png" onClick={visitParent} disabled={isRoot} />

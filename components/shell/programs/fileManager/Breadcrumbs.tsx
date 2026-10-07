@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import path from 'path-browserify';
 
 import { splitPath } from '@/filesystem/internal';
@@ -15,9 +16,10 @@ interface BreadcrumbSegmentProps {
     onClick: () => void;
 
     showDivider?: boolean;
+    canShrink?: boolean;
 }
 
-const BreadcrumbSegment = ({ segment, onClick, showDivider = false }: BreadcrumbSegmentProps) => {
+const BreadcrumbSegment = ({ segment, onClick, showDivider = false, canShrink = false }: BreadcrumbSegmentProps) => {
     const isRoot = segment === '/';
     const rootIconUrl = getSystemIcon('devices/drive-harddisk.png');
 
@@ -25,14 +27,21 @@ const BreadcrumbSegment = ({ segment, onClick, showDivider = false }: Breadcrumb
         <>
             <div
                 onClick={onClick}
-                className="
-                    rounded-xs bg-linear-to-b px-1 py-0.5 inset-ring-white outline-aero-tint/30
-                    hover:to-aero-tint-highlight/50 hover:inset-ring hover:outline
-                "
+                className={clsx(
+                    `
+                        min-w-0 rounded-full bg-linear-to-b px-1 py-0.5 inset-ring-white outline-aero-tint/30
+                        hover:to-aero-tint-highlight/50 hover:inset-ring hover:outline
+                    `,
+                    canShrink || 'shrink-0',
+                )}
             >
-                {isRoot ? <img src={rootIconUrl} alt="Root" width={16} className="mt-px" /> : <p>{segment}</p>}
+                {isRoot ? (
+                    <img src={rootIconUrl} alt="Root" width={16} className="mt-px" />
+                ) : (
+                    <p className="overflow-hidden text-nowrap text-ellipsis">{segment}</p>
+                )}
             </div>
-            {showDivider && rightCaretIcon}
+            {showDivider && <div className="shrink-0">{rightCaretIcon}</div>}
         </>
     );
 };
@@ -58,8 +67,8 @@ export const Breadcrumbs = ({ cwd, setCwd }: BreadcrumbsProps) => {
                 if (target === currentTarget) setIsInputMode();
             }}
             className="
-                h-6 w-full rounded-xs border border-aero-tint-dark/70 border-b-aero-tint/50 bg-white text-xs
-                text-aero-tint-dark italic outline outline-white/70 text-shadow-none
+                h-6 w-full min-w-0 rounded-full border border-aero-tint-dark/70 border-b-aero-tint/50 bg-white
+                text-xs text-aero-tint-dark italic outline outline-white/70 text-shadow-none
             "
         >
             {isInputMode ? (
@@ -76,15 +85,21 @@ export const Breadcrumbs = ({ cwd, setCwd }: BreadcrumbsProps) => {
                     autoFocus
                 />
             ) : (
-                <div className="flex h-full w-fit flex-row items-center pl-1">
-                    {pathSegments.map((segment, i) => (
-                        <BreadcrumbSegment
-                            key={i}
-                            segment={segment}
-                            onClick={() => setCwd(pathPrefixes[i])}
-                            showDivider={i < pathSegments.length - 1}
-                        />
-                    ))}
+                <div className="flex h-full w-fit max-w-full flex-row items-center px-1">
+                    <div className="flex h-full max-w-fit min-w-0 flex-row items-center">
+                        {pathSegments.map((segment, i) => {
+                            const isNotLast = i < pathSegments.length - 1;
+                            return (
+                                <BreadcrumbSegment
+                                    key={i}
+                                    segment={segment}
+                                    onClick={() => setCwd(pathPrefixes[i])}
+                                    showDivider={isNotLast}
+                                    canShrink={i > 0 && isNotLast}
+                                />
+                            );
+                        })}
+                    </div>
                 </div>
             )}
         </div>

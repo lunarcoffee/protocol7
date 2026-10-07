@@ -48,8 +48,11 @@ export const FileManager = ({ windowInfo }: PropsWithWindowInfo) => {
 
     return (
         <WindowFrame windowInfo={windowInfo}>
-            <div className="flex size-full min-h-0 min-w-0 flex-col bg-gray-100">
+            <div className="relative flex size-full min-h-0 min-w-0 flex-col bg-gray-100">
+                {/* fills in the leaking background color behind the control bar's rounded corner */}
+                <div className="absolute top-0 left-0 size-9.5 bg-aero-tint-highlight/40" />
                 <ControlBar cwd={cwd} setCwd={setNextCwd} />
+
                 <div className="flex size-full min-h-0 flex-row">
                     <LocationsPane setCwd={setNextCwd} locations={locations} />
                     <FileTable setCwd={setNextCwd} dir={dir} locations={locations} />
