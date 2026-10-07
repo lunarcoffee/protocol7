@@ -62,7 +62,7 @@ export const GET = async (_: Request, { params }: RouteContext<'/hosts/[host]'>)
     const { host } = await params;
 
     // TODO: cache this or generate statically for performance
-    const fileRoot = path.join('public', host);
+    const fileRoot = path.join('assets', host);
     const entries = await generateManifest(fileRoot, '/');
 
     return Response.json(entries);

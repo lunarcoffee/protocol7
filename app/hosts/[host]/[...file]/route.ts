@@ -14,7 +14,7 @@ export const GET = async (_: NextRequest, { params }: RouteContext<'/hosts/[host
 
     try {
         const clientPath = path.join(...file);
-        const filePath = path.join('public', host, toDataPath(clientPath));
+        const filePath = path.join('assets', host, toDataPath(clientPath));
         const data = new Uint8Array(await fs.readFile(filePath));
 
         let mimeType = mimeTypeCache.get(filePath);
