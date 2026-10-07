@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { readDirectory } from '@/filesystem/api/readDirectory';
 import { readFile } from '@/filesystem/api/readFile';
 import { readMetadata } from '@/filesystem/api/readMetadata';
+import { normalizePath } from '@/filesystem/internal';
 import { usePromise } from '@/hooks/usePromise';
 import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 
@@ -24,7 +25,14 @@ export const FileManager = ({ windowInfo }: PropsWithWindowInfo) => {
     // before updating the actual `cwd`, check if `nextCwd` is a valid directoy; it has to happen this way because
     // reading metadata is async
     const [nextCwdMetadata] = usePromise(() => readMetadata(nextCwd), [nextCwd]);
-    if (cwd !== nextCwd && nextCwdMetadata?.ok && nextCwdMetadata.metadata.type === 'directory') setCwd(nextCwd);
+    if (
+        cwd !== nextCwd &&
+        nextCwdMetadata?.ok &&
+        nextCwdMetadata.metadata.path === normalizePath(nextCwd) &&
+        nextCwdMetadata.metadata.type === 'directory'
+    ) {
+        setCwd(nextCwd);
+    }
 
     // meanwhile, this value is always pending or valid
     const [dir] = usePromise(() => readDirectory(cwd), [cwd]);

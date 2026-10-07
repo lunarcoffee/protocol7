@@ -1,6 +1,7 @@
 import path from 'path-browserify';
 
 import { splitPath } from '@/filesystem/internal';
+import { useBoolean } from '@/hooks/useBoolean';
 import { getSystemIcon } from '@/utils/getSystemIcon';
 
 export const rightCaretIcon = (
@@ -47,38 +48,45 @@ export const Breadcrumbs = ({ cwd, setCwd }: BreadcrumbsProps) => {
         .slice(1)
         .reduce((prefix, segment) => [...prefix, path.join(prefix[prefix.length - 1], segment)], ['/']);
 
-    // const inputMode = (
-    //     <input
-    //         value={cwd}
-    //         onChange={({ target }) => setCwd(target.value)}
-    //         className="
-    //             h-6 w-full rounded-xs border border-aero-tint-dark/70 border-b-aero-tint/50 bg-white p-1
-    //             text-xs text-aero-tint-darkest outline outline-white/70
-    //         "
-    //     />
-    // );
+    const [isInputMode, setIsInputMode, setNotInputMode] = useBoolean();
+
+    // TODO: support locations
 
     return (
         <div
+            onClick={({ target, currentTarget }) => {
+                if (target === currentTarget) setIsInputMode();
+            }}
             className="
                 h-6 w-full rounded-xs border border-aero-tint-dark/70 border-b-aero-tint/50 bg-white text-xs
                 text-aero-tint-dark italic outline outline-white/70 text-shadow-none
             "
         >
-            <div className="flex size-full flex-row items-center pl-1">
-                {pathSegments.map((segment, i) => {
-                    return (
+            {isInputMode ? (
+                <input
+                    defaultValue={cwd}
+                    onKeyDown={({ key, currentTarget }) => {
+                        if (key === 'Enter') {
+                            setCwd(currentTarget.value);
+                            currentTarget.blur();
+                        }
+                    }}
+                    className="size-full border-none px-2 not-italic outline-none"
+                    onBlur={setNotInputMode}
+                    autoFocus
+                />
+            ) : (
+                <div className="flex h-full w-fit flex-row items-center pl-1">
+                    {pathSegments.map((segment, i) => (
                         <BreadcrumbSegment
                             key={i}
                             segment={segment}
-                            onClick={() => {
-                                setCwd(pathPrefixes[i]);
-                            }}
+                            onClick={() => setCwd(pathPrefixes[i])}
                             showDivider={i < pathSegments.length - 1}
                         />
-                    );
-                })}
-            </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
