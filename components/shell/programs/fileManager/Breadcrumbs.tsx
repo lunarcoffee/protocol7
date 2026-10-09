@@ -67,8 +67,9 @@ export const Breadcrumbs = ({ cwd, setCwd }: BreadcrumbsProps) => {
                 if (target === currentTarget) setIsInputMode();
             }}
             className="
-                h-6 w-full min-w-0 rounded-full border border-aero-tint-dark/70 border-b-aero-tint/50 bg-white
-                text-xs text-aero-tint-dark italic outline outline-white/70 text-shadow-none
+                h-6 w-full min-w-0 cursor-text rounded-full border border-aero-tint-dark/70
+                border-b-aero-tint/50 bg-white text-xs text-aero-tint-dark italic outline outline-white/70
+                text-shadow-none
             "
         >
             {isInputMode ? (
@@ -85,7 +86,7 @@ export const Breadcrumbs = ({ cwd, setCwd }: BreadcrumbsProps) => {
                     autoFocus
                 />
             ) : (
-                <div className="flex h-full w-fit max-w-full flex-row items-center px-1">
+                <div className="flex h-full w-fit max-w-full cursor-auto flex-row items-center px-1">
                     <div className="flex h-full max-w-fit min-w-0 flex-row items-center">
                         {pathSegments.map((segment, i) => {
                             const isNotLast = i < pathSegments.length - 1;

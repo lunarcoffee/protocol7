@@ -15,7 +15,7 @@
     - grid view
     - history
     - status bar
-    - customizable favorite locations
+    - customizable favorite locations (through GUI)
   - filesystem
     - soft links?
     - also most of the API is practically untested lol
@@ -43,7 +43,7 @@
   - volume simulation
   - buncha other stuff i haven't thought of yet :)
 - remote viewer UI
-  - fullscreen button
+  - ~~fullscreen button~~
   - reset host button
     - toggle for convenience?
   - host selector

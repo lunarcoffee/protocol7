@@ -18,7 +18,7 @@ import { DesktopIcon } from './DesktopIcon';
 
 const Wallpaper = () => {
     // TODO: get wallpaper from system settings eventually
-    const name = 'flowers';
+    const name = 'street';
     const [file] = usePromise(() => readFile(`/users/lunarcoffee/Pictures/wallpapers/${name}.jpg`), [name]);
     if (!file?.ok) return null;
 
