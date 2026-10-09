@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { useBoolean } from '@/hooks/useBoolean';
 import { addMousePositionListener } from '@/utils/getMousePosition';
 
-import { RemoteViewer } from './RemoteViewer';
+import { RemoteViewer } from './remoteViewer/RemoteViewer';
 
 enableMapSet();
 
