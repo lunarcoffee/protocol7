@@ -17,7 +17,12 @@ const LoadingFallback = () => (
         transition={{ duration: 1, delay: 1, ease: 'circIn' }}
     >
         <div className="absolute size-full animate-pulse inset-shadow-[0_0_16vh] inset-shadow-white/15" />
-        <p className="m-auto text-lg text-white/80">establishing connection to remote shell...</p>
+        <p className="m-auto text-lg text-white/80">
+            establishing connection to remote shell
+            <span className="animate-ellipsis-ping [animation-delay:0.3s]">.</span>
+            <span className="animate-ellipsis-ping [animation-delay:0.5s]">.</span>
+            <span className="animate-ellipsis-ping [animation-delay:0.7s]">.</span>
+        </p>
     </motion.div>
 );
 
@@ -42,22 +47,23 @@ export const RemoteViewer = () => {
         <div
             ref={viewerRef}
             className="
-                flex h-lvh w-lvw items-center justify-center bg-neutral-950 p-10 font-manrope tracking-wider
-                select-none
+                flex h-lvh w-lvw animate-fade-in bg-neutral-950 font-manrope tracking-wider select-none
             "
         >
-            {/* when not in fullscreen, maintain 3:2 aspect ratio but take up at most 90% of the entire viewport */}
             <div
-                onContextMenu={(event) => event.preventDefault()}
+                // when not fullscreened, maintain 3:2 aspect ratio but take up at most 90% of either dimension; also
+                // make sure there's enough room for the control buttons (`3rem` on the left, so `6rem` total)
                 className={clsx(
                     'absolute inset-0',
-                    isFullscreen || 'm-auto h-[calc(2/3*90lvw)] max-h-9/10 w-9/10 max-w-[calc(3/2*90lvh)]',
+                    isFullscreen || 'm-auto aspect-3/2 max-h-9/10 w-9/10 max-w-[min(3/2*90lvh,100lvw-6rem)]',
                 )}
+                onContextMenu={(event) => event.preventDefault()}
             >
                 <ViewerControls
                     isFullscreen={isFullscreen}
                     enterFullscreen={enterFullscreen}
                     exitFullscreen={exitFullscreen}
+                    disabled={!isReady}
                 />
                 <AnimatePresence>
                     {isReady ? (

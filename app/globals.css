@@ -20,6 +20,27 @@
 
     --font-manrope: var(--font-manrope);
     --font-open-sans: var(--font-open-sans);
+
+    /* currently only used to fade in the entire remote viewer UI */
+    --animate-fade-in: fade-in 0.3s ease-out;
+
+    @keyframes fade-in {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    --animate-ellipsis-ping: ellipsis-ping 0.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+
+    @keyframes ellipsis-ping {
+        75%,
+        100% {
+            opacity: 0;
+        }
+    }
 }
 
 body {

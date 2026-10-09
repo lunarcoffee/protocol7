@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 import { useBoolean } from '@/hooks/useBoolean';
 import { twMergeClsx } from '@/utils/twMergeClsx';
 
@@ -15,17 +17,31 @@ interface ViewerControlButtonProps {
     onClick: () => void;
 
     isFullscreen: boolean;
+    disabled: boolean;
 }
 
-const ViewerControlButton = ({ Icon, tooltip, size = 18, onClick, isFullscreen }: ViewerControlButtonProps) => (
-    <ViewerTooltip label={tooltip} isFullscreen={isFullscreen} className="relative cursor-pointer">
-        <Icon width={size} height={size} onClick={onClick} />
+const ViewerControlButton = ({
+    Icon,
+    tooltip,
+    size = 18,
+    onClick,
+    isFullscreen,
+    disabled,
+}: ViewerControlButtonProps) => (
+    <ViewerTooltip
+        label={tooltip}
+        isFullscreen={isFullscreen}
+        className={clsx('relative', disabled || 'cursor-pointer')}
+    >
+        <Icon width={size} height={size} onClick={disabled ? () => {} : onClick} />
     </ViewerTooltip>
 );
 
 interface ViewerControlButtonsProps extends ViewerControlProps {
     setIsInitialReveal: () => void;
     setNotInitialReveal: () => void;
+
+    disabled: boolean;
 }
 
 const ViewerControlButtons = ({
@@ -34,6 +50,7 @@ const ViewerControlButtons = ({
     exitFullscreen,
     setIsInitialReveal,
     setNotInitialReveal,
+    disabled,
 }: ViewerControlButtonsProps) => {
     const onClickFullscreen = () => {
         if (isFullscreen) {
@@ -66,14 +83,22 @@ const ViewerControlButtons = ({
                 tooltip="select host"
                 onClick={() => {}}
                 isFullscreen={isFullscreen}
+                disabled={disabled}
             />
-            <ViewerControlButton Icon={InfoIcon} tooltip="host info" onClick={() => {}} isFullscreen={isFullscreen} />
+            <ViewerControlButton
+                Icon={InfoIcon}
+                tooltip="host info"
+                onClick={() => {}}
+                isFullscreen={isFullscreen}
+                disabled={disabled}
+            />
             <ViewerControlButton
                 Icon={isFullscreen ? FullscreenExitIcon : FullscreenEnterIcon}
                 tooltip={(isFullscreen ? 'exit' : 'enter') + ' fullscreen'}
                 size={isFullscreen ? 17 : 16}
                 onClick={onClickFullscreen}
                 isFullscreen={isFullscreen}
+                disabled={disabled}
             />
         </div>
     );
@@ -83,6 +108,8 @@ export interface ViewerControlProps {
     isFullscreen: boolean;
     enterFullscreen: () => void;
     exitFullscreen: () => void;
+
+    disabled: boolean;
 }
 
 export const ViewerControls = (props: ViewerControlProps) => {
