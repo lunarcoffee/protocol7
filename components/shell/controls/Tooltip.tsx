@@ -1,8 +1,9 @@
-import { PropsWithChildren, useRef } from 'react';
+import { PropsWithChildren } from 'react';
 import { createPortal } from 'react-dom';
 import ReactMarkdown from 'react-markdown';
 
 import { useBoolean } from '@/hooks/useBoolean';
+import { useTimeout } from '@/hooks/useTimeout';
 import { getShellRootElement } from '@/utils/getShellRootElement';
 
 import { PositionAnchor } from './PositionAnchor';
@@ -18,21 +19,10 @@ export interface TooltipProps extends PropsWithChildren {
 
 export const Tooltip = ({ label, className, children }: TooltipProps) => {
     const [isVisible, setVisible, setNotVisible] = useBoolean();
-
-    const timeoutRef = useRef<NodeJS.Timeout>(null);
-
-    const cancelShow = () => {
-        setNotVisible();
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-
-    const resetShowAfterDelay = () => {
-        cancelShow();
-        timeoutRef.current = setTimeout(setVisible, TOOLTIP_DELAY);
-    };
+    const [cancelShow, restartShowAfterDelay] = useTimeout(setVisible, setNotVisible, TOOLTIP_DELAY);
 
     return (
-        <div onMouseMove={resetShowAfterDelay} onClick={cancelShow} onMouseLeave={cancelShow} className={className}>
+        <div onMouseMove={restartShowAfterDelay} onClick={cancelShow} onMouseLeave={cancelShow} className={className}>
             {children}
             {isVisible &&
                 createPortal(

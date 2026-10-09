@@ -1,10 +1,9 @@
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'motion/react';
-import { PropsWithChildren, useRef } from 'react';
+import { PropsWithChildren } from 'react';
 
 import { useBoolean } from '@/hooks/useBoolean';
-
-// TODO: maybe dedupe with `controls/Tooltip`?
+import { useTimeout } from '@/hooks/useTimeout';
 
 const TOOLTIP_DELAY = 500;
 
@@ -17,34 +16,21 @@ export interface ViewerTooltipProps extends PropsWithChildren {
 
 export const ViewerTooltip = ({ label, isFullscreen, className, children }: ViewerTooltipProps) => {
     const [isVisible, setVisible, setNotVisible] = useBoolean();
-
-    const timeoutRef = useRef<NodeJS.Timeout>(null);
-
-    const cancelShow = () => {
-        setNotVisible();
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-
-    const resetShowAfterDelay = () => {
-        cancelShow();
-        timeoutRef.current = setTimeout(setVisible, TOOLTIP_DELAY);
-    };
+    const [cancelShow, restartShowAfterDelay] = useTimeout(setVisible, setNotVisible, TOOLTIP_DELAY);
 
     return (
-        <div onMouseMove={resetShowAfterDelay} onClick={cancelShow} onMouseLeave={cancelShow} className={className}>
+        <div onMouseMove={restartShowAfterDelay} onClick={cancelShow} onMouseLeave={cancelShow} className={className}>
             {children}
             <AnimatePresence>
                 {isVisible && (
                     <motion.div
                         className={clsx(
                             `
-                                absolute -top-1 z-20 rounded-full border border-neutral-400/40
-                                bg-neutral-950/70 font-manrope shadow-[0_0_0_1px] shadow-neutral-950
-                                backdrop-blur-sm
+                                absolute -top-1 z-20 rounded-full border border-neutral-400/40 bg-neutral-900
+                                font-manrope shadow-[0_0_0_1px] shadow-neutral-950 backdrop-blur-sm
                             `,
                             isFullscreen ? 'left-7.5' : 'left-9',
                         )}
-                        onMouseLeave={cancelShow}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
