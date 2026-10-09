@@ -32,9 +32,11 @@ export const Tooltip = ({ label, className, children }: TooltipProps) => {
                                 max-w-lg rounded-sm border border-aero-tint-dark bg-linear-to-b from-gray-100
                                 to-aero-tint-highlight shadow-md shadow-aero-tint-darkest/30
                             "
-                            // this shouldn't be necessary but i somehow got a stuck tooltip once while testing; if that
-                            // ever happens, this should make it easy to clear
-                            onMouseLeave={cancelShow}
+                            // prevent the tooltip from being kept open if the mouse enters this div before it unmounts
+                            onMouseMove={(event) => {
+                                event.stopPropagation();
+                                cancelShow();
+                            }}
                         >
                             <div className="px-1 py-0.5 text-xs whitespace-pre-wrap text-aero-tint-dark">
                                 <ReactMarkdown>{label}</ReactMarkdown>

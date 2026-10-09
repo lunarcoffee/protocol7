@@ -24,7 +24,6 @@ export interface PositionAnchorProps extends PropsWithChildren {
 // anchors `children` to the bottom right of the given `position`, adjusting as necessary to keep the entire contents
 // visible on the screen without clipping
 export const PositionAnchor = ({ position, offsetForCursor, className, children }: PositionAnchorProps) => {
-    // initial desired anchor position
     let { x, y } = position ?? getMousePosition();
     if (offsetForCursor) {
         x += CURSOR_PADDING;
@@ -32,20 +31,16 @@ export const PositionAnchor = ({ position, offsetForCursor, className, children 
     }
     const { x: sx, y: sy } = toScreenPosition({ x, y });
 
-    // actual anchor position; this might be updated in the effect below
+    // actual anchor position; may be updated after the `children` are measured if they overflow the screen
     const [left, setLeft] = useState(sx);
     const [top, setTop] = useState(sy);
 
-    // prevents flickering; we only render once this is set and we only set this once the above state is finalized
-    const [canDisplay, setCanDisplay, setCannotDisplay] = useBoolean();
+    // set after the `children` are measured
+    const [canDisplay, setCanDisplay] = useBoolean();
 
     const fakeRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        setCannotDisplay();
-        setLeft(sx);
-        setTop(sy);
-
         if (!fakeRef.current) return;
 
         const { right, bottom } = getShellRootElement()!.getBoundingClientRect();
@@ -59,9 +54,7 @@ export const PositionAnchor = ({ position, offsetForCursor, className, children 
         if (y + height > bottom) setTop(sy - height - CURSOR_HEIGHT - CURSOR_PADDING);
 
         setCanDisplay();
-        // `useBoolean` setters are referentially stable
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [x, y, children]);
+    }, [children, x, y, sx, sy, setCanDisplay]);
 
     return (
         <>

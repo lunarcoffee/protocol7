@@ -28,6 +28,11 @@ export const ViewerTooltip = ({ label, isFullscreen, className, children }: View
                             'absolute -top-1 z-20 bg-neutral-950 backdrop-blur-sm',
                             isFullscreen ? 'left-7.5' : 'left-9',
                         )}
+                        // prevent the tooltip from being kept open if the mouse enters this div before it unmounts
+                        onMouseMove={(event) => {
+                            event.stopPropagation();
+                            cancelShow();
+                        }}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
