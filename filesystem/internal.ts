@@ -1,7 +1,7 @@
 import murmurhash from 'murmurhash';
 import path from 'path-browserify';
 
-import { systemStore } from '@/stores/system/SystemStoreProvider';
+import { systemStore } from '@/hooks/system/useInitializeSystem';
 
 import { FsDirectoryMetadata, FsFileMetadata, FsSizeMetadata, FsTimeMetadata } from '.';
 

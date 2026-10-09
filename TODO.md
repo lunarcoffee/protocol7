@@ -49,3 +49,6 @@
   - host selector
   - host info
   - debug menu (can probably incorporate a lot of the above stuff)
+  - ~~better loading screen~~
+    - actually wait for essential assets to load before revealing
+  - ensure minimum horizontal padding for buttons

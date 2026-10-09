@@ -63,14 +63,14 @@ const ViewerControlButtons = ({
         >
             <ViewerControlButton
                 Icon={GlobeIcon}
-                tooltip="Select host"
+                tooltip="select host"
                 onClick={() => {}}
                 isFullscreen={isFullscreen}
             />
-            <ViewerControlButton Icon={InfoIcon} tooltip="Host info" onClick={() => {}} isFullscreen={isFullscreen} />
+            <ViewerControlButton Icon={InfoIcon} tooltip="host info" onClick={() => {}} isFullscreen={isFullscreen} />
             <ViewerControlButton
                 Icon={isFullscreen ? FullscreenExitIcon : FullscreenEnterIcon}
-                tooltip={(isFullscreen ? 'Exit' : 'Enter') + ' fullscreen'}
+                tooltip={(isFullscreen ? 'exit' : 'enter') + ' fullscreen'}
                 size={isFullscreen ? 17 : 16}
                 onClick={onClickFullscreen}
                 isFullscreen={isFullscreen}
@@ -94,7 +94,7 @@ export const ViewerControls = (props: ViewerControlProps) => {
             <div
                 className={twMergeClsx(
                     `
-                        -ml-8 h-full w-8 rounded-r-lg bg-neutral-950 transition-[margin] duration-100 ease-out
+                        -ml-8 h-full w-8 bg-neutral-950 transition-[margin] duration-100 ease-out
                         group-hover:ml-0
                     `,
                     isInitialReveal && 'ml-0 animate-[pulse_0.66s_cubic-bezier(0.4,0,0.6,1)_infinite]',

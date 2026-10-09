@@ -25,10 +25,7 @@ export const ViewerTooltip = ({ label, isFullscreen, className, children }: View
                 {isVisible && (
                     <motion.div
                         className={clsx(
-                            `
-                                absolute -top-1 z-20 rounded-full border border-neutral-400/40 bg-neutral-900
-                                font-manrope shadow-[0_0_0_1px] shadow-neutral-950 backdrop-blur-sm
-                            `,
+                            'absolute -top-1 z-20 bg-neutral-950 backdrop-blur-sm',
                             isFullscreen ? 'left-7.5' : 'left-9',
                         )}
                         initial={{ opacity: 0 }}
@@ -36,7 +33,7 @@ export const ViewerTooltip = ({ label, isFullscreen, className, children }: View
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.05 }}
                     >
-                        <div className="px-2.5 py-1 text-xs text-nowrap text-neutral-300">{label}</div>
+                        <div className="px-5 py-1 text-xs text-nowrap text-neutral-300">{label}</div>
                     </motion.div>
                 )}
             </AnimatePresence>
