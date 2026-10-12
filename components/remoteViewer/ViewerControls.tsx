@@ -67,15 +67,8 @@ const ViewerControlButtons = ({
         <div
             className={twMergeClsx(
                 'flex size-full flex-col items-center justify-between px-2 py-4',
-                isFullscreen
-                    ? `
-                        text-neutral-600
-                        *:hover:text-neutral-400
-                    `
-                    : `
-                        text-neutral-700
-                        *:hover:text-neutral-500
-                    `,
+                isFullscreen ? 'text-neutral-600' : 'text-neutral-700',
+                disabled || (isFullscreen ? '*:hover:text-neutral-400' : '*:hover:text-neutral-500'),
             )}
         >
             <ViewerControlButton
