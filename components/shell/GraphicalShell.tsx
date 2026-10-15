@@ -23,9 +23,7 @@ export const GraphicalShell = () => {
         createWindow({ pid: PID_SHELL, wid: WID_DESKTOP, render: (windowInfo) => <Desktop windowInfo={windowInfo} /> });
 
         return () => destroyProcess(PID_SHELL);
-        // store actions are referentially stable
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [createProcess, createWindow, destroyProcess]);
 
     return (
         <div id={SHELL_ROOT_ELEMENT_ID} className="size-full">

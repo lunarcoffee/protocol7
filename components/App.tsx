@@ -25,9 +25,7 @@ export const App = () => {
         initializeZenFS();
 
         addMousePositionListener();
-        // `useBoolean` setters are referentially stable
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [setZenFsInitialized, setZenFsNotInitialized]);
 
     return isZenFsInitialized && <RemoteViewer />;
 };

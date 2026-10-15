@@ -23,7 +23,7 @@ export const usePromise = <T>(promiseFn: () => Promise<T>, deps: DependencyList)
             canceled = true;
         };
         // clients should declare the relevant dependencies, including those used in `promiseFn`
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [...deps, refreshSignal]);
 
     return [result, triggerRefresh];

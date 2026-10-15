@@ -53,6 +53,7 @@ const RightIsland = () => {
                                     <></>
                                 ),
                             renderPane: () => <p />,
+                            key: 'audio',
                         },
                         {
                             renderIcon: () =>
@@ -66,6 +67,7 @@ const RightIsland = () => {
                                     <></>
                                 ),
                             renderPane: () => <p />,
+                            key: 'network',
                         },
                     ]}
                 />

@@ -1,26 +1,24 @@
-import { includeIgnoreFile } from '@eslint/compat';
+import { includeIgnoreFile } from '@eslint/config-helpers';
 import eslint from '@eslint/js';
-import nextVitals from 'eslint-config-next/core-web-vitals';
-import nextTs from 'eslint-config-next/typescript';
+import eslintReact from '@eslint-react/eslint-plugin';
+import next from '@next/eslint-plugin-next';
 import betterTailwind from 'eslint-plugin-better-tailwindcss';
-import { getDefaultCallees } from 'eslint-plugin-better-tailwindcss/api/defaults';
+import { getDefaultSelectors } from 'eslint-plugin-better-tailwindcss/api/defaults';
 import prettier from 'eslint-plugin-prettier';
-import reactPlugin from 'eslint-plugin-react';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import { fileURLToPath } from 'url';
 
 const gitignorePath = fileURLToPath(new URL('.gitignore', import.meta.url));
 
 const eslintConfig = [
-    ...nextVitals,
-    ...nextTs,
-
-    reactPlugin.configs.flat.recommended,
-    reactPlugin.configs.flat['jsx-runtime'],
+    next.configs.recommended,
+    next.configs['core-web-vitals'],
 
     eslint.configs.recommended,
     ...tseslint.configs.recommended,
+    eslintReact.configs['recommended-typescript'],
 
     includeIgnoreFile(gitignorePath),
 
@@ -33,20 +31,13 @@ const eslintConfig = [
         rules: {
             quotes: ['warn', 'single', { allowTemplateLiterals: false }],
 
-            'react/self-closing-comp': 'warn',
-            'react/jsx-curly-brace-presence': 'warn',
-
             'simple-import-sort/imports': 'warn',
             'simple-import-sort/exports': 'warn',
 
             ...betterTailwind.configs['recommended-warn'].rules,
             'better-tailwindcss/enforce-consistent-line-wrapping': [
                 'warn',
-                {
-                    printWidth: 110,
-                    indent: 4,
-                    strictness: 'loose',
-                },
+                { printWidth: 110, indent: 4, strictness: 'loose' },
             ],
 
             'prettier/prettier': 'warn',
@@ -54,15 +45,22 @@ const eslintConfig = [
             '@next/next/no-img-element': 'off',
         },
         settings: {
+            'react-x': { additionalEffectHooks: '/^usePromise$/u' },
+
             'better-tailwindcss': {
                 entryPoint: 'app/globals.css',
-                callees: [
-                    ...getDefaultCallees(),
+                selectors: [
+                    ...getDefaultSelectors(),
                     // add detection for custom tailwind class helper
-                    ['twMergeClsx', [{ match: 'strings' }, { match: 'objectKeys' }]],
+                    {
+                        kind: 'callee',
+                        name: '^twMergeClsx$',
+                        match: [{ type: 'strings' }, { type: 'objectKeys' }],
+                    },
                 ],
             },
         },
+        languageOptions: { globals: { ...globals.browser, ...globals.node } },
     },
 ];
 

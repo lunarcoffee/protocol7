@@ -92,7 +92,7 @@ export const Breadcrumbs = ({ cwd, setCwd }: BreadcrumbsProps) => {
                             const isNotLast = i < pathSegments.length - 1;
                             return (
                                 <BreadcrumbSegment
-                                    key={i}
+                                    key={pathPrefixes[i]}
                                     segment={segment}
                                     onClick={() => setCwd(pathPrefixes[i])}
                                     showDivider={isNotLast}
