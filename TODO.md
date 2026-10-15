@@ -53,6 +53,7 @@
         - actually wait for essential assets to load before revealing
     - ~~ensure minimum horizontal padding for buttons~~
 - tooling
-    - migrate away from eslint
+    - ~~migrate to oxlint/oxfmt~~
+    - migrate to cn from clsx/tw-merge
     - tests!!
     - migrate away from next?

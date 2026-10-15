@@ -1,0 +1,50 @@
+{
+    "$schema": "./node_modules/oxlint/configuration_schema.json",
+    "plugins": ["typescript", "unicorn", "oxc", "react", "nextjs", "import", "promise"],
+    "jsPlugins": ["oxlint-tailwindcss"],
+    "categories": {
+        "correctness": "error",
+        "suspicious": "warn"
+    },
+    "settings": {
+        "tailwindcss": {
+            "entryPoint": "app/globals.css",
+            "callees": ["twMerge", "twMergeClsx"]
+        }
+    },
+    "rules": {
+        "sort-imports": ["warn", { "ignoreDeclarationSort": true, "ignoreMemberSort": false }],
+        "no-shadow": "off",
+
+        "import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }],
+
+        "react/self-closing-comp": "warn",
+        "react/jsx-curly-brace-presence": "warn",
+        "react/react-in-jsx-scope": "off",
+        "react/exhaustive-deps": ["warn", { "additionalHooks": "usePromise" }],
+
+        "tailwindcss/no-conflicting-classes": "error",
+        "tailwindcss/no-contradicting-variants": "warn",
+        "tailwindcss/no-dark-without-light": "warn",
+        "tailwindcss/no-duplicate-classes": "warn",
+        "tailwindcss/no-dynamic-classes": "error",
+        "tailwindcss/no-unknown-classes": "error",
+        "tailwindcss/enforce-canonical": "warn",
+        "tailwindcss/enforce-negative-arbitrary-values": "warn",
+        "tailwindcss/no-deprecated-classes": "error",
+        "tailwindcss/no-unnecessary-arbitrary-value": "warn",
+        "tailwindcss/consistent-variant-order": "warn",
+        "tailwindcss/enforce-consistent-important-position": "warn",
+        "tailwindcss/enforce-consistent-variable-syntax": "warn",
+        "tailwindcss/enforce-consistent-line-wrapping": [
+            "warn",
+            { "printWidth": 110, "wrapLines": "all", "wrapStrings": "all" }
+        ],
+        "tailwindcss/enforce-shorthand": "warn",
+        "tailwindcss/enforce-sort-order": "warn",
+        "tailwindcss/no-unnecessary-whitespace": "warn",
+
+        "@next/next/no-img-element": "off"
+    },
+    "env": { "builtin": true }
+}
