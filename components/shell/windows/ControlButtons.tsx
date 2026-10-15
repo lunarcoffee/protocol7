@@ -18,47 +18,57 @@ const ControlButton = ({
     bottomGlow: string;
     onClick: () => void;
 }) => (
+    // this is a workaround for a Safari quirk where applying the brightness filter on the inner div causes the outline
+    // to disappear for some reason
     <div
-        onClick={onClick}
-        // prevent dragging a window by the buttons
-        onMouseDown={(event) => event.stopPropagation()}
-        className={`
-            size-4 rounded-full bg-linear-to-t
-            ${bgFrom}
-            ${bgTo}
-            inset-shadow-sm inset-shadow-black/70 outline
-            ${outline}
-            group overflow-clip shadow-sm shadow-white/80 transition duration-75
-            hover:shadow-white hover:brightness-125
-            active:shadow-white active:brightness-80
-        `}
+        className="
+            size-4
+            hover:brightness-125
+            active:brightness-80
+        "
     >
-        <div className="relative">
-            {/* top reflective glow */}
-            <div
-                className={`
-                    absolute -mt-1 -ml-1 h-3 w-6 rounded-full bg-radial
-                    ${topGlow}
-                    to-transparent to-50% transition duration-75
-                    group-hover:brightness-125
-                    group-active:brightness-80
-                `}
-            />
-            {/* upper half drop shadow */}
-            <div
-                className={`
-                    absolute size-4 rounded-full inset-shadow-[0_1px_2px]
-                    ${topShadow}
-                `}
-            />
-            {/* bottom glow */}
-            <div
-                className={`
-                    absolute mt-2 size-4 rounded-full bg-radial
-                    ${bottomGlow}
-                    to-transparent to-70%
-                `}
-            />
+        <div
+            onClick={onClick}
+            // prevent dragging a window by the buttons
+            onMouseDown={(event) => event.stopPropagation()}
+            className={`
+                size-full rounded-full bg-linear-to-t
+                ${bgFrom}
+                ${bgTo}
+                inset-shadow-sm inset-shadow-black/70 outline
+                ${outline}
+                group overflow-clip shadow-sm shadow-white/80 transition duration-75
+                hover:shadow-white
+                active:shadow-white
+            `}
+        >
+            <div className="relative">
+                {/* top reflective glow */}
+                <div
+                    className={`
+                        absolute -mt-1 -ml-1 h-3 w-6 rounded-full bg-radial
+                        ${topGlow}
+                        to-transparent to-50%
+                        group-hover:brightness-125
+                        group-active:brightness-80
+                    `}
+                />
+                {/* upper half drop shadow */}
+                <div
+                    className={`
+                        absolute size-4 rounded-full inset-shadow-[0_1px_2px]
+                        ${topShadow}
+                    `}
+                />
+                {/* bottom glow */}
+                <div
+                    className={`
+                        absolute mt-2 size-4 rounded-full bg-radial
+                        ${bottomGlow}
+                        to-transparent to-70%
+                    `}
+                />
+            </div>
         </div>
     </div>
 );

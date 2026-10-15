@@ -39,7 +39,7 @@ export const WindowList = () => {
                             rounded-xs bg-radial-[at_100%_100%] from-transparent via-transparent via-55%
                             to-white/30 to-90% shadow-xs inset-shadow-[0_0_3px] shadow-aero-tint-darkest
                             inset-shadow-white/30 outline outline-aero-tint-darkest/60
-                            transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,box-shadow,backdrop-filter]
+                            transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,box-shadow]
                             duration-75
                             hover:inset-shadow-[0_0_5px]
                         `,
