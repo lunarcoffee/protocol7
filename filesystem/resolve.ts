@@ -1,8 +1,8 @@
 import path from 'path-browserify';
 
-import { FsDirectoryMetadata, FsEntryMetadata, FsFileMetadata, OverlayDirectoryMetadata, OverlayFileMetadata } from '.';
+import { FsDirectoryMetadata, FsEntryMetadata, FsFileMetadata, OverlayDirectoryMetadata } from '.';
 import { getBaseEntries, getBaseMetadata, splitPath, toDirectoryMetadata, toFileMetadata } from './internal';
-import { FsManifestEntryMetadata, ROOT_DIR_METADATA } from './manifest';
+import { ROOT_DIR_METADATA } from './manifest';
 import { listAllOverlayNames, readOverlayMetadata } from './overlay';
 
 /*
@@ -107,11 +107,6 @@ export const resolve = async (entryPath: string): Promise<ResolvedEntry | undefi
     return current;
 };
 
-type GenericMetadata = FsManifestEntryMetadata | OverlayFileMetadata | OverlayDirectoryMetadata;
-
-const toFsMetadata = (entryPath: string, metadata: GenericMetadata) =>
-    (metadata.type === 'file' ? toFileMetadata : toDirectoryMetadata)(entryPath, metadata);
-
 // merges entries in `dirPath` in the base and the overlay
 export const listDirectoryMerged = async (dirPath: string, dir: ResolvedDirectory) => {
     const entries: Record<string, FsEntryMetadata> = {};
@@ -121,7 +116,10 @@ export const listDirectoryMerged = async (dirPath: string, dir: ResolvedDirector
         const baseEntries = getBaseEntries(dir.basePath);
         for (const [name, metadata] of Object.entries(baseEntries ?? {})) {
             const entryPath = path.join(dirPath, name);
-            entries[name] = toFsMetadata(entryPath, metadata);
+            entries[name] =
+                metadata.type === 'file'
+                    ? toFileMetadata(entryPath, metadata)
+                    : toDirectoryMetadata(entryPath, metadata);
         }
     }
 
@@ -134,8 +132,14 @@ export const listDirectoryMerged = async (dirPath: string, dir: ResolvedDirector
 
     // then merge in entries from the overlay
     for (const [name, entryPath, metadata] of await Promise.all(overlayEntries)) {
-        if (!metadata || metadata.type === 'deleted') delete entries[name];
-        else entries[name] = toFsMetadata(entryPath, metadata);
+        if (!metadata || metadata.type === 'deleted') {
+            delete entries[name];
+        } else {
+            entries[name] =
+                metadata.type === 'file'
+                    ? toFileMetadata(entryPath, metadata)
+                    : toDirectoryMetadata(entryPath, metadata);
+        }
     }
 
     return entries;
