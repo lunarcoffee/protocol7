@@ -1,11 +1,10 @@
+import { Launcher } from './Launcher';
 import { readFile } from '@/filesystem/api/readFile';
 import { usePromise } from '@/hooks/usePromise';
 import { useCreateWindow, useDestroyWindow, useWindow } from '@/hooks/windows';
 import { PID_SHELL } from '@/stores/system/processes/ProcessManager';
 import { WID_LAUNCHER } from '@/stores/system/windows/WindowManager';
 import { twMergeClsx } from '@/utils/twMergeClsx';
-
-import { Launcher } from './Launcher';
 
 const ReflectiveOrb = ({ active }: { active: boolean }) => (
     <>

@@ -1,6 +1,9 @@
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { Dispatch, PropsWithChildren, SetStateAction, useState } from 'react';
 
+import { rightCaretIcon } from './Breadcrumbs';
+import { FavoriteLocations } from './FileManager';
+import { HeadingText } from './HeadingText';
 import { FsEntryMetadata } from '@/filesystem';
 import { ReadDirectoryResult } from '@/filesystem/api/readDirectory';
 import { usePromise } from '@/hooks/usePromise';
@@ -9,10 +12,6 @@ import { formatTimestampShort } from '@/utils/formatTimestamp';
 import { getIconForEntry } from '@/utils/getIconForEntry';
 import { getSystemIcon } from '@/utils/getSystemIcon';
 import { keyToCompareFn } from '@/utils/keyToCompareFn';
-
-import { rightCaretIcon } from './Breadcrumbs';
-import { FavoriteLocations } from './FileManager';
-import { HeadingText } from './HeadingText';
 
 const nameCompareFn = keyToCompareFn<FsEntryMetadata>(({ name }) => [name]);
 const modifiedCompareFn = keyToCompareFn<FsEntryMetadata>(({ modified }) => [modified]);

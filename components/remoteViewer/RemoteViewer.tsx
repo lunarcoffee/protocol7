@@ -1,12 +1,11 @@
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { AnimatePresence, motion } from 'motion/react';
 import { useRef, useState } from 'react';
-
-import { useBoolean } from '@/hooks/useBoolean';
 
 import { useInitializeSystem } from '../../hooks/system/useInitializeSystem';
 import { GraphicalShell } from '../shell/GraphicalShell';
 import { ViewerControls } from './ViewerControls';
+import { useBoolean } from '@/hooks/useBoolean';
 
 const LoadingFallback = () => (
     <motion.div

@@ -1,9 +1,8 @@
-import { err, ok, Result } from '@/utils/Result';
-
 import { FsDirectoryMetadata, FsEntryMetadata } from '..';
 import { normalizePath } from '../internal';
 import { overlayMutex } from '../overlay';
 import { listDirectoryMerged, resolve } from '../resolve';
+import { Result, err, ok } from '@/utils/Result';
 
 export type ReadDirectorySuccess = {
     metadata: FsDirectoryMetadata;

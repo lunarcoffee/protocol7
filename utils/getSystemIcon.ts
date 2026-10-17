@@ -1,9 +1,8 @@
 import path from 'path-browserify';
 
+import { DEFAULT_ICON_PATH, SYSTEM_ICONS_ROOT } from './getIconForEntry';
 import { exists } from '@/filesystem/api/exists';
 import { pathToRemoteURL } from '@/filesystem/internal';
-
-import { DEFAULT_ICON_PATH, SYSTEM_ICONS_ROOT } from './getIconForEntry';
 
 // bypasses filesystem API, directly compute URL to icon
 export const getSystemIcon = (iconPath: string) => {

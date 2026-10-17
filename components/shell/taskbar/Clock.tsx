@@ -1,10 +1,9 @@
 import dedent from 'dedent';
 import { DateTime } from 'luxon';
 
-import { useCurrentTime } from '@/hooks/useCurrentTime';
-
 import { Tooltip } from '../controls/Tooltip';
 import { Hoverable } from './Hoverable';
+import { useCurrentTime } from '@/hooks/useCurrentTime';
 
 export const Clock = () => {
     const currentTime = useCurrentTime();

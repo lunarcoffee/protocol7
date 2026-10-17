@@ -1,10 +1,9 @@
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import path from 'path-browserify';
 import { useState } from 'react';
 
-import { getSystemIcon } from '@/utils/getSystemIcon';
-
 import { Breadcrumbs } from './Breadcrumbs';
+import { getSystemIcon } from '@/utils/getSystemIcon';
 
 const SearchBar = () => {
     const [query, setQuery] = useState('');

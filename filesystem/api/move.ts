@@ -1,13 +1,12 @@
 import { promises as fs } from '@zenfs/core';
 import path from 'path-browserify';
 
-import { err, ok, Result } from '@/utils/Result';
-
 import { FsEntryMetadata, OverlayEntryMetadata } from '..';
 import { isRoot, isSameOrDescendant, normalizePath, pathToData } from '../internal';
 import { overlayMutex, writeOverlayMetadata } from '../overlay';
 import { copyDirectoryToOverlay, eraseOverlayData, removeOverlayEntry, touchOverlayEntry } from '../overlay';
-import { resolve, ResolvedEntry } from '../resolve';
+import { ResolvedEntry, resolve } from '../resolve';
+import { Result, err, ok } from '@/utils/Result';
 
 // generate new metadata for `entry`; an entry whose contents are in the base keeps referring to their previous location
 // instead of copying them into the overlay

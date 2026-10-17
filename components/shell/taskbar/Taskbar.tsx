@@ -1,10 +1,9 @@
-import { readFile } from '@/filesystem/api/readFile';
-import { usePromise } from '@/hooks/usePromise';
-
 import { Clock } from './Clock';
 import { LauncherButton } from './LauncherButton';
 import { SystemTray } from './SystemTray';
 import { WindowList } from './WindowList';
+import { readFile } from '@/filesystem/api/readFile';
+import { usePromise } from '@/hooks/usePromise';
 
 // includes left dark background gradient
 const LeftIsland = () => (

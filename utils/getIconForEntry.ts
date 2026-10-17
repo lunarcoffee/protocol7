@@ -1,10 +1,9 @@
 import path from 'path-browserify';
 
-import { exists } from '@/filesystem/api/exists';
-import { readFile, ReadFileSuccess } from '@/filesystem/api/readFile';
-import { readMetadata } from '@/filesystem/api/readMetadata';
-
 import { getMimeType } from './getMimeType';
+import { exists } from '@/filesystem/api/exists';
+import { ReadFileSuccess, readFile } from '@/filesystem/api/readFile';
+import { readMetadata } from '@/filesystem/api/readMetadata';
 
 export const SYSTEM_ICONS_ROOT = '/system/icons';
 

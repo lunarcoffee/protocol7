@@ -1,10 +1,9 @@
+import { ControlButtons } from './ControlButtons';
 import { useMaximizeWindow, useMoveWindow } from '@/hooks/windows';
 import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import { Dimensions } from '@/utils/Dimensions';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 import { twMergeClsx } from '@/utils/twMergeClsx';
-
-import { ControlButtons } from './ControlButtons';
 
 export const TitleBar = ({ windowInfo }: PropsWithWindowInfo) => {
     const { wid, title, position, isMaximized, hasFocus } = windowInfo;

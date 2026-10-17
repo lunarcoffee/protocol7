@@ -1,8 +1,7 @@
 import { JSX } from 'react';
 
-import { Dimensions } from '@/utils/Dimensions';
-
 import { ProcessID } from '../processes/ProcessManager';
+import { Dimensions } from '@/utils/Dimensions';
 
 export type WindowID = number;
 

@@ -1,14 +1,13 @@
 import { useEffect } from 'react';
 
+import { Desktop } from './desktop/Desktop';
+import { Taskbar } from './taskbar/Taskbar';
+import { WindowLayer } from './WindowLayer';
 import { useCreateProcess, useDestroyProcess } from '@/hooks/processes';
 import { useCreateWindow } from '@/hooks/windows';
 import { PID_SHELL } from '@/stores/system/processes/ProcessManager';
 import { WID_DESKTOP, WID_TASKBAR } from '@/stores/system/windows/WindowManager';
 import { SHELL_ROOT_ELEMENT_ID } from '@/utils/getShellRootElement';
-
-import { Desktop } from './desktop/Desktop';
-import { Taskbar } from './taskbar/Taskbar';
-import { WindowLayer } from './WindowLayer';
 
 export const GraphicalShell = () => {
     const createProcess = useCreateProcess();

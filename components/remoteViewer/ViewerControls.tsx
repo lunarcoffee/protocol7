@@ -1,7 +1,4 @@
-import clsx from 'clsx';
-
-import { useBoolean } from '@/hooks/useBoolean';
-import { twMergeClsx } from '@/utils/twMergeClsx';
+import { clsx } from 'clsx';
 
 import { FullscreenEnterIcon } from '../icons/FullscreenEnterIcon';
 import { FullscreenExitIcon } from '../icons/FullscreenExitIcon';
@@ -9,6 +6,8 @@ import { GlobeIcon } from '../icons/GlobeIcon';
 import { InfoIcon } from '../icons/InfoIcon';
 import { IconComponentType } from '../icons/types';
 import { ViewerTooltip } from './ViewerTooltip';
+import { useBoolean } from '@/hooks/useBoolean';
+import { twMergeClsx } from '@/utils/twMergeClsx';
 
 interface ViewerControlButtonProps {
     Icon: IconComponentType;

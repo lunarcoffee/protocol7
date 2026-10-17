@@ -1,15 +1,14 @@
 import { motion } from 'motion/react';
 import { PropsWithChildren } from 'react';
 
+import { ResizeHandles } from './ResizeHandles';
+import { TitleBar } from './TitleBar';
 import { useToggle } from '@/hooks/useToggle';
 import { useFocusWindow } from '@/hooks/windows';
 import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import { clamp } from '@/utils/clamp';
 import { Dimensions } from '@/utils/Dimensions';
 import { twMergeClsx } from '@/utils/twMergeClsx';
-
-import { ResizeHandles } from './ResizeHandles';
-import { TitleBar } from './TitleBar';
 
 const ReflectiveSurface = ({ size }: { size: Dimensions }) => {
     // fade out corner glass reflections as the window gets too small

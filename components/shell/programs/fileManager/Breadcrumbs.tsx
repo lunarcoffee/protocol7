@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import path from 'path-browserify';
 
 import { splitPath } from '@/filesystem/internal';

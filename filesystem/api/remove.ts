@@ -1,10 +1,9 @@
 import path from 'path-browserify';
 
-import { err, ok, Result } from '@/utils/Result';
-
 import { isRoot, normalizePath } from '../internal';
 import { copyDirectoryToOverlay, overlayMutex, removeOverlayEntry, touchOverlayEntry } from '../overlay';
 import { listDirectoryMerged, resolve } from '../resolve';
+import { Result, err, ok } from '@/utils/Result';
 
 export type RemoveError = 'EROOT' | 'ENOENT' | 'ENOTEMPTY';
 

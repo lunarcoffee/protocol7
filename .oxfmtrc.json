@@ -23,10 +23,5 @@
             "type-import",
             "unknown"
         ]
-    },
-    "sortTailwindcss": {
-        "stylesheet": "./app/global.css",
-        "functions": ["clsx", "twMerge", "twMergeClsx"],
-        "preserveWhitespace": true
     }
 }

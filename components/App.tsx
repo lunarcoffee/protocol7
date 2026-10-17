@@ -5,10 +5,9 @@ import { IndexedDB } from '@zenfs/dom';
 import { enableMapSet } from 'immer';
 import { useEffect } from 'react';
 
+import { RemoteViewer } from './remoteViewer/RemoteViewer';
 import { useBoolean } from '@/hooks/useBoolean';
 import { addMousePositionListener } from '@/utils/getMousePosition';
-
-import { RemoteViewer } from './remoteViewer/RemoteViewer';
 
 enableMapSet();
 

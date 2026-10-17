@@ -1,12 +1,11 @@
 import path from 'path-browserify';
 
-import { err, ok, Result } from '@/utils/Result';
-
 import { FsDirectoryMetadata } from '..';
 import { normalizePath, nowTimestamp, toDirectoryMetadata } from '../internal';
 import { copyDirectoryToOverlay, overlayMutex, touchOverlayEntry, writeOverlayDirectory } from '../overlay';
 import { hasUnderlyingBaseEntry } from '../overlay';
 import { resolve } from '../resolve';
+import { Result, err, ok } from '@/utils/Result';
 
 export type CreateDirectorySuccess = { metadata: FsDirectoryMetadata };
 export type CreateDirectoryError = 'ENOENT' | 'EEXIST';

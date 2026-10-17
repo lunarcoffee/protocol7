@@ -1,7 +1,6 @@
-import { getSystemIcon } from '@/utils/getSystemIcon';
-
 import { FavoriteLocations } from './FileManager';
 import { HeadingText } from './HeadingText';
+import { getSystemIcon } from '@/utils/getSystemIcon';
 
 export interface LocationsPaneProps {
     setCwd: (dir: string) => void;

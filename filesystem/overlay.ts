@@ -4,9 +4,9 @@ import path from 'path-browserify';
 
 import { OverlayDirectoryMetadata, OverlayEntryMetadata } from '.';
 import {
+    METADATA_EXTENSION,
     getBaseMetadata,
     isRoot,
-    METADATA_EXTENSION,
     nowTimestamp,
     pathToData,
     pathToMetadata,

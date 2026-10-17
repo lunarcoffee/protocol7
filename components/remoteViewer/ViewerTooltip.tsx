@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { AnimatePresence, motion } from 'motion/react';
 import { PropsWithChildren } from 'react';
 

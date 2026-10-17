@@ -1,8 +1,7 @@
-import { err, ok, Result } from '@/utils/Result';
-
 import { FsEntryMetadata } from '..';
 import { normalizePath } from '../internal';
 import { resolve } from '../resolve';
+import { Result, err, ok } from '@/utils/Result';
 
 export type ReadMetadataSuccess = { metadata: FsEntryMetadata };
 export type ReadMetadataError = 'ENOENT';

@@ -54,20 +54,32 @@ export const PositionAnchor = ({ position, offsetForCursor, className, children 
         if (y + height > bottom) setTop(sy - height - CURSOR_HEIGHT - CURSOR_PADDING);
 
         setCanDisplay();
-    }, [children, x, y, sx, sy, setCanDisplay]);
+    }, [x, y, sx, sy, setCanDisplay]);
 
     return (
         <>
             {/* invisible element used to measure the size of the children */}
             {createPortal(
-                <div ref={fakeRef} className={className + ' pointer-events-none invisible absolute'}>
+                <div
+                    ref={fakeRef}
+                    className={`
+                        ${className}
+                        pointer-events-none invisible absolute
+                    `}
+                >
                     {children}
                 </div>,
                 document.body,
             )}
             {canDisplay &&
                 createPortal(
-                    <div className={className + ' absolute'} style={{ left, top }}>
+                    <div
+                        className={`
+                            ${className}
+                            absolute
+                        `}
+                        style={{ left, top }}
+                    >
                         {children}
                     </div>,
                     getShellRootElement()!,
