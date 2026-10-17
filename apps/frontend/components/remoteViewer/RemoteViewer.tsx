@@ -46,7 +46,7 @@ export const RemoteViewer = () => {
         <div
             ref={viewerRef}
             className="
-                flex h-lvh w-lvw animate-fade-in bg-neutral-950 font-manrope tracking-wider select-none
+                flex h-lvh w-lvw animate-fade-in bg-neutral-950 font-manrope font-light tracking-wider select-none
             "
         >
             <div
@@ -66,7 +66,7 @@ export const RemoteViewer = () => {
                 />
                 <AnimatePresence>
                     {isReady ? (
-                        <div className="absolute z-0 size-full overflow-clip font-open-sans tracking-normal">
+                        <div className="absolute z-0 size-full overflow-clip font-open-sans font-normal tracking-normal">
                             <GraphicalShell />
                         </div>
                     ) : (

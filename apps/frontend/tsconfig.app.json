@@ -19,7 +19,6 @@
         "noFallthroughCasesInSwitch": true,
 
         /* import aliases */
-        "paths": { "@/*": ["./src/*"] }
-    },
-    "include": ["src"]
+        "paths": { "@/*": ["./*"] }
+    }
 }

@@ -38,9 +38,7 @@
     "devDependencies": {
         "@protocol7/filesystem-types": "workspace:*",
         "@rolldown/plugin-babel": "^0.2.4",
-        "@tailwindcss/postcss": "^4",
         "@types/luxon": "^3.7.6",
-        "@types/node": "^24.13.3",
         "@types/path-browserify": "^1.0.3",
         "@types/react": "19.3.0",
         "@types/react-dom": "19.3.0",

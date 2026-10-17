@@ -6,12 +6,12 @@ export const useTimeout = (fn: () => void, cancelFn: () => void, delay: number) 
 
     const cancel = () => {
         cancelFn();
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
     };
 
     const restart = () => {
         cancel();
-        timeoutRef.current = setTimeout(fn, delay);
+        timeoutRef.current = window.setTimeout(fn, delay);
     };
 
     return [cancel, restart] as const;
