@@ -13,8 +13,8 @@
         "start": "vite preview"
     },
     "dependencies": {
-        "@fontsource/manrope": "^5.3.0",
-        "@fontsource/open-sans": "^5.3.0",
+        "@fontsource-variable/manrope": "^5.3.0",
+        "@fontsource-variable/open-sans": "^5.3.0",
         "@tailwindcss/vite": "^4.3.3",
         "@zenfs/core": "^2.7.7",
         "@zenfs/dom": "^1.2.14",
