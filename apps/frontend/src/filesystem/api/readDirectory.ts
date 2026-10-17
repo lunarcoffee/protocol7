@@ -1,0 +1,27 @@
+import { normalizePath } from '../internal';
+import { overlayMutex } from '../overlay';
+import { listDirectoryMerged, resolve } from '../resolve';
+import { type Result, err, ok } from '@/utils/Result';
+
+import type { FsDirectoryMetadata, FsEntryMetadata } from '@protocol7/filesystem-types';
+
+export type ReadDirectorySuccess = {
+    metadata: FsDirectoryMetadata;
+    entries: Record<string, FsEntryMetadata>;
+};
+
+export type ReadDirectoryError = 'ENOENT';
+
+export type ReadDirectoryResult = Result<ReadDirectorySuccess, ReadDirectoryError>;
+
+export const readDirectory = (dirPath: string): Promise<ReadDirectoryResult> => {
+    dirPath = normalizePath(dirPath);
+
+    return overlayMutex.runExclusive(async () => {
+        const entry = await resolve(dirPath);
+        if (entry?.type !== 'directory') return err('ENOENT');
+
+        const entries = await listDirectoryMerged(dirPath, entry);
+        return ok({ metadata: entry.metadata, entries });
+    });
+};
