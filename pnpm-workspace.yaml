@@ -1,5 +1,7 @@
+packages:
+    - 'apps/*'
+    - 'packages/*'
 allowBuilds:
-    '@parcel/watcher': true
-    unrs-resolver: true
+    esbuild: true
 minimumReleaseAgeExclude:
-  - cn@0.5.0
+    - cn@0.5.0

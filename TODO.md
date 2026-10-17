@@ -56,4 +56,4 @@
     - ~~migrate to oxlint/oxfmt~~
     - ~~migrate to cn from clsx/tw-merge~~
     - tests!!
-    - migrate away from next?
+    - ~~migrate away from next?~~
