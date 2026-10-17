@@ -62,6 +62,7 @@ const iconStateReducer = (draft: Draft<IconStates>, action: UpdateIconStatesActi
             return action.iconStates;
         }
     }
+    return undefined;
 };
 
 export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) => {

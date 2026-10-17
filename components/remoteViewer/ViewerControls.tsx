@@ -46,15 +46,21 @@ const ViewerControlButtons = ({
     setNotInitialReveal,
     disabled,
 }: ViewerControlButtonsProps) => {
-    const onClickFullscreen = () => {
+    const [isTransitioning, setTransitioning, setDoneTransitioning] = useBoolean();
+
+    const onClickFullscreen = async () => {
+        setTransitioning();
+
         if (isFullscreen) {
-            exitFullscreen();
+            await exitFullscreen();
         } else {
             // upon fullscreening, make the controls visible for a time to help indicate where they are
-            enterFullscreen();
+            await enterFullscreen();
             setIsInitialReveal();
             setTimeout(setNotInitialReveal, 2000);
         }
+
+        setDoneTransitioning();
     };
 
     return (
@@ -85,7 +91,7 @@ const ViewerControlButtons = ({
                 size={isFullscreen ? 17 : 16}
                 onClick={onClickFullscreen}
                 isFullscreen={isFullscreen}
-                disabled={disabled}
+                disabled={disabled || isTransitioning}
             />
         </div>
     );
@@ -93,8 +99,8 @@ const ViewerControlButtons = ({
 
 export interface ViewerControlProps {
     isFullscreen: boolean;
-    enterFullscreen: () => void;
-    exitFullscreen: () => void;
+    enterFullscreen: () => Promise<void>;
+    exitFullscreen: () => Promise<void>;
 
     disabled: boolean;
 }

@@ -7,9 +7,7 @@
         "suspicious": "warn"
     },
     "settings": {
-        "better-tailwindcss": {
-            "entryPoint": "app/globals.css"
-        }
+        "better-tailwindcss": { "entryPoint": "app/globals.css" }
     },
     "rules": {
         "sort-imports": ["warn", { "ignoreDeclarationSort": true, "ignoreMemberSort": false }],
@@ -24,12 +22,13 @@
 
         "@next/next/no-img-element": "off",
 
-        // better-tailwindcss takes lint time from a couple dozen ms to a couple seconds but i'll keep it for now
         "better-tailwindcss/enforce-consistent-line-wrapping": [
             "warn",
             { "printWidth": 110, "indent": 4, "strictness": "loose" }
         ],
         "better-tailwindcss/enforce-consistent-class-order": "warn",
+        // this rule takes lint time from ~200 ms to over two seconds but unfortunately it's actually very useful so it
+        // gets to stay
         "better-tailwindcss/enforce-canonical-classes": "warn",
         "better-tailwindcss/no-duplicate-classes": "warn",
         "better-tailwindcss/no-deprecated-classes": "warn",
@@ -38,5 +37,6 @@
         "better-tailwindcss/no-unknown-classes": "warn",
         "better-tailwindcss/no-conflicting-classes": "warn"
     },
-    "env": { "builtin": true }
+    "env": { "builtin": true },
+    "options": { "typeAware": true }
 }

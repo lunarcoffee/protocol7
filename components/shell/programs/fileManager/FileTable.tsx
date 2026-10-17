@@ -171,6 +171,7 @@ export const FileTable = ({ setCwd, dir, locations }: FileTableProps) => {
                                     <FileTableColumnHeader
                                         isAscending={isAscending}
                                         currentSortColumn={sortColumn}
+                                        // oxlint-disable-next-line typescript/no-unsafe-type-assertion
                                         thisSortColumn={column as FileTableColumnName}
                                         setIsAscending={setIsAscending}
                                         setSortColumn={setSortColumn}

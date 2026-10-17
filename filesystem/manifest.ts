@@ -22,22 +22,20 @@ const EPOCH = new Date(0).toISOString();
 
 export const ROOT_DIR_METADATA = toDirectoryMetadata('/', { created: EPOCH, modified: EPOCH });
 
-const getMetadataFromManifest = (manifest: FsManifest, entryPath: string) => {
+const getMetadataFromManifest = (manifest: FsManifest, entryPath: string): FsManifestEntryMetadata | undefined => {
     const [segment, ...rest] = splitPath(entryPath);
-    if (!segment) return;
+    if (!segment) return undefined;
     if (rest.length === 0) return manifest[segment];
 
     const dir = manifest[segment];
-    if (!dir || dir.type !== 'directory-list') return;
-
-    return getMetadataFromManifest(dir.entries, rest.join('/'));
+    return dir && dir.type === 'directory-list' ? getMetadataFromManifest(dir.entries, rest.join('/')) : undefined;
 };
 
 const getEntriesFromManifest = (manifest: FsManifest, dirPath: string) => {
     if (isRoot(dirPath)) return manifest;
 
     const dir = getMetadataFromManifest(manifest, dirPath);
-    if (dir?.type === 'directory-list') return dir.entries;
+    return dir?.type === 'directory-list' ? dir.entries : undefined;
 };
 
 export const fetchManifest = async (hostname: string): Promise<RemoteFsManifest | undefined> => {
@@ -51,5 +49,6 @@ export const fetchManifest = async (hostname: string): Promise<RemoteFsManifest 
         };
     } catch (err) {
         console.error(`fs: exception while fetching manifest for host ${hostname}!`, err);
+        return undefined;
     }
 };

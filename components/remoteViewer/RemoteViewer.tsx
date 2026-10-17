@@ -31,13 +31,13 @@ export const RemoteViewer = () => {
     const [hostname] = useState('localhost');
     const [isFullscreen, setIsFullscreen, setNotFullscreen] = useBoolean();
 
-    const enterFullscreen = () => {
+    const enterFullscreen = async () => {
         setIsFullscreen();
-        if (document.fullscreenEnabled) viewerRef.current?.requestFullscreen();
+        if (document.fullscreenEnabled) await viewerRef.current?.requestFullscreen();
     };
-    const exitFullscreen = () => {
+    const exitFullscreen = async () => {
         setNotFullscreen();
-        if (document.fullscreenElement) document.exitFullscreen();
+        if (document.fullscreenElement) await document.exitFullscreen();
     };
 
     const isReady = useInitializeSystem(hostname);

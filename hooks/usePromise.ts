@@ -17,13 +17,13 @@ export const usePromise = <T>(promiseFn: () => Promise<T>, deps: DependencyList)
             const result = await promiseFn();
             if (!canceled) setResult(result);
         };
-        awaitPromise();
+        void awaitPromise();
 
         return () => {
             canceled = true;
         };
         // clients should declare the relevant dependencies, including those used in `promiseFn`
-        // eslint-disable-next-line @eslint-react/exhaustive-deps
+        // oxlint-disable-next-line react-hooks/exhaustive-deps
     }, [...deps, refreshSignal]);
 
     return [result, triggerRefresh];

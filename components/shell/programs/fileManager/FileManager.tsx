@@ -43,6 +43,7 @@ export const FileManager = ({ windowInfo }: PropsWithWindowInfo) => {
             const locations = JSON.parse(contents) as Record<string, FavoriteLocation>;
             return new Map(Object.entries(locations));
         }
+        return undefined;
     }, []);
 
     return (

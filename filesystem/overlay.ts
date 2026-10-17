@@ -24,9 +24,9 @@ export const overlayMutex = new Mutex();
 
 export const readOverlayMetadata = async (entryPath: string) => {
     const metadataPath = pathToMetadata(entryPath);
-    if (await fs.exists(metadataPath)) {
-        return JSON.parse((await fs.readFile(metadataPath)).toString()) as OverlayEntryMetadata;
-    }
+    return (await fs.exists(metadataPath))
+        ? (JSON.parse((await fs.readFile(metadataPath)).toString()) as OverlayEntryMetadata)
+        : undefined;
 };
 
 export const writeOverlayMetadata = (entryPath: string, metadata: OverlayEntryMetadata) =>

@@ -21,7 +21,7 @@ export const App = () => {
         };
 
         setZenFsNotInitialized();
-        initializeZenFS();
+        void initializeZenFS();
 
         addMousePositionListener();
     }, [setZenFsInitialized, setZenFsNotInitialized]);

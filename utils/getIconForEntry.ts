@@ -2,7 +2,7 @@ import path from 'path-browserify';
 
 import { getMimeType } from './getMimeType';
 import { exists } from '@/filesystem/api/exists';
-import { ReadFileSuccess, readFile } from '@/filesystem/api/readFile';
+import { readFile } from '@/filesystem/api/readFile';
 import { readMetadata } from '@/filesystem/api/readMetadata';
 
 export const SYSTEM_ICONS_ROOT = '/system/icons';
@@ -45,7 +45,8 @@ export const getIconForEntry = async (entryPath: string): Promise<GetIconForEntr
         isSystemIcon = true;
     }
 
-    // can't be bothered if this read fails lol just don't screw with system files
-    const readFileResult = (await readFile(imagePath)) as ReadFileSuccess;
+    const readFileResult = await readFile(imagePath);
+    if (!readFileResult?.ok) throw new Error('core: system icon not found!');
+
     return { objectURL: readFileResult.getObjectURL(), isSystemIcon };
 };
