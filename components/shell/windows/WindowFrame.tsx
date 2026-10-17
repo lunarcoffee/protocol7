@@ -1,15 +1,14 @@
+import { cn } from 'cn';
 import { motion } from 'motion/react';
 import { PropsWithChildren } from 'react';
 
+import { ResizeHandles } from './ResizeHandles';
+import { TitleBar } from './TitleBar';
 import { useToggle } from '@/hooks/useToggle';
 import { useFocusWindow } from '@/hooks/windows';
 import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import { clamp } from '@/utils/clamp';
 import { Dimensions } from '@/utils/Dimensions';
-import { twMergeClsx } from '@/utils/twMergeClsx';
-
-import { ResizeHandles } from './ResizeHandles';
-import { TitleBar } from './TitleBar';
 
 const ReflectiveSurface = ({ size }: { size: Dimensions }) => {
     // fade out corner glass reflections as the window gets too small
@@ -59,7 +58,7 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
 
     return (
         <div
-            className={twMergeClsx(
+            className={cn(
                 'absolute perspective-midrange',
                 isMaximized && 'inset-x-0 top-0 bottom-10',
                 isOpen || 'hidden',
@@ -71,7 +70,7 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
         >
             <motion.div
                 onMouseDown={() => focusWindow(wid)}
-                className={twMergeClsx(
+                className={cn(
                     `
                         absolute inset-0 flex origin-[50%_-10%] flex-col overflow-hidden rounded-md border
                         border-aero-tint-darkest/85 bg-linear-to-tr from-aero-tint-dark/70 to-aero-tint/70
@@ -105,7 +104,7 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
                 <TitleBar windowInfo={windowInfo} />
                 <ReflectiveSurface size={size} />
                 <div
-                    className={twMergeClsx(
+                    className={cn(
                         `
                             z-20 min-h-0 min-w-0 grow overflow-clip rounded-sm border
                             border-aero-tint-darkest/85 shadow-[0_0_2px] shadow-white/80

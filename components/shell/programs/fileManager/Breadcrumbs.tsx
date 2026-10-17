@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import { cn } from 'cn';
 import path from 'path-browserify';
 
 import { splitPath } from '@/filesystem/internal';
@@ -27,7 +27,7 @@ const BreadcrumbSegment = ({ segment, onClick, showDivider = false, canShrink = 
         <>
             <div
                 onClick={onClick}
-                className={clsx(
+                className={cn(
                     `
                         min-w-0 rounded-full bg-linear-to-b px-1 py-0.5 inset-ring-white outline-aero-tint/30
                         hover:to-aero-tint-highlight/50 hover:inset-ring hover:outline

@@ -1,16 +1,15 @@
 import { useState } from 'react';
 
+import { WindowFrame } from '../../windows/WindowFrame';
+import { ControlBar } from './ControlBar';
+import { FileTable } from './FileTable';
+import { LocationsPane } from './LocationsPane';
 import { readDirectory } from '@/filesystem/api/readDirectory';
 import { readFile } from '@/filesystem/api/readFile';
 import { readMetadata } from '@/filesystem/api/readMetadata';
 import { normalizePath } from '@/filesystem/internal';
 import { usePromise } from '@/hooks/usePromise';
 import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
-
-import { WindowFrame } from '../../windows/WindowFrame';
-import { ControlBar } from './ControlBar';
-import { FileTable } from './FileTable';
-import { LocationsPane } from './LocationsPane';
 
 export type FavoriteLocation = { label: string; icon: string };
 export type FavoriteLocations = Map<string, FavoriteLocation>;
@@ -44,6 +43,7 @@ export const FileManager = ({ windowInfo }: PropsWithWindowInfo) => {
             const locations = JSON.parse(contents) as Record<string, FavoriteLocation>;
             return new Map(Object.entries(locations));
         }
+        return undefined;
     }, []);
 
     return (

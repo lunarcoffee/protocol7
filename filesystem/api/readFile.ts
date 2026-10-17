@@ -1,9 +1,8 @@
-import { err, ok, Result } from '@/utils/Result';
-
 import { FsFileMetadata } from '..';
 import { fetchBaseData, normalizePath, pathToRemoteURL } from '../internal';
 import { overlayMutex, readOverlayData } from '../overlay';
 import { resolve } from '../resolve';
+import { Result, err, ok } from '@/utils/Result';
 
 export type ReadFileSuccess = {
     metadata: FsFileMetadata;

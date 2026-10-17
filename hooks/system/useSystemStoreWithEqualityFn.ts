@@ -1,8 +1,7 @@
 import { useStoreWithEqualityFn } from 'zustand/traditional';
 
-import { SystemStore } from '@/stores/system/store';
-
 import { systemStore } from './useInitializeSystem';
+import { SystemStore } from '@/stores/system/store';
 
 export const useSystemStoreWithEqualityFn = <T>(
     selector: (system: SystemStore) => T,

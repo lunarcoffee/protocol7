@@ -1,7 +1,7 @@
 import { eraseOverlay } from '@/filesystem/api/eraseOverlay';
 import { fetchManifest } from '@/filesystem/manifest';
 import { usePromise } from '@/hooks/usePromise';
-import { createSystemStore, SystemStoreAPI } from '@/stores/system/store';
+import { SystemStoreAPI, createSystemStore } from '@/stores/system/store';
 
 export let systemStore: SystemStoreAPI | null = null;
 

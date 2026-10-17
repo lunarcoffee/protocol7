@@ -2,6 +2,7 @@ import { Draft } from 'immer';
 import { MouseEvent, useEffect, useRef, useState } from 'react';
 import { useImmerReducer } from 'use-immer';
 
+import { DesktopIcon } from './DesktopIcon';
 import { FsEntryMetadata } from '@/filesystem';
 import { readDirectory } from '@/filesystem/api/readDirectory';
 import { readFile } from '@/filesystem/api/readFile';
@@ -13,8 +14,6 @@ import { Dimensions } from '@/utils/Dimensions';
 import { doRectanglesIntersect } from '@/utils/doRectanglesIntersect';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 import { toScreenPosition } from '@/utils/toScreenPosition';
-
-import { DesktopIcon } from './DesktopIcon';
 
 const Wallpaper = () => {
     // TODO: get wallpaper from system settings eventually
@@ -63,6 +62,7 @@ const iconStateReducer = (draft: Draft<IconStates>, action: UpdateIconStatesActi
             return action.iconStates;
         }
     }
+    return undefined;
 };
 
 export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) => {

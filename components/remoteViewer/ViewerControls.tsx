@@ -1,7 +1,4 @@
-import clsx from 'clsx';
-
-import { useBoolean } from '@/hooks/useBoolean';
-import { twMergeClsx } from '@/utils/twMergeClsx';
+import { cn } from 'cn';
 
 import { FullscreenEnterIcon } from '../icons/FullscreenEnterIcon';
 import { FullscreenExitIcon } from '../icons/FullscreenExitIcon';
@@ -9,6 +6,7 @@ import { GlobeIcon } from '../icons/GlobeIcon';
 import { InfoIcon } from '../icons/InfoIcon';
 import { IconComponentType } from '../icons/types';
 import { ViewerTooltip } from './ViewerTooltip';
+import { useBoolean } from '@/hooks/useBoolean';
 
 interface ViewerControlButtonProps {
     Icon: IconComponentType;
@@ -28,11 +26,7 @@ const ViewerControlButton = ({
     isFullscreen,
     disabled,
 }: ViewerControlButtonProps) => (
-    <ViewerTooltip
-        label={tooltip}
-        isFullscreen={isFullscreen}
-        className={clsx('relative', disabled || 'cursor-pointer')}
-    >
+    <ViewerTooltip label={tooltip} isFullscreen={isFullscreen} className={cn('relative', disabled || 'cursor-pointer')}>
         <Icon width={size} height={size} onClick={disabled ? () => {} : onClick} />
     </ViewerTooltip>
 );
@@ -52,20 +46,26 @@ const ViewerControlButtons = ({
     setNotInitialReveal,
     disabled,
 }: ViewerControlButtonsProps) => {
-    const onClickFullscreen = () => {
+    const [isTransitioning, setTransitioning, setDoneTransitioning] = useBoolean();
+
+    const onClickFullscreen = async () => {
+        setTransitioning();
+
         if (isFullscreen) {
-            exitFullscreen();
+            await exitFullscreen();
         } else {
             // upon fullscreening, make the controls visible for a time to help indicate where they are
-            enterFullscreen();
+            await enterFullscreen();
             setIsInitialReveal();
             setTimeout(setNotInitialReveal, 2000);
         }
+
+        setDoneTransitioning();
     };
 
     return (
         <div
-            className={twMergeClsx(
+            className={cn(
                 'flex size-full flex-col items-center justify-between px-2 py-4',
                 isFullscreen ? 'text-neutral-600' : 'text-neutral-700',
                 disabled || (isFullscreen ? '*:hover:text-neutral-400' : '*:hover:text-neutral-500'),
@@ -91,7 +91,7 @@ const ViewerControlButtons = ({
                 size={isFullscreen ? 17 : 16}
                 onClick={onClickFullscreen}
                 isFullscreen={isFullscreen}
-                disabled={disabled}
+                disabled={disabled || isTransitioning}
             />
         </div>
     );
@@ -99,8 +99,8 @@ const ViewerControlButtons = ({
 
 export interface ViewerControlProps {
     isFullscreen: boolean;
-    enterFullscreen: () => void;
-    exitFullscreen: () => void;
+    enterFullscreen: () => Promise<void>;
+    exitFullscreen: () => Promise<void>;
 
     disabled: boolean;
 }
@@ -112,7 +112,7 @@ export const ViewerControls = (props: ViewerControlProps) => {
         // this outer div draws the hoverable area to reveal controls
         <div className="group absolute top-4 left-0 z-10 h-32 w-1" onMouseEnter={setNotInitialReveal}>
             <div
-                className={twMergeClsx(
+                className={cn(
                     `
                         -ml-8 h-full w-8 bg-neutral-950 transition-[margin] duration-100 ease-out
                         group-hover:ml-0

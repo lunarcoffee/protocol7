@@ -1,9 +1,8 @@
 import murmurhash from 'murmurhash';
 import path from 'path-browserify';
 
-import { systemStore } from '@/hooks/system/useInitializeSystem';
-
 import { FsDirectoryMetadata, FsFileMetadata, FsSizeMetadata, FsTimeMetadata } from '.';
+import { systemStore } from '@/hooks/system/useInitializeSystem';
 
 const pathWithHostname = (entryPath: string) => path.join(systemStore!.getState().hostname, entryPath);
 

@@ -1,13 +1,12 @@
 import { promises as fs } from '@zenfs/core';
 import path from 'path-browserify';
 
-import { err, ok, Result } from '@/utils/Result';
-
 import { FsFileMetadata } from '..';
 import { normalizePath, nowTimestamp, pathToData, toFileMetadata } from '../internal';
 import { overlayMutex, writeOverlayMetadata } from '../overlay';
 import { copyDirectoryToOverlay, eraseOverlayData, touchOverlayEntry } from '../overlay';
 import { resolve } from '../resolve';
+import { Result, err, ok } from '@/utils/Result';
 
 export type WriteFileSuccess = { metadata: FsFileMetadata };
 export type WriteFileError = 'ENOENT' | 'EEXIST';

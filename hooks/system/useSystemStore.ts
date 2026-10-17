@@ -1,8 +1,7 @@
 import { useStore } from 'zustand';
 
-import { SystemStore } from '@/stores/system/store';
-
 import { systemStore } from './useInitializeSystem';
+import { SystemStore } from '@/stores/system/store';
 
 export const useSystemStore = <T>(selector: (system: SystemStore) => T): T => {
     if (!systemStore) throw new Error('core: system store uninitialized!');

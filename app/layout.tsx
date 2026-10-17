@@ -1,8 +1,8 @@
 import './globals.css';
-
-import type { Metadata } from 'next';
 import { Manrope, Open_Sans } from 'next/font/google';
 import { ReactNode } from 'react';
+
+import type { Metadata } from 'next';
 
 const openSans = Open_Sans({
     variable: '--font-open-sans',

@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import { cn } from 'cn';
 import { AnimatePresence, motion } from 'motion/react';
 import { PropsWithChildren } from 'react';
 
@@ -24,7 +24,7 @@ export const ViewerTooltip = ({ label, isFullscreen, className, children }: View
             <AnimatePresence>
                 {isVisible && (
                     <motion.div
-                        className={clsx(
+                        className={cn(
                             'absolute -top-1 z-20 bg-neutral-950 backdrop-blur-sm',
                             isFullscreen ? 'left-7.5' : 'left-9',
                         )}

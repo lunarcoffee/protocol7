@@ -2,11 +2,10 @@ import { PropsWithChildren } from 'react';
 import { createPortal } from 'react-dom';
 import ReactMarkdown from 'react-markdown';
 
+import { PositionAnchor } from './PositionAnchor';
 import { useBoolean } from '@/hooks/useBoolean';
 import { useTimeout } from '@/hooks/useTimeout';
 import { getShellRootElement } from '@/utils/getShellRootElement';
-
-import { PositionAnchor } from './PositionAnchor';
 
 // TODO: maybe move this to a global user settings store eventually
 const TOOLTIP_DELAY = 500;

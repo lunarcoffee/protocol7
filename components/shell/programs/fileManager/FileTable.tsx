@@ -1,6 +1,9 @@
-import clsx from 'clsx';
+import { cn } from 'cn';
 import { Dispatch, PropsWithChildren, SetStateAction, useState } from 'react';
 
+import { rightCaretIcon } from './Breadcrumbs';
+import { FavoriteLocations } from './FileManager';
+import { HeadingText } from './HeadingText';
 import { FsEntryMetadata } from '@/filesystem';
 import { ReadDirectoryResult } from '@/filesystem/api/readDirectory';
 import { usePromise } from '@/hooks/usePromise';
@@ -9,10 +12,6 @@ import { formatTimestampShort } from '@/utils/formatTimestamp';
 import { getIconForEntry } from '@/utils/getIconForEntry';
 import { getSystemIcon } from '@/utils/getSystemIcon';
 import { keyToCompareFn } from '@/utils/keyToCompareFn';
-
-import { rightCaretIcon } from './Breadcrumbs';
-import { FavoriteLocations } from './FileManager';
-import { HeadingText } from './HeadingText';
 
 const nameCompareFn = keyToCompareFn<FsEntryMetadata>(({ name }) => [name]);
 const modifiedCompareFn = keyToCompareFn<FsEntryMetadata>(({ modified }) => [modified]);
@@ -63,7 +62,7 @@ const FileTableColumnHeader = ({
         <div className="relative">
             {/* sort direction indicator (downwards caret means ascending) */}
             {currentlySortingByThisColumn && (
-                <div className={clsx('absolute left-[50%] -mt-2', isAscending ? 'rotate-90' : '-rotate-90')}>
+                <div className={cn('absolute left-[50%] -mt-2', isAscending ? 'rotate-90' : '-rotate-90')}>
                     {rightCaretIcon}
                 </div>
             )}
@@ -102,7 +101,7 @@ const FileTableRow = ({ metadata, setCwd, locations }: FileTableRowProps) => {
             "
         >
             {/* display a shadow under custom image icons to ensure visibility */}
-            <td className={clsx('px-1', icon?.isSystemIcon || 'drop-shadow-xs drop-shadow-aero-tint-dark')}>
+            <td className={cn('px-1', icon?.isSystemIcon || 'drop-shadow-xs drop-shadow-aero-tint-dark')}>
                 {icon && <img src={icon.objectURL} alt={name} width={16} />}
             </td>
             <td className="overflow-hidden py-0.5 pr-4 text-nowrap text-ellipsis">{name}</td>
@@ -172,6 +171,7 @@ export const FileTable = ({ setCwd, dir, locations }: FileTableProps) => {
                                     <FileTableColumnHeader
                                         isAscending={isAscending}
                                         currentSortColumn={sortColumn}
+                                        // oxlint-disable-next-line typescript/no-unsafe-type-assertion
                                         thisSortColumn={column as FileTableColumnName}
                                         setIsAscending={setIsAscending}
                                         setSortColumn={setSortColumn}

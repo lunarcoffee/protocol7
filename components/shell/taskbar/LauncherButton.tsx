@@ -1,17 +1,17 @@
+import { cn } from 'cn';
+
+import { Launcher } from './Launcher';
 import { readFile } from '@/filesystem/api/readFile';
 import { usePromise } from '@/hooks/usePromise';
 import { useCreateWindow, useDestroyWindow, useWindow } from '@/hooks/windows';
 import { PID_SHELL } from '@/stores/system/processes/ProcessManager';
 import { WID_LAUNCHER } from '@/stores/system/windows/WindowManager';
-import { twMergeClsx } from '@/utils/twMergeClsx';
-
-import { Launcher } from './Launcher';
 
 const ReflectiveOrb = ({ active }: { active: boolean }) => (
     <>
         {/* upper reflection */}
         <div
-            className={twMergeClsx(
+            className={cn(
                 `
                     absolute z-10 h-7 w-12 rounded-t-3xl rounded-b-sm bg-linear-to-b from-white/40 to-white/5
                     inset-shadow-sm inset-shadow-white/40 transition duration-100
@@ -29,7 +29,7 @@ const ReflectiveOrb = ({ active }: { active: boolean }) => (
         />
         {/* lower half glow */}
         <div
-            className={twMergeClsx(
+            className={cn(
                 `
                     absolute z-30 size-12 rounded-full bg-radial-[at_50%_100%] from-aero-tint to-transparent
                     to-50% transition duration-100
@@ -54,7 +54,7 @@ const LauncherIcon = ({ active }: { active: boolean }) => {
             src={file.getObjectURL()}
             alt="launcher icon"
             draggable={false}
-            className={twMergeClsx(
+            className={cn(
                 `
                     absolute z-30 mt-1 size-10 opacity-70 drop-shadow-[0_0_0] drop-shadow-transparent
                     transition duration-100
@@ -88,7 +88,7 @@ export const LauncherButton = () => {
 
     return (
         <div
-            className={twMergeClsx(
+            className={cn(
                 `
                     group z-0 box-content flex size-12 cursor-pointer flex-row justify-center rounded-full
                     border border-aero-tint-darkest bg-aero-tint-dark shadow-[0_0_0.2rem] shadow-white/50

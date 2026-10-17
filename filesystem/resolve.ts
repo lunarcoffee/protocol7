@@ -39,10 +39,10 @@ const RESOLVED_ROOT: ResolvedDirectory = {
 
 // determine which directory on the base (if any) to merge the given overlay directory with
 const resolveDirectoryBasePath = ({ isOpaque, source }: OverlayDirectoryMetadata, defaultBasePath?: string) => {
-    if (isOpaque) return;
+    if (isOpaque) return undefined;
 
     const basePath = source || defaultBasePath;
-    if (basePath && getBaseEntries(basePath)) return basePath;
+    return basePath && getBaseEntries(basePath) ? basePath : undefined;
 };
 
 const resolveChild = async (parent: ResolvedDirectory, childPath: string): Promise<ResolvedEntry | undefined> => {
@@ -51,7 +51,7 @@ const resolveChild = async (parent: ResolvedDirectory, childPath: string): Promi
     // first try to resolve the path in the overlay
     if (parent.inOverlay) {
         const metadata = await readOverlayMetadata(childPath);
-        if (metadata?.type === 'deleted') return;
+        if (metadata?.type === 'deleted') return undefined;
 
         if (metadata?.type === 'file') {
             return {
@@ -90,6 +90,8 @@ const resolveChild = async (parent: ResolvedDirectory, childPath: string): Promi
             };
         }
     }
+
+    return undefined;
 };
 
 // resolves `entryPath` one segment at a time, so that anything in the overlay hides everything under it in the base
@@ -98,7 +100,7 @@ export const resolve = async (entryPath: string): Promise<ResolvedEntry | undefi
     let currentPath = '/';
 
     for (const segment of splitPath(entryPath)) {
-        if (current?.type !== 'directory') return;
+        if (current?.type !== 'directory') return undefined;
 
         currentPath = path.join(currentPath, segment);
         current = await resolveChild(current, currentPath);

@@ -1,14 +1,11 @@
 import { immer } from 'zustand/middleware/immer';
-import { createStore, StoreApi } from 'zustand/vanilla';
-
-import { RemoteFsManifest } from '@/filesystem/manifest';
-import { Dimensions } from '@/utils/Dimensions';
+import { StoreApi, createStore } from 'zustand/vanilla';
 
 import { DEFAULT_PROCESS_MANAGER, ProcessID, ProcessManager } from './processes/ProcessManager';
-import { processCreate, ProcessCreationInfo, processDestroy } from './processes/updateProcessManager';
+import { ProcessCreationInfo, processCreate, processDestroy } from './processes/updateProcessManager';
 import {
-    windowCreate,
     WindowCreationInfo,
+    windowCreate,
     windowDestroy,
     windowFocus,
     windowMinimize,
@@ -18,6 +15,8 @@ import {
     windowToggleMaximized,
 } from './windows/updateWindowManager';
 import { DEFAULT_WINDOW_MANAGER, WindowID, WindowManager } from './windows/WindowManager';
+import { RemoteFsManifest } from '@/filesystem/manifest';
+import { Dimensions } from '@/utils/Dimensions';
 
 export interface System {
     hostname: string;

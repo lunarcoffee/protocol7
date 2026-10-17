@@ -15,8 +15,7 @@ export interface HandleMouseDragArgs {
 export const handleMouseDrag = ({ initialPosition: { x, y }, onMove, onDragEnd, cursor }: HandleMouseDragArgs) => {
     if (cursor) document.body.style.cursor = cursor;
 
-    const mouseMoveListener = (rawEvent: Event) => {
-        const event = rawEvent as MouseEvent;
+    const mouseMoveListener = (event: MouseEvent) => {
         const dx = event.clientX - x;
         const dy = event.clientY - y;
 

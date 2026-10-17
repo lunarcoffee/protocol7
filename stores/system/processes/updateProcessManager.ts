@@ -1,9 +1,10 @@
 import { Draft } from 'immer';
 
-import type { System } from '../store';
 import { windowDestroy } from '../windows/updateWindowManager';
 import { WindowID } from '../windows/WindowManager';
 import { ProcessID, ProcessInfo, ProcessManager } from './ProcessManager';
+
+import type { System } from '../store';
 
 /* process manager helpers */
 

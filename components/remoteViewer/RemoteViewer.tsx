@@ -1,12 +1,11 @@
-import clsx from 'clsx';
+import { cn } from 'cn';
 import { AnimatePresence, motion } from 'motion/react';
 import { useRef, useState } from 'react';
-
-import { useBoolean } from '@/hooks/useBoolean';
 
 import { useInitializeSystem } from '../../hooks/system/useInitializeSystem';
 import { GraphicalShell } from '../shell/GraphicalShell';
 import { ViewerControls } from './ViewerControls';
+import { useBoolean } from '@/hooks/useBoolean';
 
 const LoadingFallback = () => (
     <motion.div
@@ -32,13 +31,13 @@ export const RemoteViewer = () => {
     const [hostname] = useState('localhost');
     const [isFullscreen, setIsFullscreen, setNotFullscreen] = useBoolean();
 
-    const enterFullscreen = () => {
+    const enterFullscreen = async () => {
         setIsFullscreen();
-        if (document.fullscreenEnabled) viewerRef.current?.requestFullscreen();
+        if (document.fullscreenEnabled) await viewerRef.current?.requestFullscreen();
     };
-    const exitFullscreen = () => {
+    const exitFullscreen = async () => {
         setNotFullscreen();
-        if (document.fullscreenElement) document.exitFullscreen();
+        if (document.fullscreenElement) await document.exitFullscreen();
     };
 
     const isReady = useInitializeSystem(hostname);
@@ -53,7 +52,7 @@ export const RemoteViewer = () => {
             <div
                 // when not fullscreened, maintain 3:2 aspect ratio but take up at most 90% of either dimension; also
                 // make sure there's enough room for the control buttons (`3rem` on the left, so `6rem` total)
-                className={clsx(
+                className={cn(
                     'absolute inset-0',
                     isFullscreen || 'm-auto aspect-3/2 max-h-9/10 w-9/10 max-w-[min(3/2*90lvh,100lvw-6rem)]',
                 )}

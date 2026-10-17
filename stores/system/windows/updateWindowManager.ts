@@ -1,10 +1,10 @@
 import { Draft } from 'immer';
 
+import { processAttachWindow, processDetachWindow } from '../processes/updateProcessManager';
+import { WindowID, WindowInfo, WindowManager } from './WindowManager';
 import { Dimensions } from '@/utils/Dimensions';
 
-import { processAttachWindow, processDetachWindow } from '../processes/updateProcessManager';
 import type { System } from '../store';
-import { WindowID, WindowInfo, WindowManager } from './WindowManager';
 
 /* window manager helpers */
 

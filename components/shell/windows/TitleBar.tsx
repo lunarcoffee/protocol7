@@ -1,10 +1,10 @@
+import { cn } from 'cn';
+
+import { ControlButtons } from './ControlButtons';
 import { useMaximizeWindow, useMoveWindow } from '@/hooks/windows';
 import { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import { Dimensions } from '@/utils/Dimensions';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
-import { twMergeClsx } from '@/utils/twMergeClsx';
-
-import { ControlButtons } from './ControlButtons';
 
 export const TitleBar = ({ windowInfo }: PropsWithWindowInfo) => {
     const { wid, title, position, isMaximized, hasFocus } = windowInfo;
@@ -25,7 +25,7 @@ export const TitleBar = ({ windowInfo }: PropsWithWindowInfo) => {
                 onMouseDown: (event) => onWindowDragStart({ x: event.clientX, y: event.clientY }),
             })}
             onDoubleClick={() => maximizeWindow(wid)}
-            className={twMergeClsx(
+            className={cn(
                 'z-10 flex flex-row items-center py-0.5 pr-1',
                 hasFocus || 'brightness-75 grayscale-50',
                 isMaximized && 'pr-2 pl-[0.2rem]',
