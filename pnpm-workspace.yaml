@@ -3,5 +3,3 @@ packages:
     - 'packages/*'
 allowBuilds:
     esbuild: true
-minimumReleaseAgeExclude:
-    - cn@0.5.0

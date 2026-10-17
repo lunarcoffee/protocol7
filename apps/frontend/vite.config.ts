@@ -4,10 +4,10 @@ import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
 
+const srcRoot = fileURLToPath(new URL('.', import.meta.url));
+
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [react(), tailwindcss(), babel({ presets: [reactCompilerPreset()] })],
-    resolve: {
-        alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
-    },
+    plugins: [react(), babel({ presets: [reactCompilerPreset()] }), tailwindcss()],
+    resolve: { alias: { '@': srcRoot } },
 });
