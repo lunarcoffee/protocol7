@@ -8,8 +8,7 @@
     },
     "settings": {
         "better-tailwindcss": {
-            "entryPoint": "app/globals.css",
-            "callees": ["clsx", "twMerge", "twMergeClsx"]
+            "entryPoint": "app/globals.css"
         }
     },
     "rules": {

@@ -1,10 +1,10 @@
+import { cn } from 'cn';
 import { AnimatePresence, motion } from 'motion/react';
 import { shallow } from 'zustand/shallow';
 
 import { useSystemStoreWithEqualityFn } from '@/hooks/system/useSystemStoreWithEqualityFn';
 import { useFocusWindow, useMinimizeWindow } from '@/hooks/windows';
 import { WID_DESKTOP, WID_LAUNCHER, WID_TASKBAR, WindowInfo } from '@/stores/system/windows/WindowManager';
-import { twMergeClsx } from '@/utils/twMergeClsx';
 
 // IDs of windows which should not appear in the window list
 export const HIDDEN_WIDS = [WID_DESKTOP, WID_TASKBAR, WID_LAUNCHER];
@@ -33,7 +33,7 @@ export const WindowList = () => {
             {Array.from(listableWindows, ({ wid, title, hasFocus }) => (
                 <motion.div
                     onClick={hasFocus ? () => minimizeWindow(wid) : () => focusWindow(wid)}
-                    className={twMergeClsx(
+                    className={cn(
                         `
                             relative flex h-8 min-w-0 shrink basis-40 flex-row items-center overflow-clip
                             rounded-xs bg-radial-[at_100%_100%] from-transparent via-transparent via-55%

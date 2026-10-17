@@ -1,4 +1,4 @@
-import { clsx } from 'clsx';
+import { cn } from 'cn';
 import path from 'path-browserify';
 import { useState } from 'react';
 
@@ -12,7 +12,7 @@ const SearchBar = () => {
             value={query}
             onChange={({ target }) => setQuery(target.value)}
             placeholder="Search..."
-            className={clsx(
+            className={cn(
                 `
                     h-6 w-50 shrink-0 rounded-full border border-aero-tint-dark/70 border-b-aero-tint/50
                     bg-white px-2 py-1 text-xs text-aero-tint-darkest outline outline-white/70

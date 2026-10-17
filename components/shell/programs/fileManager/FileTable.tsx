@@ -1,4 +1,4 @@
-import { clsx } from 'clsx';
+import { cn } from 'cn';
 import { Dispatch, PropsWithChildren, SetStateAction, useState } from 'react';
 
 import { rightCaretIcon } from './Breadcrumbs';
@@ -62,7 +62,7 @@ const FileTableColumnHeader = ({
         <div className="relative">
             {/* sort direction indicator (downwards caret means ascending) */}
             {currentlySortingByThisColumn && (
-                <div className={clsx('absolute left-[50%] -mt-2', isAscending ? 'rotate-90' : '-rotate-90')}>
+                <div className={cn('absolute left-[50%] -mt-2', isAscending ? 'rotate-90' : '-rotate-90')}>
                     {rightCaretIcon}
                 </div>
             )}
@@ -101,7 +101,7 @@ const FileTableRow = ({ metadata, setCwd, locations }: FileTableRowProps) => {
             "
         >
             {/* display a shadow under custom image icons to ensure visibility */}
-            <td className={clsx('px-1', icon?.isSystemIcon || 'drop-shadow-xs drop-shadow-aero-tint-dark')}>
+            <td className={cn('px-1', icon?.isSystemIcon || 'drop-shadow-xs drop-shadow-aero-tint-dark')}>
                 {icon && <img src={icon.objectURL} alt={name} width={16} />}
             </td>
             <td className="overflow-hidden py-0.5 pr-4 text-nowrap text-ellipsis">{name}</td>

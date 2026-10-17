@@ -54,6 +54,6 @@
     - ~~ensure minimum horizontal padding for buttons~~
 - tooling
     - ~~migrate to oxlint/oxfmt~~
-    - migrate to cn from clsx/tw-merge
+    - ~~migrate to cn from clsx/tw-merge~~
     - tests!!
     - migrate away from next?

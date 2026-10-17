@@ -1,3 +1,4 @@
+import { cn } from 'cn';
 import dedent from 'dedent';
 import { MouseEvent } from 'react';
 
@@ -9,7 +10,6 @@ import { usePromise } from '@/hooks/usePromise';
 import { useCreateWindow, useNextWindowID } from '@/hooks/windows';
 import { formatTimestampFull } from '@/utils/formatTimestamp';
 import { getIconForEntry } from '@/utils/getIconForEntry';
-import { twMergeClsx } from '@/utils/twMergeClsx';
 
 export interface DesktopIconProps {
     iconPath: string;
@@ -43,7 +43,7 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
         <Tooltip label={tooltipLabel} className="h-fit">
             <div
                 id={`desktop-icon-${uid}`}
-                className={twMergeClsx(
+                className={cn(
                     `
                         flex w-20 flex-col items-center gap-1.5 overflow-visible rounded-xs pt-1
                         hover:bg-aero-tint-highlight/25 hover:shadow-[0_0_4px]
@@ -80,7 +80,7 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                 </div>
                 <div className="flex w-20 justify-center overflow-visible">
                     <p
-                        className={twMergeClsx(
+                        className={cn(
                             `
                                 px-0.5 pb-0.5 text-center text-xs wrap-break-word
                                 text-shadow-aero-tint-darkest text-shadow-md
