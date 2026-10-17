@@ -1,0 +1,12 @@
+{
+    "name": "@protocol7/filesystem-types",
+    "version": "0.1.0",
+    "private": true,
+    "author": "lunarcoffee",
+    "exports": {
+        ".": {
+            "types": "./src/index.ts",
+            "default": "./src/index.ts"
+        }
+    }
+}
