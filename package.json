@@ -9,7 +9,8 @@
         "dev:frontend": "pnpm --filter frontend dev",
         "dev:backend": "pnpm --filter backend dev",
         "build": "pnpm -r --parallel build",
-        "tsc": "pnpm -r --parallel exec tsc --noEmit",
+        "tsc": "pnpm -r --parallel tsc",
+        "start": "pnpm -r --parallel start",
         "lint": "pnpm -r --parallel lint",
         "lint:fix": "pnpm -r --parallel lint:fix",
         "format": "oxfmt"
