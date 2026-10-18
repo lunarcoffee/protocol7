@@ -7,14 +7,15 @@
     "scripts": {
         "dev": "vite",
         "build": "tsc -b && vite build",
+        "start": "vite preview",
         "tsc": "tsc --noEmit -p tsconfig.app.json",
         "lint": "oxlint",
-        "lint:fix": "oxlint --fix",
-        "start": "vite preview"
+        "lint:fix": "oxlint --fix"
     },
     "dependencies": {
         "@fontsource-variable/manrope": "^5.3.0",
         "@fontsource-variable/open-sans": "^5.3.0",
+        "@tailwindcss/postcss": "^4.3.3",
         "@tailwindcss/vite": "^4.3.3",
         "@zenfs/core": "^2.7.7",
         "@zenfs/dom": "^1.2.14",

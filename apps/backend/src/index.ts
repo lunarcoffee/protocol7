@@ -1,11 +1,19 @@
 import { serve } from '@hono/node-server';
+import { watch } from 'chokidar';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import path from 'path';
 
-import { generateManifest } from './generateManifest.js';
-import { getFile } from './getFile.js';
+import { getFileContents } from './contents.js';
+import { getManifest, regenerateManifest } from './manifest.js';
 import { HOST_ASSETS_PATH } from './utils.js';
+
+const HOST_ASSETS_PATH_REGEX = new RegExp(`^${HOST_ASSETS_PATH}/`);
+
+// watch host assets directory for any changes (recursively) and regenerate manifests as needed
+watch(HOST_ASSETS_PATH, { ignoreInitial: true }).on('all', async (_, eventPath) => {
+    const host = eventPath.replace(HOST_ASSETS_PATH_REGEX, '').split('/').at(0);
+    if (host) await regenerateManifest(host);
+});
 
 const app = new Hono();
 
@@ -16,18 +24,16 @@ app.get('/hosts/:hostPath{.+}', async (c) => {
     const { hostPath } = c.req.param();
     const [host, ...filePath] = hostPath.split('/').filter((segment) => segment.length > 0);
 
+    // serve the contents of a specific file
     if (filePath.length > 0) {
-        const [data, mimeType] = await getFile(host, filePath);
+        const [data, mimeType] = await getFileContents(host, filePath);
         c.header('Content-Type', mimeType);
         return c.body(data);
     }
 
-    // TODO: now that this is just running on a server consider watching the actual fs for changes adn regenerating the
-    // manifest only then (serving a cached version otherwise)
-    const fileRoot = path.join(HOST_ASSETS_PATH, host);
-    const entries = await generateManifest(fileRoot, '/');
-
-    return c.json(entries);
+    // serve the filesystem manifest for the given `host`
+    let manifest = await getManifest(host);
+    return c.json(manifest);
 });
 
 // TODO: env

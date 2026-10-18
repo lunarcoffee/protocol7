@@ -6,11 +6,11 @@
     "author": "lunarcoffee",
     "scripts": {
         "dev": "pnpm -r --parallel dev",
-        "dev:frontend": "pnpm --filter frontend dev",
-        "dev:backend": "pnpm --filter backend dev",
+        "dev:frontend": "pnpm --F frontend dev",
+        "dev:backend": "pnpm --F backend dev",
         "build": "pnpm -r --parallel build",
-        "tsc": "pnpm -r --parallel tsc",
         "start": "pnpm -r --parallel start",
+        "tsc": "pnpm -r --parallel tsc",
         "lint": "pnpm -r --parallel lint",
         "lint:fix": "pnpm -r --parallel lint:fix",
         "format": "oxfmt"

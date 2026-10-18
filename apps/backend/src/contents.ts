@@ -7,7 +7,7 @@ import { HOST_ASSETS_PATH, toDataPath } from './utils.js';
 
 const mimeTypeCache = new Map<string, string>();
 
-export const getFile = async (host: string, pathSegments: string[]) => {
+export const getFileContents = async (host: string, pathSegments: string[]) => {
     const clientPath = path.join(...pathSegments);
     const filePath = path.join(HOST_ASSETS_PATH, host, toDataPath(clientPath));
 

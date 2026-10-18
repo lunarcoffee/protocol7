@@ -19,6 +19,7 @@
     - filesystem
         - soft links?
         - also most of the API is practically untested lol
+        - reconciling manifest changes
     - programs
         - config persistence conventions
         - subsystem for 'launching programs'
@@ -52,8 +53,12 @@
     - ~~better loading screen~~
         - actually wait for essential assets to load before revealing
     - ~~ensure minimum horizontal padding for buttons~~
+- server
+    - ~~cache manifest but watch host filesystem directory for changes~~
+    - ~~allow partial metadata files~~
 - tooling
     - ~~migrate to oxlint/oxfmt~~
     - ~~migrate to cn from clsx/tw-merge~~
+    - ~~migrate away from next?~~ (migrated to vite & hono)
+    - .env
     - tests!!
-    - ~~migrate away from next?~~
