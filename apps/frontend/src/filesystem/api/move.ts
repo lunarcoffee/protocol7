@@ -4,10 +4,10 @@ import path from 'path-browserify';
 import { isRoot, isSameOrDescendant, normalizePath, pathToData } from '../internal';
 import { overlayMutex, writeOverlayMetadata } from '../overlay';
 import { copyDirectoryToOverlay, eraseOverlayData, removeOverlayEntry, touchOverlayEntry } from '../overlay';
-import { type ResolvedEntry, resolve } from '../resolve';
+import { resolve } from '../resolve';
 import { type Result, err, ok } from '@/utils/Result';
 
-import type { FsEntryMetadata, OverlayEntryMetadata } from '@protocol7/filesystem-types';
+import type { FsEntryMetadata, OverlayEntryMetadata, ResolvedEntry } from '@protocol7/filesystem-types';
 
 // generate new metadata for `entry`; an entry whose contents are in the base keeps referring to their previous location
 // instead of copying them into the overlay

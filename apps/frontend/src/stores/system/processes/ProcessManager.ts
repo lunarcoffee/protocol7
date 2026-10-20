@@ -9,7 +9,6 @@ export interface ProcessInfo {
 
     windows: WindowID[]; // a process owns any number of windows
     isHeadless: boolean; // headless processes don't die when their last window is destroyed
-    // TODO: implemenet this behavior
 }
 
 export interface ProcessManager {

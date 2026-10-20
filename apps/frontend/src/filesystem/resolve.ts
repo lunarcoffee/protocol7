@@ -5,36 +5,11 @@ import { ROOT_DIR_METADATA } from './manifest';
 import { listAllOverlayNames, readOverlayMetadata } from './overlay';
 
 import type {
-    FsDirectoryMetadata,
     FsEntryMetadata,
-    FsFileMetadata,
     OverlayDirectoryMetadata,
+    ResolvedDirectory,
+    ResolvedEntry,
 } from '@protocol7/filesystem-types';
-
-/*
- * types and functions for interacting with the unified base and overlay
- */
-
-export type ResolvedFile = {
-    type: 'file';
-    metadata: FsFileMetadata;
-
-    // where the contents are in the base; if not present, the contents are in the overlay
-    contentBasePath?: string;
-};
-
-export type ResolvedDirectory = {
-    type: 'directory';
-    metadata: FsDirectoryMetadata;
-
-    // the base directory this directory is merged with, if any
-    basePath?: string;
-
-    // whether this directory has an entry in the overlay (i.e., whether it might have children there)
-    inOverlay: boolean;
-};
-
-export type ResolvedEntry = ResolvedFile | ResolvedDirectory;
 
 const RESOLVED_ROOT: ResolvedDirectory = {
     type: 'directory',

@@ -65,8 +65,8 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                         pid: nextProcessID,
                         wid: nextWindowID,
                         title: 'File Manager',
-                        size: { x: 700, y: 420 },
-                        minSize: { x: 600, y: 300 },
+                        size: { x: 700, y: 450 },
+                        minSize: { x: 700, y: 450 },
                         render: (windowInfo) => <FileManager windowInfo={windowInfo} />,
                     });
                 }}

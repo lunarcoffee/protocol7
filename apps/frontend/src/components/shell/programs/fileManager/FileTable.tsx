@@ -21,8 +21,8 @@ const sizeCompareFn = keyToCompareFn<FsEntryMetadata>((metadata) => [metadata.ty
 // mapping columns and the comparison functions they use for ordering entries
 const FILE_TABLE_COLUMNS = {
     ['Name']: { compareFn: nameCompareFn, className: 'w-[50%]' },
-    ['Last modified']: { compareFn: modifiedCompareFn, className: 'w-[25%]' },
-    ['Size']: { compareFn: sizeCompareFn, className: 'w-[calc(25%-1.5rem)]' },
+    ['Last modified']: { compareFn: modifiedCompareFn, className: 'w-[30%]' },
+    ['Size']: { compareFn: sizeCompareFn, className: 'w-[calc(20%-1.5rem)]' },
 };
 
 type FileTableColumnName = keyof typeof FILE_TABLE_COLUMNS;

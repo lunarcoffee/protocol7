@@ -16,8 +16,8 @@ import {
 } from './windows/updateWindowManager';
 import { DEFAULT_WINDOW_MANAGER, type WindowID, type WindowManager } from './windows/WindowManager';
 
-import type { RemoteFsManifest } from '@/filesystem/manifest';
 import type { Dimensions } from '@/utils/Dimensions';
+import type { RemoteFsManifest } from '@protocol7/filesystem-types';
 
 export interface System {
     hostname: string;

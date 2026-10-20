@@ -1,23 +1,6 @@
 import { isRoot, pathToRemoteURL, splitPath, toDirectoryMetadata } from './internal';
 
-import type { FsCommonMetadata, FsFileMetadata, FsTimeMetadata } from '@protocol7/filesystem-types';
-
-type FsDirectoryListingMetadata = {
-    type: 'directory-list';
-    entries: Record<string, FsManifestEntryMetadata>;
-} & FsCommonMetadata &
-    FsTimeMetadata;
-
-export type FsManifestEntryMetadata = FsFileMetadata | FsDirectoryListingMetadata;
-
-// the object as sent by the server
-export type FsManifest = Record<string, FsManifestEntryMetadata>;
-
-// wrapper for general use
-export interface RemoteFsManifest {
-    getMetadata: (entryPath: string) => FsManifestEntryMetadata | undefined;
-    getEntries: (dirPath: string) => FsManifest | undefined;
-}
+import type { FsManifest, FsManifestEntryMetadata, RemoteFsManifest } from '@protocol7/filesystem-types';
 
 const EPOCH = new Date(0).toISOString();
 

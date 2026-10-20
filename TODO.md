@@ -34,6 +34,8 @@
         - buttons, text inputs, text styles, etc. (lots will prob come from file manager work)
         - dialogs
         - scrollbars
+    - taskbar
+        - extra chrome
     - system clipboard
     - context menus
         - on desktop, in file manager, on taskbar, etc.
@@ -57,9 +59,12 @@
     - ~~cache manifest but watch host filesystem directory for changes~~
     - ~~allow partial metadata files~~
     - ~~cache file contents~~
+    - more efficient network usage (also needs some client-side work)
+        - scaled icons
+        - image thumbnails
 - tooling
     - ~~migrate to oxlint/oxfmt~~
     - ~~migrate to cn from clsx/tw-merge~~
     - ~~migrate away from next?~~ (migrated to vite & hono)
-    - .env
+    - ~~.env~~
     - tests!!
