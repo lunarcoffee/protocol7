@@ -1,6 +1,7 @@
 import { serve } from '@hono/node-server';
 import { watch } from 'chokidar';
 import { Hono } from 'hono';
+import { compress } from 'hono/compress';
 import { cors } from 'hono/cors';
 import path from 'path';
 
@@ -10,6 +11,8 @@ import { getManifest, regenerateManifest } from './hosts/manifest.js';
 import { logger } from './logger.js';
 
 const app = new Hono();
+
+app.use(compress());
 
 app.use('/hosts/*', cors({ origin: config.FRONTEND_ORIGIN, maxAge: 3_600 }));
 
