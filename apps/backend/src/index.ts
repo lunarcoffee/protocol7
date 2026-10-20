@@ -20,6 +20,8 @@ app.get('/hosts/:hostPath{.+}', async (c) => {
     // serve the contents of a specific file
     if (filePath.length > 0) {
         const [data, mimeType] = await getFile(host, path.join(...filePath));
+
+        if (config.CACHE_RESPONSES) c.header('Cache-Control', 'max-age=1800');
         c.header('Content-Type', mimeType);
         return c.body(data);
     }

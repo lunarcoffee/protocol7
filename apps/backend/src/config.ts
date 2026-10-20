@@ -21,8 +21,9 @@ export const config = {
     FRONTEND_ORIGIN: process.env.FRONTEND_ORIGIN!,
 
     HOST_ASSETS_PATH: path.join(import.meta.dirname, '..', process.env.HOST_ASSETS_PATH!),
-    // in bytes
-    HOST_ASSETS_CACHE_SIZE: parseInt(process.env.MAX_ASSET_CACHE_SIZE ?? '100000000'),
+    HOST_ASSETS_CACHE_BYTES: parseInt(process.env.MAX_ASSET_CACHE_BYTES ?? '100000000'),
+
+    CACHE_RESPONSES: process.env.CACHE_RESPONSES === 'true',
 };
 
 logger.level = config.LOG_LEVEL;

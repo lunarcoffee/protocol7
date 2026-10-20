@@ -12,7 +12,7 @@ import { toDataPath } from '../utils.js';
 type HostFile = readonly [Uint8Array<ArrayBuffer>, string];
 
 const fileCache = new LRUCache<string, HostFile>({
-    maxSize: config.HOST_ASSETS_CACHE_SIZE,
+    maxSize: config.HOST_ASSETS_CACHE_BYTES,
     sizeCalculation: ({ length }) => length,
 });
 
