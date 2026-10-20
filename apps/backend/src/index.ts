@@ -2,23 +2,16 @@ import { serve } from '@hono/node-server';
 import { watch } from 'chokidar';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import path from 'path';
 
-import { getFileContents } from './contents.js';
-import { getManifest, regenerateManifest } from './manifest.js';
-import { HOST_ASSETS_PATH } from './utils.js';
-
-const HOST_ASSETS_PATH_REGEX = new RegExp(`^${HOST_ASSETS_PATH}/`);
-
-// watch host assets directory for any changes (recursively) and regenerate manifests as needed
-watch(HOST_ASSETS_PATH, { ignoreInitial: true }).on('all', async (_, eventPath) => {
-    const host = eventPath.replace(HOST_ASSETS_PATH_REGEX, '').split('/').at(0);
-    if (host) await regenerateManifest(host);
-});
+import { config } from './config.js';
+import { getFile, invalidateCachedFile } from './hosts/file.js';
+import { getManifest, regenerateManifest } from './hosts/manifest.js';
+import { logger } from './logger.js';
 
 const app = new Hono();
 
-// TODO: env
-app.use('/hosts/*', cors());
+app.use('/hosts/*', cors({ origin: config.FRONTEND_ORIGIN, maxAge: 3_600 }));
 
 app.get('/hosts/:hostPath{.+}', async (c) => {
     const { hostPath } = c.req.param();
@@ -26,7 +19,7 @@ app.get('/hosts/:hostPath{.+}', async (c) => {
 
     // serve the contents of a specific file
     if (filePath.length > 0) {
-        const [data, mimeType] = await getFileContents(host, filePath);
+        const [data, mimeType] = await getFile(host, path.join(...filePath));
         c.header('Content-Type', mimeType);
         return c.body(data);
     }
@@ -36,5 +29,17 @@ app.get('/hosts/:hostPath{.+}', async (c) => {
     return c.json(manifest);
 });
 
-// TODO: env
-serve({ fetch: app.fetch, port: 8000 }, (info) => console.log(`server is up on localhost:${info.port}`));
+serve({ fetch: app.fetch, port: config.BACKEND_PORT }, ({ port }) =>
+    logger.info(`server is listening on port ${port}`),
+);
+
+const HOST_ASSETS_PATH_REGEX = new RegExp(`^${config.HOST_ASSETS_PATH}/`);
+
+// watch host assets directory for any changes (recursively) and refresh caches as needed
+watch(config.HOST_ASSETS_PATH, { ignoreInitial: true }).on('all', async (_, eventPath) => {
+    const host = eventPath.replace(HOST_ASSETS_PATH_REGEX, '').split('/').at(0);
+    if (host) {
+        invalidateCachedFile(eventPath);
+        await regenerateManifest(host);
+    }
+});

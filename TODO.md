@@ -56,6 +56,7 @@
 - server
     - ~~cache manifest but watch host filesystem directory for changes~~
     - ~~allow partial metadata files~~
+    - ~~cache file contents~~
 - tooling
     - ~~migrate to oxlint/oxfmt~~
     - ~~migrate to cn from clsx/tw-merge~~

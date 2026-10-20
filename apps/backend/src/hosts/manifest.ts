@@ -8,8 +8,9 @@ import fs from 'fs/promises';
 import murmurhash from 'murmurhash';
 import path from 'path';
 
-import { logger } from './logger.js';
-import { HOST_ASSETS_PATH, toClientPath, toDataPath, toMetadataPath } from './utils.js';
+import { config } from '../config.js';
+import { logger } from '../logger.js';
+import { toClientPath, toDataPath, toMetadataPath } from '../utils.js';
 
 const getDataFileMetadata = async (
     fileRoot: string,
@@ -73,10 +74,10 @@ const generateManifest = async (fileRoot: string, dirPath: string): Promise<FsMa
 const manifestCache = new Map<string, FsManifest>();
 
 export const regenerateManifest = async (host: string) => {
-    const fileRoot = path.join(HOST_ASSETS_PATH, host);
+    const fileRoot = path.join(config.HOST_ASSETS_PATH, host);
     const manifest = await generateManifest(fileRoot, '/');
-    manifestCache.set(host, manifest);
 
+    manifestCache.set(host, manifest);
     logger.info({ host }, 'regenerated fs manifest');
 
     return manifest;

@@ -190,12 +190,18 @@ importers:
       chokidar:
         specifier: ^5.0.0
         version: 5.0.0
+      dotenv:
+        specifier: ^18.0.8
+        version: 18.0.8
       file-type:
         specifier: ^22.2.0
         version: 22.2.0(supports-color@7.2.0)
       hono:
         specifier: ^4.13.13
         version: 4.13.13
+      lru-cache:
+        specifier: ^11.5.3
+        version: 11.5.3
       mime:
         specifier: ^4.1.1
         version: 4.1.1
@@ -251,6 +257,9 @@ importers:
       dedent:
         specifier: ^1.7.2
         version: 1.7.2
+      dotenv:
+        specifier: ^18.0.8
+        version: 18.0.8
       file-type:
         specifier: ^22.2.0
         version: 22.2.0(supports-color@7.2.0)
@@ -1431,6 +1440,11 @@ packages:
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
 
+  dotenv@18.0.8:
+    resolution: {integrity: sha512-2KDeoFoK/zRtcnbunCDlLG5VWVMcyqeQc6iK65o231nfNAcuGrKoqUQfJFUtBI+QlShk5HKIHxwebBtUl3rEfA==}
+    engines: {node: '>=12'}
+    hasBin: true
+
   electron-to-chromium@1.5.458:
     resolution: {integrity: sha512-/hIH2gRSmxrf4/X4Nw/t/Wc8PVS22l8/3HnWjWTWsTOM5dsnMUPZF/+u+yr3LqweNuTBJE1rq6qAQzKkZVwMfA==}
 
@@ -1744,6 +1758,10 @@ packages:
 
   longest-streak@3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}
+
+  lru-cache@11.5.3:
+    resolution: {integrity: sha512-U4N8FgzmWxc8k1VH8Kr6lQg18U7Fjvby6wXHVRX/ZZ7IwWbRMgrRbP0Wrb5q5NVinryp4SQampHKdvtecItxUg==}
+    engines: {node: 20 || >=22}
 
   luxon@3.7.2:
     resolution: {integrity: sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew==}
@@ -2977,6 +2995,8 @@ snapshots:
     dependencies:
       dequal: 2.0.3
 
+  dotenv@18.0.8: {}
+
   electron-to-chromium@1.5.458: {}
 
   empathic@2.1.0: {}
@@ -3245,6 +3265,8 @@ snapshots:
       lightningcss-win32-x64-msvc: 1.33.0
 
   longest-streak@3.1.0: {}
+
+  lru-cache@11.5.3: {}
 
   luxon@3.7.2: {}
 

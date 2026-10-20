@@ -17,7 +17,7 @@ export type OverlayDeletedMetadata = { type: 'deleted' };
 
 export type OverlayEntryMetadata = OverlayFileMetadata | OverlayDirectoryMetadata | OverlayDeletedMetadata;
 
-/* types for after resolution in the unified base and overlay filesystems */
+/* types after resolution in the unified base and overlay filesystems */
 
 export type ResolvedFile = {
     type: 'file';

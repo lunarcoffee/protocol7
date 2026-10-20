@@ -1,6 +1,3 @@
-// TODO: env
-export const HOST_ASSETS_PATH = 'hosts';
-
 export const toDataPath = (filePath: string): string =>
     filePath.replaceAll(/(?<!^)\//g, '.data/').replace(/(?<!\/)$/, '.data');
 
