@@ -4,7 +4,7 @@ import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
 
-const srcRoot = fileURLToPath(new URL('.', import.meta.url));
+const srcRoot = fileURLToPath(new URL('./src', import.meta.url));
 
 export default defineConfig({
     plugins: [

@@ -86,11 +86,10 @@ export const pathToMetadata = (entryPath: string) => pathWithHostname(pathWithEx
 export const pathToData = (entryPath: string) =>
     pathWithHostname(isRoot(entryPath) ? '/' : pathWithExtension(entryPath, DATA_EXTENSION));
 
-// TODO: env
-const SERVER_URL = 'http://localhost:8000/';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export const pathToRemoteURL = (entryPath: string, hostname?: string) =>
-    SERVER_URL + path.join('hosts', pathWithHostname(entryPath, hostname));
+    BACKEND_URL + path.join('hosts', pathWithHostname(entryPath, hostname));
 
 /* client path utilities */
 
