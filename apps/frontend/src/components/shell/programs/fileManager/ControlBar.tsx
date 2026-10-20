@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { Breadcrumbs } from './Breadcrumbs';
 import { getSystemIcon } from '@/utils/getSystemIcon';
 
+import type { FavoriteLocations } from './FileManager';
+
 const SearchBar = () => {
     const [query, setQuery] = useState('');
     return (
@@ -40,9 +42,10 @@ const ControlBarButton = ({ iconPath, onClick }: ControlBarButtonProps) => {
 export interface ControlBarProps {
     cwd: string;
     setCwd: (dir: string) => void;
+    locations?: FavoriteLocations;
 }
 
-export const ControlBar = ({ cwd, setCwd }: ControlBarProps) => {
+export const ControlBar = ({ cwd, setCwd, locations }: ControlBarProps) => {
     const isRoot = cwd === '/';
 
     const visitParent = () => {
@@ -58,7 +61,7 @@ export const ControlBar = ({ cwd, setCwd }: ControlBarProps) => {
             "
         >
             <ControlBarButton iconPath="actions/go-up.png" onClick={visitParent} disabled={isRoot} />
-            <Breadcrumbs cwd={cwd} setCwd={setCwd} />
+            <Breadcrumbs cwd={cwd} setCwd={setCwd} locations={locations} />
             <SearchBar />
         </div>
     );

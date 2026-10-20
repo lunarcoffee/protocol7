@@ -26,9 +26,9 @@ export const Tooltip = ({ label, className, children }: TooltipProps) => {
                 <PositionAnchor offsetForCursor className="z-[calc(infinity)]">
                     <div
                         className="
-                                max-w-lg rounded-sm border border-aero-tint-dark bg-linear-to-b from-gray-100
-                                to-aero-tint-highlight shadow-md shadow-aero-tint-darkest/30
-                            "
+                            max-w-lg rounded-sm border border-aero-tint-dark bg-linear-to-b from-gray-100
+                            to-aero-tint-highlight shadow-md shadow-aero-tint-darkest/30
+                        "
                         // prevent the tooltip from being kept open if the mouse enters this div before it unmounts
                         onMouseMove={(event) => {
                             event.stopPropagation();

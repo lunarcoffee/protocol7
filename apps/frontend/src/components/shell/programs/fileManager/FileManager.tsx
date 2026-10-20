@@ -39,12 +39,11 @@ export const FileManager = ({ windowInfo }: PropsWithWindowInfo) => {
 
     const [locations] = usePromise(async () => {
         const file = await readFile(FAVORITE_LOCATIONS_PATH);
-        if (file?.ok) {
-            const contents = new TextDecoder().decode(await file.contents());
-            const locations = JSON.parse(contents) as Record<string, FavoriteLocation>;
-            return new Map(Object.entries(locations));
-        }
-        return undefined;
+        if (!file?.ok) return undefined;
+
+        const contents = new TextDecoder().decode(await file.contents());
+        const locations = JSON.parse(contents) as Record<string, FavoriteLocation>;
+        return new Map(Object.entries(locations));
     }, []);
 
     return (
@@ -52,7 +51,7 @@ export const FileManager = ({ windowInfo }: PropsWithWindowInfo) => {
             <div className="relative flex size-full min-h-0 min-w-0 flex-col bg-gray-100">
                 {/* fills in the leaking background color behind the control bar's rounded corner */}
                 <div className="absolute top-0 left-0 size-9.5 bg-aero-tint-highlight/40" />
-                <ControlBar cwd={cwd} setCwd={setNextCwd} />
+                <ControlBar cwd={cwd} setCwd={setNextCwd} locations={locations} />
 
                 <div className="flex size-full min-h-0 flex-row">
                     <LocationsPane setCwd={setNextCwd} locations={locations} />
