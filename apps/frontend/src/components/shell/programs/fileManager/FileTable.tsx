@@ -1,9 +1,11 @@
 import { cn } from 'cn';
 import { type Dispatch, type PropsWithChildren, type SetStateAction, useState } from 'react';
 
+import { Tooltip } from '../../controls/Tooltip';
 import { rightCaretIcon } from './Breadcrumbs';
 import { HeadingText } from './HeadingText';
 import { usePromise } from '@/hooks/usePromise';
+import { formatMetadataTooltip } from '@/utils/formatMetadataTooltip';
 import { formatSizeBytes } from '@/utils/formatSizeBytes';
 import { formatTimestampShort } from '@/utils/formatTimestamp';
 import { getIconForEntry } from '@/utils/getIconForEntry';
@@ -20,9 +22,9 @@ const sizeCompareFn = keyToCompareFn<FsEntryMetadata>((metadata) => [metadata.ty
 
 // mapping columns and the comparison functions they use for ordering entries
 const FILE_TABLE_COLUMNS = {
-    ['Name']: { compareFn: nameCompareFn, className: 'w-[50%]' },
-    ['Last modified']: { compareFn: modifiedCompareFn, className: 'w-[30%]' },
-    ['Size']: { compareFn: sizeCompareFn, className: 'w-[calc(20%-1.5rem)]' },
+    ['Name']: { compareFn: nameCompareFn },
+    ['Last modified']: { compareFn: modifiedCompareFn },
+    ['Size']: { compareFn: sizeCompareFn },
 };
 
 type FileTableColumnName = keyof typeof FILE_TABLE_COLUMNS;
@@ -92,32 +94,33 @@ const FileTableRow = ({ metadata, setCwd, locations }: FileTableRowProps) => {
         return await getIconForEntry(path);
     }, [locations, path]);
 
+    const tooltipLabel = formatMetadataTooltip(metadata);
+
     return (
-        <tr
-            key={path}
-            {...(isDirectory && { onDoubleClick: () => setCwd(path) })}
-            className="
-                rounded-xs bg-linear-to-b inset-ring-gray-100 outline-aero-tint/30
-                hover:to-aero-tint-highlight/50 hover:inset-ring hover:outline
-            "
-        >
-            {/* display a shadow under custom image icons to ensure visibility */}
-            <td className={cn('px-1', icon?.isSystemIcon || 'drop-shadow-xs drop-shadow-aero-tint-dark')}>
-                {icon && <img src={icon.objectURL} alt={name} width={16} />}
-            </td>
-            <td className="overflow-hidden py-0.5 pr-4 text-nowrap text-ellipsis">{name}</td>
-            <td>{formatTimestampShort(modified)}</td>
-            <td>{isDirectory || formatSizeBytes(metadata.size)}</td>
-        </tr>
+        <Tooltip label={tooltipLabel} className="col-span-4 grid grid-cols-subgrid">
+            <div
+                {...(isDirectory && { onDoubleClick: () => setCwd(path) })}
+                className="
+                    col-span-4 grid grid-cols-subgrid rounded-xs bg-linear-to-b inset-ring-gray-100
+                    outline-aero-tint/30
+                    *:my-auto
+                    hover:to-aero-tint-highlight/50 hover:inset-ring hover:outline
+                "
+            >
+                {/* display a shadow under custom image icons to ensure visibility */}
+                <div className={cn('px-1', icon?.isSystemIcon || 'drop-shadow-xs drop-shadow-aero-tint-dark')}>
+                    {icon && <img src={icon.objectURL} alt={name} width={16} />}
+                </div>
+                <div className="overflow-hidden py-0.5 pr-4 text-nowrap text-ellipsis">{name}</div>
+                <div>{formatTimestampShort(modified)}</div>
+                <div>{isDirectory || formatSizeBytes(metadata.size)}</div>
+            </div>
+        </Tooltip>
     );
 };
 
 const PlaceholderRow = ({ children }: PropsWithChildren) => (
-    <tr>
-        <td className="p-6 text-center text-xs text-aero-tint/50" colSpan={4}>
-            {children}
-        </td>
-    </tr>
+    <div className="col-span-4 m-auto p-6 text-xs text-aero-tint/50">{children}</div>
 );
 
 export interface FileTableProps {
@@ -162,47 +165,42 @@ export const FileTable = ({ setCwd, dir, locations }: FileTableProps) => {
                 />
             )}
             <div className="m-2">
-                <table className="w-full table-fixed border-collapse text-left text-xs">
-                    {/* these table headers allow configuring the sorting */}
-                    <thead className="sticky top-2 z-20">
-                        <tr>
-                            <th className="w-6 max-w-6 min-w-6" />
-                            {Object.entries(FILE_TABLE_COLUMNS).map(([column, { className }]) => (
-                                <th key={column} className={className}>
-                                    <FileTableColumnHeader
-                                        isAscending={isAscending}
-                                        currentSortColumn={sortColumn}
-                                        // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-                                        thisSortColumn={column as FileTableColumnName}
-                                        setIsAscending={setIsAscending}
-                                        setSortColumn={setSortColumn}
-                                    >
-                                        {column}
-                                    </FileTableColumnHeader>
-                                </th>
-                            ))}
-                        </tr>
-                        <tr className="h-1" />
-                    </thead>
-                    {/* actual list of entries */}
-                    <tbody>
-                        {isDirLoading ? (
-                            <PlaceholderRow>Loading...</PlaceholderRow>
-                        ) : !hasEntries ? (
-                            <PlaceholderRow>No items</PlaceholderRow>
-                        ) : (
-                            // always show directories first
-                            [...directories!, ...files!].map((metadata) => (
-                                <FileTableRow
-                                    key={metadata.uid}
-                                    setCwd={setCwd}
-                                    metadata={metadata}
-                                    locations={locations}
-                                />
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                <div className="grid size-full border-collapse grid-cols-[1fr_9fr_6fr_4fr] text-left text-xs">
+                    <div className="sticky top-2 z-20 col-span-4 grid grid-cols-subgrid">
+                        {/* icon column */}
+                        <div className="w-6 max-w-6 min-w-6" />
+                        {Object.keys(FILE_TABLE_COLUMNS).map((column) => (
+                            <FileTableColumnHeader
+                                key={column}
+                                isAscending={isAscending}
+                                currentSortColumn={sortColumn}
+                                // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+                                thisSortColumn={column as FileTableColumnName}
+                                setIsAscending={setIsAscending}
+                                setSortColumn={setSortColumn}
+                            >
+                                {column}
+                            </FileTableColumnHeader>
+                        ))}
+                        <div className="h-1" />
+                    </div>
+
+                    {isDirLoading ? (
+                        <PlaceholderRow>Loading...</PlaceholderRow>
+                    ) : !hasEntries ? (
+                        <PlaceholderRow>No items</PlaceholderRow>
+                    ) : (
+                        // always show directories first
+                        [...directories!, ...files!].map((metadata) => (
+                            <FileTableRow
+                                key={metadata.uid}
+                                setCwd={setCwd}
+                                metadata={metadata}
+                                locations={locations}
+                            />
+                        ))
+                    )}
+                </div>
             </div>
         </div>
     );

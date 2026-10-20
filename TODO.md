@@ -9,8 +9,7 @@
         - ~~breadcrumbs allow direct editing when clicked~~
         - ~~breadcrumbs overflow handling~~
         - search functionality
-        - distribute columns better
-            - customizable columns
+        - ~~distribute columns better~~
         - (multi-)select functionality (extract from desktop)
         - grid view
         - history
@@ -62,6 +61,7 @@
     - more efficient network usage (also needs some client-side work)
         - scaled icons
         - image thumbnails
+    - percent encode filenames (or put in POST body)
 - tooling
     - ~~migrate to oxlint/oxfmt~~
     - ~~migrate to cn from clsx/tw-merge~~

@@ -7,7 +7,7 @@ const UNITS = [
 ];
 
 export const formatSizeBytes = (bytes: number): string => {
-    if (bytes < 1_000) return `${bytes} B`;
+    if (bytes < 1_000) return `${bytes} bytes`;
 
     const { limit, unit } = UNITS.find(({ limit }) => bytes >= limit)!;
     return `${(bytes / limit).toFixed(2)} ${unit}`;

@@ -1,5 +1,4 @@
 import { cn } from 'cn';
-import dedent from 'dedent';
 
 import { Tooltip } from '@/components/shell/controls/Tooltip';
 import { FileManager } from '@/components/shell/programs/fileManager/FileManager';
@@ -7,7 +6,7 @@ import { readMetadata } from '@/filesystem/api/readMetadata';
 import { useCreateProcess, useNextProcessID } from '@/hooks/processes';
 import { usePromise } from '@/hooks/usePromise';
 import { useCreateWindow, useNextWindowID } from '@/hooks/windows';
-import { formatTimestampFull } from '@/utils/formatTimestamp';
+import { escapeMarkdown } from '@/utils/escapeMarkdown';
 import { getIconForEntry } from '@/utils/getIconForEntry';
 
 import type { MouseEvent } from 'react';
@@ -29,16 +28,8 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
 
     if (!iconFile?.ok) return null;
 
-    const { name: label, uid, created, modified } = iconFile.metadata;
-
-    const createdTime = formatTimestampFull(created);
-    const modifiedTime = formatTimestampFull(modified);
-    const tooltipLabel = dedent`
-        *${label}*
-
-        **Created** on ${createdTime}
-        ${modifiedTime !== createdTime ? `**Last modified** on ${modifiedTime}` : ''}
-    `;
+    const { name: label, uid } = iconFile.metadata;
+    const tooltipLabel = `*${escapeMarkdown(label)}*`;
 
     return (
         <Tooltip label={tooltipLabel} className="h-fit">
