@@ -86,10 +86,17 @@ export const pathToMetadata = (entryPath: string) => pathWithHostname(pathWithEx
 export const pathToData = (entryPath: string) =>
     pathWithHostname(isRoot(entryPath) ? '/' : pathWithExtension(entryPath, DATA_EXTENSION));
 
+/* remote URL utilities */
+
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-export const pathToRemoteURL = (entryPath: string, hostname?: string) =>
-    BACKEND_URL + path.join('hosts', pathWithHostname(entryPath, hostname));
+export const getRemoteManifestURL = (hostname: string) => new URL(path.join('hosts', hostname), BACKEND_URL);
+
+export const getRemoteFileURL = (filePath: string) => {
+    const url = new URL(path.join('hosts', systemStore!.getState().hostname, 'file'), BACKEND_URL);
+    url.searchParams.append('path', filePath);
+    return url;
+};
 
 /* client path utilities */
 
@@ -130,7 +137,7 @@ export const getBaseMetadata = (entryPath: string) => systemStore!.getState().fi
 export const getBaseEntries = (dirPath: string) => systemStore!.getState().fileManifest.getEntries(dirPath);
 
 export const fetchBaseData = async (filePath: string): Promise<ArrayBuffer> => {
-    const serverFile = await fetch(pathToRemoteURL(filePath));
+    const serverFile = await fetch(getRemoteFileURL(filePath));
     if (!serverFile.ok) throw new Error(`fs: failed to fetch file ${filePath} from server!`);
 
     return serverFile.arrayBuffer();

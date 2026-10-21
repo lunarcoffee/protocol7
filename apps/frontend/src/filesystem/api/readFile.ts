@@ -1,4 +1,4 @@
-import { fetchBaseData, normalizePath, pathToRemoteURL } from '../internal';
+import { fetchBaseData, getRemoteFileURL, normalizePath } from '../internal';
 import { overlayMutex, readOverlayData } from '../overlay';
 import { resolve } from '../resolve';
 import { type Result, err, ok } from '@/utils/Result';
@@ -31,7 +31,7 @@ export const readFile = (filePath: string): Promise<ReadFileResult> => {
 
         // contents are in the base (i.e., on the server)
         if (contentBasePath) {
-            const getObjectURL = () => pathToRemoteURL(contentBasePath);
+            const getObjectURL = () => getRemoteFileURL(contentBasePath);
             return ok({ metadata, contents: () => fetchBaseData(contentBasePath), getObjectURL });
         }
 

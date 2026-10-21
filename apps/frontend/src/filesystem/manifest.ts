@@ -1,4 +1,4 @@
-import { isRoot, pathToRemoteURL, splitPath, toDirectoryMetadata } from './internal';
+import { getRemoteManifestURL, isRoot, splitPath, toDirectoryMetadata } from './internal';
 
 import type { FsManifest, FsManifestEntryMetadata, RemoteFsManifest } from '@protocol7/filesystem-types';
 
@@ -24,7 +24,7 @@ const getEntriesFromManifest = (manifest: FsManifest, dirPath: string) => {
 
 export const fetchManifest = async (hostname: string): Promise<RemoteFsManifest | undefined> => {
     try {
-        const response = await fetch(pathToRemoteURL('', hostname));
+        const response = await fetch(getRemoteManifestURL(hostname));
         const manifest = (await response.json()) as FsManifest;
 
         return {
