@@ -1,35 +1,33 @@
+import { type Draft, castDraft } from 'immer';
 import { useImmerReducer } from 'use-immer';
 
-import type { ItemStates, UpdateItemStatesAction } from '@/components/shell/controls/DragSelectContainer';
-import type { Draft } from 'immer';
+import type {
+    DragSelectItemKey,
+    ItemStates,
+    UpdateItemStatesAction,
+} from '@/components/shell/controls/DragSelectContainer';
 
 // use with `DragSelectContainer`
-const itemStateReducer = <K>(draft: Draft<ItemStates<K>>, actionRaw: UpdateItemStatesAction<K>) => {
+const itemStateReducer = <K extends DragSelectItemKey>(
+    draft: Draft<ItemStates<K>>,
+    actionRaw: UpdateItemStatesAction<K>,
+) => {
     const action = actionRaw;
     switch (action.action) {
-        case 'set': {
-            const { key, value } = action;
-            // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-            draft.set(key as Draft<K>, value);
+        case 'set':
+            draft.set(castDraft(action.key), action.value);
             break;
-        }
-        case 'set-all': {
-            const { value } = action;
-            draft.forEach((_, key) => draft.set(key, value));
+        case 'set-all':
+            draft.forEach((_, key) => draft.set(key, action.value));
             break;
-        }
-        case 'toggle': {
-            const { key } = action;
-            // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-            draft.set(key as Draft<K>, !draft.get(key as Draft<K>));
+        case 'toggle':
+            draft.set(castDraft(action.key), !draft.get(castDraft(action.key)));
             break;
-        }
-        case 'replace': {
+        case 'replace':
             return action.newStates;
-        }
     }
     return undefined;
 };
 
-export const useDragSelectReducer = <K>() =>
+export const useDragSelectReducer = <K extends DragSelectItemKey>() =>
     useImmerReducer<ItemStates<K>, UpdateItemStatesAction<K>>(itemStateReducer, new Map() as ItemStates<K>);

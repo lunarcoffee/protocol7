@@ -10,20 +10,20 @@ import { platformModifierKeys } from '@/utils/platformModifierKeys';
 import type { Dimensions } from '@/utils/Dimensions';
 
 // so that we can interpolate values of type `K` in template literals
-interface Key {
+export interface DragSelectItemKey {
     toString(): string;
 }
 
 // selected states for each item key
-export type ItemStates<K extends Key> = Map<K, boolean>;
+export type ItemStates<K extends DragSelectItemKey> = Map<K, boolean>;
 
-export type UpdateItemStatesAction<K extends Key> =
+export type UpdateItemStatesAction<K extends DragSelectItemKey> =
     | { action: 'set'; key: K; value: boolean }
     | { action: 'set-all'; value: boolean }
     | { action: 'toggle'; key: K }
     | { action: 'replace'; newStates: ItemStates<K> };
 
-export interface DragSelectContainerProps<K extends Key> extends PropsWithChildren {
+export interface DragSelectContainerProps<K extends DragSelectItemKey> extends PropsWithChildren {
     itemStates: ItemStates<K>;
     updateItems: Dispatch<UpdateItemStatesAction<K>>;
     renderItem: (key: K, isSelected: boolean, onClick: (event: MouseEvent) => void) => JSX.Element;
@@ -39,7 +39,7 @@ export interface DragSelectContainerProps<K extends Key> extends PropsWithChildr
     uniqueId: string;
 }
 
-export const DragSelectContainer = <K extends Key>({
+export const DragSelectContainer = <K extends DragSelectItemKey>({
     itemStates,
     updateItems,
     renderItem,
