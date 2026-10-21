@@ -133,7 +133,7 @@ const FileTableRow = ({ metadata, setCwd, locations, isSelected, onClick }: File
 };
 
 const PlaceholderRow = ({ children }: PropsWithChildren) => (
-    <div className="col-span-4 m-auto p-6 text-xs text-aero-tint/50">{children}</div>
+    <div className="col-span-4 mx-auto p-10 text-xs text-aero-tint/50">{children}</div>
 );
 
 export interface FileTableProps {
