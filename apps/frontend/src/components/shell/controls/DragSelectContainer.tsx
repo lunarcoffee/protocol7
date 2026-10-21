@@ -28,6 +28,7 @@ export interface DragSelectContainerProps<K extends Key> {
 
     className?: string;
 
+    // TODO: with window/app context we can handle this automatically (unless we have multiple containers in a window)
     // used in the IDs for items (which must be globally unique)
     uniqueId: string;
 }

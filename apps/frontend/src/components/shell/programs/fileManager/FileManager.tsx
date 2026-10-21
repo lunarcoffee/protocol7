@@ -70,7 +70,7 @@ export const FileManager = ({ windowInfo }: PropsWithWindowInfo) => {
                     <ControlBar cwd={cwd} setCwd={setNextCwd} locations={locations} />
                     <div className="flex min-h-0 w-full flex-1 flex-row">
                         <LocationsPane setCwd={setNextCwd} locations={locations} favorites={favorites} />
-                        <FileTable setCwd={setNextCwd} dir={dir} locations={locations} />
+                        <FileTable setCwd={setNextCwd} dir={dir} locations={locations} wid={windowInfo.wid} />
                     </div>
                     <StatusBar dir={dir} />
                 </div>

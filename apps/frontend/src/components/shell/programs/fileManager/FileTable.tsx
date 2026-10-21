@@ -85,9 +85,11 @@ interface FileTableRowProps {
     locations?: SavedLocations;
     isSelected: boolean;
     onClick: (event: MouseEvent) => void;
+
+    wid: number;
 }
 
-const FileTableRow = ({ metadata, setCwd, locations, isSelected, onClick }: FileTableRowProps) => {
+const FileTableRow = ({ metadata, setCwd, locations, isSelected, onClick, wid }: FileTableRowProps) => {
     const { type, name, path, modified, uid } = metadata;
     const isDirectory = type === 'directory';
 
@@ -105,7 +107,7 @@ const FileTableRow = ({ metadata, setCwd, locations, isSelected, onClick }: File
         <Tooltip
             label={tooltipLabel}
             className="col-span-4 grid grid-cols-subgrid"
-            id={`drag-select-container-file-manager-table-item-${uid}`}
+            id={`drag-select-container-file-manager-${wid}-table-item-${uid}`}
         >
             <div
                 onClick={onClick}
@@ -140,9 +142,11 @@ export interface FileTableProps {
     setCwd: (dir: string) => void;
     dir?: ReadDirectoryResult;
     locations?: SavedLocations;
+
+    wid: number;
 }
 
-export const FileTable = ({ setCwd, dir, locations }: FileTableProps) => {
+export const FileTable = ({ setCwd, dir, locations, wid }: FileTableProps) => {
     const [isScrolled, setIsScrolled] = useState(false);
 
     const [sortColumn, setSortColumn] = useState<FileTableColumnName>('Name');
@@ -233,10 +237,11 @@ export const FileTable = ({ setCwd, dir, locations }: FileTableProps) => {
                                 locations={locations}
                                 isSelected={isSelected}
                                 onClick={onClick}
+                                wid={wid}
                             />
                         )}
                         className="col-span-4 grid grid-cols-subgrid content-start gap-px"
-                        uniqueId="file-manager-table"
+                        uniqueId={`file-manager-${wid}-table`}
                     />
                 )}
             </div>

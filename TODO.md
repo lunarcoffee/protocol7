@@ -11,6 +11,7 @@
         - search functionality
         - ~~distribute columns better~~
         - ~~(multi-)select functionality (extract from desktop)~~
+            - allow drag select to start from edges (maybe add custom children portal to DragSelectContainer?)
         - grid view
         - history
         - ~~status bar~~
@@ -31,6 +32,7 @@
         - snap to sides
             - maybe consider snap-based layouting
         - dialog/alert API?
+        - window (process?) context for apps
     - generic controls and layouts
         - buttons, text inputs, text styles, etc. (lots will prob come from file manager work)
         - dialogs
@@ -63,7 +65,7 @@
     - more efficient network usage (also needs some client-side work)
         - scaled icons
         - image thumbnails
-    - percent encode filenames (or put in POST body)
+    - ~~percent encode filenames (or put in POST body)~~
 - tooling
     - ~~migrate to oxlint/oxfmt~~
     - ~~migrate to cn from clsx/tw-merge~~
