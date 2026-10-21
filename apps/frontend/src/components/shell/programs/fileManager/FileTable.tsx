@@ -164,10 +164,12 @@ export const FileTable = ({ setCwd, dir, locations, wid }: FileTableProps) => {
     directories?.sort(sortFn);
     files?.sort(sortFn);
 
+    const sortedEntries = [...(directories ?? []), ...(files ?? [])];
+    const entryUids = sortedEntries.map(({ uid }) => uid);
+
     // entry selection states
     const [entryStates, updateEntries] = useDragSelectReducer<number>();
 
-    const entryUids = entries?.map(({ uid }) => uid);
     const [prevEntryUids, setPrevEntryUids] = useState(entryUids);
     if (!shallowArrayEquals(entryUids, prevEntryUids)) {
         setPrevEntryUids(entryUids);
@@ -185,23 +187,39 @@ export const FileTable = ({ setCwd, dir, locations, wid }: FileTableProps) => {
                 text-aero-tint-darkest outline outline-white/50 contain-layout text-shadow-none
             "
         >
-            <div
+            <DragSelectContainer
+                itemStates={entryStates}
+                updateItems={updateEntries}
+                renderItem={(key, isSelected, onClick) => (
+                    <FileTableRow
+                        key={key}
+                        setCwd={setCwd}
+                        metadata={entries!.find(({ uid }) => uid === key)!}
+                        locations={locations}
+                        isSelected={isSelected}
+                        onClick={onClick}
+                        wid={wid}
+                    />
+                )}
                 // contain-paint here prevents the `DragSelectContainer`'s rect from making scrollbars appear while
                 // still allowing actual overflowing content to scroll
                 className="
-                    grid min-h-full grid-cols-[1.5rem_9fr_6fr_4fr] grid-rows-[auto_1fr] content-start p-2
-                    text-left text-xs contain-paint
+                    grid min-h-full grid-cols-[1.5rem_9fr_6fr_4fr] content-start p-2 text-left text-xs
+                    contain-paint
                 "
+                {...(hasEntries && { portalItemsToId: `file-manager-${wid}-items-portal` })}
+                uniqueId={`file-manager-${wid}-table`}
             >
                 {/* fades out the top of the list when scrolled to keep the column headers visible */}
                 {isScrolled && (
                     <div
                         className="
-                            sticky top-0 z-10 col-span-4 -mt-10 h-10 bg-linear-to-b from-white from-60%
+                            sticky top-0 z-10 col-span-4 -mx-3 -mt-10 h-10 bg-linear-to-b from-white from-60%
                             to-transparent
                         "
                     />
                 )}
+
                 <div className="sticky top-2 z-20 col-span-4 grid grid-cols-subgrid">
                     {/* icon column header */}
                     <div className="w-6 max-w-6 min-w-6" />
@@ -223,28 +241,16 @@ export const FileTable = ({ setCwd, dir, locations, wid }: FileTableProps) => {
 
                 {isDirLoading ? (
                     <PlaceholderRow>Loading...</PlaceholderRow>
-                ) : !hasEntries ? (
-                    <PlaceholderRow>No items</PlaceholderRow>
                 ) : (
-                    <DragSelectContainer
-                        itemStates={entryStates}
-                        updateItems={updateEntries}
-                        renderItem={(key, isSelected, onClick) => (
-                            <FileTableRow
-                                key={key}
-                                setCwd={setCwd}
-                                metadata={entries!.find(({ uid }) => uid === key)!}
-                                locations={locations}
-                                isSelected={isSelected}
-                                onClick={onClick}
-                                wid={wid}
-                            />
-                        )}
-                        className="col-span-4 grid grid-cols-subgrid content-start gap-px"
-                        uniqueId={`file-manager-${wid}-table`}
-                    />
+                    !hasEntries && <PlaceholderRow>No items</PlaceholderRow>
                 )}
-            </div>
+
+                {/* the actual file table gets portalled here */}
+                <div
+                    className="col-span-4 grid grid-cols-subgrid content-start gap-px"
+                    id={`file-manager-${wid}-items-portal`}
+                />
+            </DragSelectContainer>
         </div>
     );
 };

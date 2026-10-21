@@ -8,16 +8,18 @@
     - file manager
         - ~~breadcrumbs allow direct editing when clicked~~
         - ~~breadcrumbs overflow handling~~
-        - search functionality
         - ~~distribute columns better~~
         - ~~(multi-)select functionality (extract from desktop)~~
-            - allow drag select to start from edges (maybe add custom children portal to DragSelectContainer?)
+            - ~~allow drag select to start from edges (maybe add custom children portal to DragSelectContainer?)~~
+        - refactor state into reducer context
         - grid view
+        - search functionality
         - history
         - ~~status bar~~
-        - customizable favorite locations (through GUI)
+            - actually wire to selected item state
+        - customizable favorite locations (through drag and drop GUI)
     - DragSelectContainer
-        - os-specific modifiers (e.g., cmd on mac)
+        - ~~os-specific modifiers (e.g., cmd on mac)~~
     - filesystem
         - soft links?
         - also most of the API is practically untested lol

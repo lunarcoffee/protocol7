@@ -1,9 +1,11 @@
 import { cn } from 'cn';
-import { type Dispatch, type JSX, type MouseEvent, useRef, useState } from 'react';
+import { type Dispatch, type JSX, type MouseEvent, type PropsWithChildren, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { useBoolean } from '@/hooks/useBoolean';
 import { doRectanglesIntersect } from '@/utils/doRectanglesIntersect';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
+import { platformModifierKeys } from '@/utils/platformModifierKeys';
 
 import type { Dimensions } from '@/utils/Dimensions';
 
@@ -21,12 +23,16 @@ export type UpdateItemStatesAction<K extends Key> =
     | { action: 'toggle'; key: K }
     | { action: 'replace'; newStates: ItemStates<K> };
 
-export interface DragSelectContainerProps<K extends Key> {
+export interface DragSelectContainerProps<K extends Key> extends PropsWithChildren {
     itemStates: ItemStates<K>;
     updateItems: Dispatch<UpdateItemStatesAction<K>>;
     renderItem: (key: K, isSelected: boolean, onClick: (event: MouseEvent) => void) => JSX.Element;
 
     className?: string;
+
+    // the intended purpose of this is to allow the drag container to sit higher up in the DOM than its items so the
+    // draggable area isn't restricted to the items' direct ancestor
+    portalItemsToId?: string;
 
     // TODO: with window/app context we can handle this automatically (unless we have multiple containers in a window)
     // used in the IDs for items (which must be globally unique)
@@ -38,7 +44,9 @@ export const DragSelectContainer = <K extends Key>({
     updateItems,
     renderItem,
     className,
+    portalItemsToId,
     uniqueId,
+    children,
 }: DragSelectContainerProps<K>) => {
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -85,9 +93,8 @@ export const DragSelectContainer = <K extends Key>({
     };
 
     const onClickItem = (key: K) => (event: MouseEvent) => {
-        // clicking an item in multi-select mode (holding control or meta) toggles the selection state; otherwise, it is
-        // always set to true
-        const isMultiSelect = event.getModifierState('Control') || event.getModifierState('Meta');
+        // clicking an item in multi-select mode toggles the selection state; otherwise, it is always set to true
+        const isMultiSelect = event.getModifierState(platformModifierKeys.MULTI_SELECT);
         if (!isMultiSelect) {
             updateItems({ action: 'set-all', value: false });
             updateItems({ action: 'set', key, value: true });
@@ -95,6 +102,10 @@ export const DragSelectContainer = <K extends Key>({
             updateItems({ action: 'toggle', key });
         }
     };
+
+    const items = Array.from(itemStates.entries(), ([key, isSelected]) =>
+        renderItem(key, isSelected, onClickItem(key)),
+    );
 
     return (
         <div
@@ -108,7 +119,8 @@ export const DragSelectContainer = <K extends Key>({
             }}
             className={cn('relative', className)}
         >
-            {Array.from(itemStates.entries(), ([key, isSelected]) => renderItem(key, isSelected, onClickItem(key)))}
+            {children}
+            {portalItemsToId ? createPortal(items, document.getElementById(portalItemsToId)!) : items}
             {isDragging && (
                 <div
                     id="drag-select-container-drag-rect"
