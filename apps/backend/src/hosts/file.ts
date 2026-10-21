@@ -1,5 +1,6 @@
 import { fileTypeFromBuffer } from 'file-type';
 import fs from 'fs/promises';
+import { HTTPException } from 'hono/http-exception';
 import { LRUCache } from 'lru-cache/raw';
 import mime from 'mime/lite';
 import path from 'path';
@@ -35,6 +36,10 @@ export const invalidateCachedFile = (filePath: string) => {
 };
 
 export const getFile = async (host: string, clientPath: string) => {
-    const filePath = path.join(config.HOST_ASSETS_PATH, host, toDataPath(clientPath));
-    return fileCache.get(filePath) ?? (await readAndCacheFile(host, clientPath));
+    try {
+        const filePath = path.join(config.HOST_ASSETS_PATH, host, toDataPath(clientPath));
+        return fileCache.get(filePath) ?? (await readAndCacheFile(host, clientPath));
+    } catch {
+        throw new HTTPException(404, { message: 'file not found!' });
+    }
 };

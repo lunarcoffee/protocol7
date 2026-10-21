@@ -5,6 +5,7 @@ import {
     type FsManifestEntryMetadata,
 } from '@protocol7/filesystem-types';
 import fs from 'fs/promises';
+import { HTTPException } from 'hono/http-exception';
 import murmurhash from 'murmurhash';
 import path from 'path';
 
@@ -84,4 +85,10 @@ export const regenerateManifest = async (host: string) => {
 };
 
 // read from cache or generate if no entry
-export const getManifest = async (host: string) => manifestCache.get(host) || (await regenerateManifest(host));
+export const getManifest = async (host: string) => {
+    try {
+        return manifestCache.get(host) || (await regenerateManifest(host));
+    } catch {
+        throw new HTTPException(404, { message: 'no such host!' });
+    }
+};
