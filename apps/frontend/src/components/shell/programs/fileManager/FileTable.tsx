@@ -12,7 +12,7 @@ import { getIconForEntry } from '@/utils/getIconForEntry';
 import { getSystemIcon } from '@/utils/getSystemIcon';
 import { keyToCompareFn } from '@/utils/keyToCompareFn';
 
-import type { FavoriteLocations } from './FileManager';
+import type { SavedLocations } from './FileManager';
 import type { ReadDirectoryResult } from '@/filesystem/api/readDirectory';
 import type { FsEntryMetadata } from '@protocol7/filesystem-types';
 
@@ -79,7 +79,7 @@ const FileTableColumnHeader = ({
 interface FileTableRowProps {
     metadata: FsEntryMetadata;
     setCwd: (dir: string) => void;
-    locations?: FavoriteLocations;
+    locations?: SavedLocations;
 }
 
 const FileTableRow = ({ metadata, setCwd, locations }: FileTableRowProps) => {
@@ -126,7 +126,7 @@ const PlaceholderRow = ({ children }: PropsWithChildren) => (
 export interface FileTableProps {
     setCwd: (dir: string) => void;
     dir?: ReadDirectoryResult;
-    locations?: FavoriteLocations;
+    locations?: SavedLocations;
 }
 
 export const FileTable = ({ setCwd, dir, locations }: FileTableProps) => {
@@ -151,21 +151,25 @@ export const FileTable = ({ setCwd, dir, locations }: FileTableProps) => {
         <div
             onScroll={({ currentTarget }) => setIsScrolled(currentTarget.scrollTop > 0)}
             className="
-                size-full overflow-y-scroll overscroll-none border-l border-white text-aero-tint-darkest
-                contain-layout text-shadow-none
+                mt-2 mr-2 w-full overflow-y-scroll overscroll-none rounded-lg border
+                border-x-aero-tint-dark/35 border-t-aero-tint-dark/30 border-b-aero-tint-dark/40 bg-white
+                text-aero-tint-darkest outline outline-white/50 contain-layout text-shadow-none
             "
         >
             {/* fades out the top of the list when scrolled to keep the column headers visible */}
             {isScrolled && (
                 <div
                     className="
-                        sticky top-0 z-10 -mt-10 h-10 w-full bg-linear-to-b from-gray-100 from-60%
-                        to-transparent
+                        sticky top-0 z-10 -mt-10 h-10 w-full bg-linear-to-b from-white from-60% to-transparent
                     "
                 />
             )}
             <div className="m-2">
-                <div className="grid size-full border-collapse grid-cols-[1fr_9fr_6fr_4fr] text-left text-xs">
+                <div
+                    className="
+                        grid size-full border-collapse grid-cols-[1.5rem_9fr_6fr_4fr] text-left text-xs
+                    "
+                >
                     <div className="sticky top-2 z-20 col-span-4 grid grid-cols-subgrid">
                         {/* icon column */}
                         <div className="w-6 max-w-6 min-w-6" />

@@ -13,7 +13,7 @@
         - (multi-)select functionality (extract from desktop)
         - grid view
         - history
-        - status bar
+        - ~~status bar~~
         - customizable favorite locations (through GUI)
     - filesystem
         - soft links?

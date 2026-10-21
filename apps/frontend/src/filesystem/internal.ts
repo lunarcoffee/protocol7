@@ -95,7 +95,7 @@ export const getRemoteManifestURL = (hostname: string) => new URL(path.join('hos
 export const getRemoteFileURL = (filePath: string) => {
     const url = new URL(path.join('hosts', systemStore!.getState().hostname, 'file'), BACKEND_URL);
     url.searchParams.append('path', filePath);
-    return url;
+    return url.href;
 };
 
 /* client path utilities */

@@ -1,3 +1,5 @@
+import { pluralize } from './pluralize';
+
 const UNITS = [
     { limit: 1_000_000_000_000_000, unit: 'PB' },
     { limit: 1_000_000_000_000, unit: 'TB' },
@@ -7,7 +9,7 @@ const UNITS = [
 ];
 
 export const formatSizeBytes = (bytes: number): string => {
-    if (bytes < 1_000) return `${bytes} bytes`;
+    if (bytes < 1_000) return `${bytes} ${pluralize('byte', bytes)}`;
 
     const { limit, unit } = UNITS.find(({ limit }) => bytes >= limit)!;
     return `${(bytes / limit).toFixed(2)} ${unit}`;

@@ -5,7 +5,7 @@ import { splitPath } from '@/filesystem/internal';
 import { useBoolean } from '@/hooks/useBoolean';
 import { getSystemIcon } from '@/utils/getSystemIcon';
 
-import type { FavoriteLocation, FavoriteLocations } from './FileManager';
+import type { SavedLocation, SavedLocations } from './FileManager';
 
 export const rightCaretIcon = (
     <svg width="10px" height="10px" viewBox="4 4 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -15,7 +15,7 @@ export const rightCaretIcon = (
 
 interface BreadcrumbSegmentProps {
     segment?: string;
-    location?: FavoriteLocation;
+    location?: SavedLocation;
     onClick: () => void;
 
     showDivider?: boolean;
@@ -56,7 +56,7 @@ const BreadcrumbSegment = ({
 interface BreadcrumbsProps {
     cwd: string;
     setCwd: (newValue: string) => void;
-    locations?: FavoriteLocations;
+    locations?: SavedLocations;
 }
 
 export const Breadcrumbs = ({ cwd, setCwd, locations }: BreadcrumbsProps) => {
@@ -76,9 +76,9 @@ export const Breadcrumbs = ({ cwd, setCwd, locations }: BreadcrumbsProps) => {
                 if (target === currentTarget) setIsInputMode();
             }}
             className="
-                h-6 w-full min-w-0 cursor-text rounded-full border border-aero-tint-dark/70
-                border-b-aero-tint/50 bg-white text-xs text-aero-tint-dark italic outline outline-white/70
-                text-shadow-none
+                h-6 w-full min-w-0 cursor-text rounded-full border border-x-aero-tint/58
+                border-t-aero-tint-dark/60 border-b-aero-tint/50 bg-white text-xs text-aero-tint-dark italic
+                outline outline-white/70 text-shadow-none
             "
         >
             {isInputMode ? (

@@ -5,7 +5,7 @@ import type { HTMLAttributes } from 'react';
 export const HeadingText = ({ className, children, ...props }: HTMLAttributes<HTMLParagraphElement>) => (
     <p
         {...props}
-        className={cn(className, 'text-[11px] font-semibold text-aero-tint text-shadow-2xs text-shadow-white')}
+        className={cn('text-[11px] font-semibold text-aero-tint text-shadow-2xs text-shadow-white', className)}
     >
         {children}
     </p>
