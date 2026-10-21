@@ -34,6 +34,7 @@ export const StatusBar = ({ dir }: StatusBarProps) => {
         >
             {dir?.ok && <p>{contentsText}</p>}
             <div className="flex-1" />
+            {/*TODO: link to actual state now that it exists*/}
             <p>0 selected</p>
         </div>
     );

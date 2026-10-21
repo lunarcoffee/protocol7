@@ -1,9 +1,11 @@
 import { cn } from 'cn';
-import { type Dispatch, type PropsWithChildren, type SetStateAction, useState } from 'react';
+import { type Dispatch, type MouseEvent, type PropsWithChildren, type SetStateAction, useState } from 'react';
 
+import { DragSelectContainer } from '../../controls/DragSelectContainer';
 import { Tooltip } from '../../controls/Tooltip';
 import { rightCaretIcon } from './Breadcrumbs';
 import { HeadingText } from './HeadingText';
+import { useDragSelectReducer } from '@/hooks/useDragSelectReducer';
 import { usePromise } from '@/hooks/usePromise';
 import { formatMetadataTooltip } from '@/utils/formatMetadataTooltip';
 import { formatSizeBytes } from '@/utils/formatSizeBytes';
@@ -11,6 +13,7 @@ import { formatTimestampShort } from '@/utils/formatTimestamp';
 import { getIconForEntry } from '@/utils/getIconForEntry';
 import { getSystemIcon } from '@/utils/getSystemIcon';
 import { keyToCompareFn } from '@/utils/keyToCompareFn';
+import { shallowArrayEquals } from '@/utils/shallowArrayEquals';
 
 import type { SavedLocations } from './FileManager';
 import type { ReadDirectoryResult } from '@/filesystem/api/readDirectory';
@@ -80,10 +83,12 @@ interface FileTableRowProps {
     metadata: FsEntryMetadata;
     setCwd: (dir: string) => void;
     locations?: SavedLocations;
+    isSelected: boolean;
+    onClick: (event: MouseEvent) => void;
 }
 
-const FileTableRow = ({ metadata, setCwd, locations }: FileTableRowProps) => {
-    const { type, name, path, modified } = metadata;
+const FileTableRow = ({ metadata, setCwd, locations, isSelected, onClick }: FileTableRowProps) => {
+    const { type, name, path, modified, uid } = metadata;
     const isDirectory = type === 'directory';
 
     const [icon] = usePromise(async () => {
@@ -97,15 +102,23 @@ const FileTableRow = ({ metadata, setCwd, locations }: FileTableRowProps) => {
     const tooltipLabel = formatMetadataTooltip(metadata);
 
     return (
-        <Tooltip label={tooltipLabel} className="col-span-4 grid grid-cols-subgrid">
+        <Tooltip
+            label={tooltipLabel}
+            className="col-span-4 grid grid-cols-subgrid"
+            id={`drag-select-container-file-manager-table-item-${uid}`}
+        >
             <div
+                onClick={onClick}
                 {...(isDirectory && { onDoubleClick: () => setCwd(path) })}
-                className="
-                    col-span-4 grid grid-cols-subgrid rounded-xs bg-linear-to-b inset-ring-gray-100
-                    outline-aero-tint/30
-                    *:my-auto
-                    hover:to-aero-tint-highlight/50 hover:inset-ring hover:outline
-                "
+                className={cn(
+                    `
+                        col-span-4 grid grid-cols-subgrid rounded-xs bg-linear-to-b inset-ring-gray-100
+                        outline-aero-tint-highlight
+                        *:my-auto
+                        hover:to-aero-tint-highlight/50 hover:inset-ring hover:outline
+                    `,
+                    isSelected && 'to-aero-tint-highlight/50 inset-ring outline',
+                )}
             >
                 {/* display a shadow under custom image icons to ensure visibility */}
                 <div className={cn('px-1', icon?.isSystemIcon || 'drop-shadow-xs drop-shadow-aero-tint-dark')}>
@@ -147,6 +160,18 @@ export const FileTable = ({ setCwd, dir, locations }: FileTableProps) => {
     directories?.sort(sortFn);
     files?.sort(sortFn);
 
+    // entry selection states
+    const [entryStates, updateEntries] = useDragSelectReducer<number>();
+
+    const entryUids = entries?.map(({ uid }) => uid);
+    const [prevEntryUids, setPrevEntryUids] = useState(entryUids);
+    if (!shallowArrayEquals(entryUids, prevEntryUids)) {
+        setPrevEntryUids(entryUids);
+
+        const newStates = new Map([...directories!, ...files!].map(({ uid }) => [uid, false]));
+        updateEntries({ action: 'replace', newStates });
+    }
+
     return (
         <div
             onScroll={({ currentTarget }) => setIsScrolled(currentTarget.scrollTop > 0)}
@@ -156,55 +181,64 @@ export const FileTable = ({ setCwd, dir, locations }: FileTableProps) => {
                 text-aero-tint-darkest outline outline-white/50 contain-layout text-shadow-none
             "
         >
-            {/* fades out the top of the list when scrolled to keep the column headers visible */}
-            {isScrolled && (
-                <div
-                    className="
-                        sticky top-0 z-10 -mt-10 h-10 w-full bg-linear-to-b from-white from-60% to-transparent
-                    "
-                />
-            )}
-            <div className="m-2">
-                <div
-                    className="
-                        grid size-full border-collapse grid-cols-[1.5rem_9fr_6fr_4fr] text-left text-xs
-                    "
-                >
-                    <div className="sticky top-2 z-20 col-span-4 grid grid-cols-subgrid">
-                        {/* icon column */}
-                        <div className="w-6 max-w-6 min-w-6" />
-                        {Object.keys(FILE_TABLE_COLUMNS).map((column) => (
-                            <FileTableColumnHeader
-                                key={column}
-                                isAscending={isAscending}
-                                currentSortColumn={sortColumn}
-                                // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-                                thisSortColumn={column as FileTableColumnName}
-                                setIsAscending={setIsAscending}
-                                setSortColumn={setSortColumn}
-                            >
-                                {column}
-                            </FileTableColumnHeader>
-                        ))}
-                        <div className="h-1" />
-                    </div>
-
-                    {isDirLoading ? (
-                        <PlaceholderRow>Loading...</PlaceholderRow>
-                    ) : !hasEntries ? (
-                        <PlaceholderRow>No items</PlaceholderRow>
-                    ) : (
-                        // always show directories first
-                        [...directories!, ...files!].map((metadata) => (
-                            <FileTableRow
-                                key={metadata.uid}
-                                setCwd={setCwd}
-                                metadata={metadata}
-                                locations={locations}
-                            />
-                        ))
-                    )}
+            <div
+                // contain-paint here prevents the `DragSelectContainer`'s rect from making scrollbars appear while
+                // still allowing actual overflowing content to scroll
+                className="
+                    grid min-h-full grid-cols-[1.5rem_9fr_6fr_4fr] grid-rows-[auto_1fr] content-start p-2
+                    text-left text-xs contain-paint
+                "
+            >
+                {/* fades out the top of the list when scrolled to keep the column headers visible */}
+                {isScrolled && (
+                    <div
+                        className="
+                            sticky top-0 z-10 col-span-4 -mt-10 h-10 bg-linear-to-b from-white from-60%
+                            to-transparent
+                        "
+                    />
+                )}
+                <div className="sticky top-2 z-20 col-span-4 grid grid-cols-subgrid">
+                    {/* icon column header */}
+                    <div className="w-6 max-w-6 min-w-6" />
+                    {Object.keys(FILE_TABLE_COLUMNS).map((column) => (
+                        <FileTableColumnHeader
+                            key={column}
+                            isAscending={isAscending}
+                            currentSortColumn={sortColumn}
+                            // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+                            thisSortColumn={column as FileTableColumnName}
+                            setIsAscending={setIsAscending}
+                            setSortColumn={setSortColumn}
+                        >
+                            {column}
+                        </FileTableColumnHeader>
+                    ))}
+                    <div className="h-1" />
                 </div>
+
+                {isDirLoading ? (
+                    <PlaceholderRow>Loading...</PlaceholderRow>
+                ) : !hasEntries ? (
+                    <PlaceholderRow>No items</PlaceholderRow>
+                ) : (
+                    <DragSelectContainer
+                        itemStates={entryStates}
+                        updateItems={updateEntries}
+                        renderItem={(key, isSelected, onClick) => (
+                            <FileTableRow
+                                key={key}
+                                setCwd={setCwd}
+                                metadata={entries!.find(({ uid }) => uid === key)!}
+                                locations={locations}
+                                isSelected={isSelected}
+                                onClick={onClick}
+                            />
+                        )}
+                        className="col-span-4 grid grid-cols-subgrid content-start gap-px"
+                        uniqueId="file-manager-table"
+                    />
+                )}
             </div>
         </div>
     );

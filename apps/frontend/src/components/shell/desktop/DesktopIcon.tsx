@@ -34,7 +34,7 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
     return (
         <Tooltip label={tooltipLabel} className="h-fit">
             <div
-                id={`desktop-icon-${uid}`}
+                id={`drag-select-container-desktop-item-${uid}`}
                 className={cn(
                     `
                         flex w-20 flex-col items-center gap-1.5 overflow-visible rounded-xs pt-1

@@ -5,7 +5,6 @@ import { createPortal } from 'react-dom';
 import { useBoolean } from '@/hooks/useBoolean';
 import { getMousePosition } from '@/utils/getMousePosition';
 import { getShellRootElement } from '@/utils/getShellRootElement';
-import { toScreenPosition } from '@/utils/toScreenPosition';
 
 import type { Dimensions } from '@/utils/Dimensions';
 
@@ -31,7 +30,11 @@ export const PositionAnchor = ({ position, offsetForCursor, className, children 
         x += CURSOR_PADDING;
         y += CURSOR_HEIGHT;
     }
-    const { x: sx, y: sy } = toScreenPosition({ x, y });
+
+    // convert to screen coordinates
+    const shellRect = getShellRootElement()!.getBoundingClientRect();
+    const sx = x - shellRect.left;
+    const sy = y - shellRect.top;
 
     // actual anchor position; may be updated after the `children` are measured if they overflow the screen
     const [left, setLeft] = useState(sx);

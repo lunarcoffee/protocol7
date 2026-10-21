@@ -1,10 +1,10 @@
 import { cn } from 'cn';
 import { AnimatePresence, motion } from 'motion/react';
-import { shallow } from 'zustand/shallow';
 
 import { useSystemStoreWithEqualityFn } from '@/hooks/system/useSystemStoreWithEqualityFn';
 import { useFocusWindow, useMinimizeWindow } from '@/hooks/windows';
 import { WID_DESKTOP, WID_LAUNCHER, WID_TASKBAR, type WindowInfo } from '@/stores/system/windows/WindowManager';
+import { shallowArrayEquals } from '@/utils/shallowArrayEquals';
 
 // IDs of windows which should not appear in the window list
 export const HIDDEN_WIDS = [WID_DESKTOP, WID_TASKBAR, WID_LAUNCHER];
@@ -20,9 +20,7 @@ export const WindowList = () => {
             Array.from(windows.values())
                 .filter(({ wid, isEphemeral }) => !(isEphemeral || HIDDEN_WIDS.includes(wid)))
                 .map(({ wid, title, hasFocus }) => ({ wid, title, hasFocus })),
-        (oldWindows, newWindows) =>
-            oldWindows.length === newWindows.length &&
-            oldWindows.every((oldWindow, i) => shallow(oldWindow, newWindows[i])),
+        shallowArrayEquals,
     );
 
     const minimizeWindow = useMinimizeWindow();

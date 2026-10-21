@@ -10,11 +10,13 @@
         - ~~breadcrumbs overflow handling~~
         - search functionality
         - ~~distribute columns better~~
-        - (multi-)select functionality (extract from desktop)
+        - ~~(multi-)select functionality (extract from desktop)~~
         - grid view
         - history
         - ~~status bar~~
         - customizable favorite locations (through GUI)
+    - DragSelectContainer
+        - os-specific modifiers (e.g., cmd on mac)
     - filesystem
         - soft links?
         - also most of the API is practically untested lol

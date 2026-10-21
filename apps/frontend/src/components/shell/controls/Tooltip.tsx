@@ -13,14 +13,21 @@ export interface TooltipProps extends PropsWithChildren {
     label: string;
 
     className?: string;
+    id?: string;
 }
 
-export const Tooltip = ({ label, className, children }: TooltipProps) => {
+export const Tooltip = ({ label, className, children, id }: TooltipProps) => {
     const [isVisible, setVisible, setNotVisible] = useBoolean();
     const [cancelShow, restartShowAfterDelay] = useTimeout(setVisible, setNotVisible, TOOLTIP_DELAY);
 
     return (
-        <div onMouseMove={restartShowAfterDelay} onClick={cancelShow} onMouseLeave={cancelShow} className={className}>
+        <div
+            onMouseMove={restartShowAfterDelay}
+            onClick={cancelShow}
+            onMouseLeave={cancelShow}
+            className={className}
+            id={id}
+        >
             {children}
             {isVisible && (
                 <PositionAnchor offsetForCursor className="z-[calc(infinity)]">
