@@ -1,7 +1,7 @@
 import { cn } from 'cn';
 
 import { Tooltip } from '@/components/shell/controls/Tooltip';
-import { FileManager } from '@/components/shell/programs/fileManager/FileManager';
+import { FileManager } from '@/components/shell/fileManager/FileManager';
 import { readMetadata } from '@/filesystem/api/readMetadata';
 import { useCreateProcess, useNextProcessID } from '@/hooks/processes';
 import { usePromise } from '@/hooks/usePromise';

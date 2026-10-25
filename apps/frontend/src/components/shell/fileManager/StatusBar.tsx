@@ -1,16 +1,13 @@
+import { useFileManagerStore } from './store/useFileManagerStore';
 import { formatSizeBytes } from '@/utils/formatSizeBytes';
 import { pluralize } from '@/utils/pluralize';
 
-import type { ReadDirectoryResult } from '@/filesystem/api/readDirectory';
 import type { FsFileMetadata } from '@protocol7/filesystem-types';
 
-export interface StatusBarProps {
-    dir?: ReadDirectoryResult;
-}
+export const StatusBar = () => {
+    const dir = useFileManagerStore(({ dir }) => dir);
 
-export const StatusBar = ({ dir }: StatusBarProps) => {
     const entries = Object.values(dir?.ok ? dir.entries : {});
-
     const files = entries.filter((entry): entry is FsFileMetadata => entry.type === 'file');
     const dirs = entries.filter(({ type }) => type === 'directory');
 

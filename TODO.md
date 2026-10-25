@@ -11,7 +11,7 @@
         - ~~distribute columns better~~
         - ~~(multi-)select functionality (extract from desktop)~~
             - ~~allow drag select to start from edges (maybe add custom children portal to DragSelectContainer?)~~
-        - refactor state into reducer context
+        - ~~refactor state into store context~~
         - grid view
         - search functionality
         - history
@@ -28,7 +28,6 @@
         - ~~config persistence conventions~~
         - subsystem for 'launching programs'
             - 'executable' file format?
-            - global app data store?
         - autolaunch scripts (e.g., for a welcome program)
     - windows
         - window icons (also on taskbar)

@@ -1,11 +1,12 @@
 import { cn } from 'cn';
 import path from 'path-browserify';
 
+import { useFileManagerStore } from './store/useFileManagerStore';
 import { splitPath } from '@/filesystem/internal';
 import { useBoolean } from '@/hooks/useBoolean';
 import { getSystemIcon } from '@/utils/getSystemIcon';
 
-import type { SavedLocation, SavedLocations } from './FileManager';
+import type { SavedLocation } from '@/stores/fileManager/store';
 
 export const rightCaretIcon = (
     <svg width="10px" height="10px" viewBox="4 4 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -53,20 +54,18 @@ const BreadcrumbSegment = ({
     </>
 );
 
-interface BreadcrumbsProps {
-    cwd: string;
-    setCwd: (newValue: string) => void;
-    locations?: SavedLocations;
-}
+export const Breadcrumbs = () => {
+    const cwd = useFileManagerStore(({ cwd }) => cwd);
+    const setCwd = useFileManagerStore(({ setCwd }) => setCwd);
+    const locations = useFileManagerStore(({ locations }) => locations);
 
-export const Breadcrumbs = ({ cwd, setCwd, locations }: BreadcrumbsProps) => {
     const pathSegments = ['/', ...splitPath(cwd)];
     const pathPrefixes = pathSegments
         .slice(1)
         .reduce((prefix, segment) => [...prefix, path.join(prefix[prefix.length - 1], segment)], ['/']);
 
     // the first breadcrumb is the deepest-matching location
-    const locationIndex = pathPrefixes.findLastIndex((path) => locations?.has(path)) ?? 0;
+    const locationIndex = pathPrefixes.findLastIndex((path) => locations.has(path)) ?? 0;
 
     const [isInputMode, setIsInputMode, setNotInputMode] = useBoolean();
 
@@ -86,7 +85,7 @@ export const Breadcrumbs = ({ cwd, setCwd, locations }: BreadcrumbsProps) => {
                     defaultValue={cwd}
                     onKeyDown={({ key, currentTarget }) => {
                         if (key === 'Enter') {
-                            setCwd(currentTarget.value);
+                            void setCwd(currentTarget.value);
                             currentTarget.blur();
                         }
                     }}
@@ -107,7 +106,7 @@ export const Breadcrumbs = ({ cwd, setCwd, locations }: BreadcrumbsProps) => {
                                     {...(i === locationIndex
                                         ? { location: locations?.get(pathPrefixes[i]) }
                                         : { segment })}
-                                    onClick={() => setCwd(pathPrefixes[i])}
+                                    onClick={() => void setCwd(pathPrefixes[i])}
                                     showDivider={isNotLast}
                                     canShrink={i > locationIndex && isNotLast}
                                 />

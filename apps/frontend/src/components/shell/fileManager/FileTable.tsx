@@ -1,10 +1,11 @@
 import { cn } from 'cn';
 import { type Dispatch, type MouseEvent, type PropsWithChildren, type SetStateAction, useState } from 'react';
 
-import { DragSelectContainer } from '../../controls/DragSelectContainer';
-import { Tooltip } from '../../controls/Tooltip';
+import { DragSelectContainer } from '../controls/DragSelectContainer';
+import { Tooltip } from '../controls/Tooltip';
 import { rightCaretIcon } from './Breadcrumbs';
 import { HeadingText } from './HeadingText';
+import { useFileManagerStore } from './store/useFileManagerStore';
 import { useDragSelectReducer } from '@/hooks/useDragSelectReducer';
 import { usePromise } from '@/hooks/usePromise';
 import { formatMetadataTooltip } from '@/utils/formatMetadataTooltip';
@@ -15,8 +16,7 @@ import { getSystemIcon } from '@/utils/getSystemIcon';
 import { keyToCompareFn } from '@/utils/keyToCompareFn';
 import { shallowArrayEquals } from '@/utils/shallowArrayEquals';
 
-import type { SavedLocations } from './FileManager';
-import type { ReadDirectoryResult } from '@/filesystem/api/readDirectory';
+import type { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import type { FsEntryMetadata } from '@protocol7/filesystem-types';
 
 const nameCompareFn = keyToCompareFn<FsEntryMetadata>(({ name }) => [name]);
@@ -81,21 +81,22 @@ const FileTableColumnHeader = ({
 
 interface FileTableRowProps {
     metadata: FsEntryMetadata;
-    setCwd: (dir: string) => void;
-    locations?: SavedLocations;
     isSelected: boolean;
     onClick: (event: MouseEvent) => void;
 
     wid: number;
 }
 
-const FileTableRow = ({ metadata, setCwd, locations, isSelected, onClick, wid }: FileTableRowProps) => {
+const FileTableRow = ({ metadata, isSelected, onClick, wid }: FileTableRowProps) => {
+    const setCwd = useFileManagerStore(({ setCwd }) => setCwd);
+    const locations = useFileManagerStore(({ locations }) => locations);
+
     const { type, name, path, modified, uid } = metadata;
     const isDirectory = type === 'directory';
 
     const [icon] = usePromise(async () => {
         // if this entry is a favorite location, use the icon for that instead
-        const location = locations?.get(path);
+        const location = locations.get(path);
         if (location) return { objectURL: getSystemIcon(location.icon), isSystemIcon: true };
 
         return await getIconForEntry(path);
@@ -111,7 +112,7 @@ const FileTableRow = ({ metadata, setCwd, locations, isSelected, onClick, wid }:
         >
             <div
                 onClick={onClick}
-                {...(isDirectory && { onDoubleClick: () => setCwd(path) })}
+                {...(isDirectory && { onDoubleClick: () => void setCwd(path) })}
                 className={cn(
                     `
                         col-span-4 grid grid-cols-subgrid rounded-xs bg-linear-to-b inset-ring-gray-100
@@ -138,15 +139,10 @@ const PlaceholderRow = ({ children }: PropsWithChildren) => (
     <div className="col-span-4 mx-auto p-10 text-xs text-aero-tint/50">{children}</div>
 );
 
-export interface FileTableProps {
-    setCwd: (dir: string) => void;
-    dir?: ReadDirectoryResult;
-    locations?: SavedLocations;
+export const FileTable = ({ winfo }: PropsWithWindowInfo) => {
+    const { wid } = winfo;
+    const dir = useFileManagerStore(({ dir }) => dir);
 
-    wid: number;
-}
-
-export const FileTable = ({ setCwd, dir, locations, wid }: FileTableProps) => {
     const [isScrolled, setIsScrolled] = useState(false);
 
     const [sortColumn, setSortColumn] = useState<FileTableColumnName>('Name');
@@ -193,9 +189,7 @@ export const FileTable = ({ setCwd, dir, locations, wid }: FileTableProps) => {
                 renderItem={(key, isSelected, onClick) => (
                     <FileTableRow
                         key={key}
-                        setCwd={setCwd}
                         metadata={entries!.find(({ uid }) => uid === key)!}
-                        locations={locations}
                         isSelected={isSelected}
                         onClick={onClick}
                         wid={wid}

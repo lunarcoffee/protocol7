@@ -3,9 +3,8 @@ import path from 'path-browserify';
 import { useState } from 'react';
 
 import { Breadcrumbs } from './Breadcrumbs';
+import { useFileManagerStore } from './store/useFileManagerStore';
 import { getSystemIcon } from '@/utils/getSystemIcon';
-
-import type { SavedLocations } from './FileManager';
 
 const SearchBar = () => {
     const [query, setQuery] = useState('');
@@ -32,25 +31,20 @@ interface ControlBarButtonProps {
     disabled?: boolean;
 }
 
-const ControlBarButton = ({ iconPath, onClick }: ControlBarButtonProps) => {
-    return (
-        <div onClick={onClick} className="flex size-6 min-w-6 items-center justify-center rounded-xs pl-1">
-            <img src={getSystemIcon(iconPath)} alt="Up a level" width={16} />
-        </div>
-    );
-};
+const ControlBarButton = ({ iconPath, onClick }: ControlBarButtonProps) => (
+    <div onClick={onClick} className="flex size-6 min-w-6 items-center justify-center rounded-xs pl-1">
+        <img src={getSystemIcon(iconPath)} alt="Up a level" width={16} />
+    </div>
+);
 
-export interface ControlBarProps {
-    cwd: string;
-    setCwd: (dir: string) => void;
-    locations?: SavedLocations;
-}
+export const ControlBar = () => {
+    const cwd = useFileManagerStore(({ cwd }) => cwd);
+    const setCwd = useFileManagerStore(({ setCwd }) => setCwd);
 
-export const ControlBar = ({ cwd, setCwd, locations }: ControlBarProps) => {
     const isRoot = cwd === '/';
 
     const visitParent = () => {
-        if (!isRoot) setCwd(path.dirname(cwd));
+        if (!isRoot) void setCwd(path.dirname(cwd));
     };
 
     return (
@@ -62,7 +56,7 @@ export const ControlBar = ({ cwd, setCwd, locations }: ControlBarProps) => {
             "
         >
             <ControlBarButton iconPath="actions/go-up.png" onClick={visitParent} disabled={isRoot} />
-            <Breadcrumbs cwd={cwd} setCwd={setCwd} locations={locations} />
+            <Breadcrumbs />
             <SearchBar />
         </div>
     );
