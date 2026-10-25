@@ -6,21 +6,26 @@ export type RefreshTrigger = () => void;
 
 export type UsePromiseResult<T> = [T | undefined, RefreshTrigger];
 
-export const usePromise = <T>(promiseFn: () => Promise<T>, deps: DependencyList): UsePromiseResult<T> => {
+export const usePromise = <T>(
+    promiseFn: (signal: AbortSignal) => Promise<T>,
+    deps: DependencyList,
+    cleanupFn?: () => void,
+): UsePromiseResult<T> => {
     const [result, setResult] = useState<T>();
     const [refreshSignal, triggerRefresh] = useToggle();
 
     useEffect(() => {
-        let canceled = false;
+        let controller = new AbortController();
 
         const awaitPromise = async () => {
-            const result = await promiseFn();
-            if (!canceled) setResult(result);
+            const result = await promiseFn(controller.signal);
+            if (!controller.signal.aborted) setResult(result);
         };
         void awaitPromise();
 
         return () => {
-            canceled = true;
+            controller.abort();
+            cleanupFn?.();
         };
         // clients should declare the relevant dependencies, including those used in `promiseFn`
         // oxlint-disable-next-line react-hooks/exhaustive-deps

@@ -25,16 +25,16 @@
         - also most of the API is practically untested lol
         - reconciling manifest changes
     - programs
-        - config persistence conventions
+        - ~~config persistence conventions~~
         - subsystem for 'launching programs'
-            - 'executable' file format
+            - 'executable' file format?
+            - global app data store?
         - autolaunch scripts (e.g., for a welcome program)
     - windows
         - window icons (also on taskbar)
         - snap to sides
             - maybe consider snap-based layouting
         - dialog/alert API?
-        - window (process?) context for apps
     - generic controls and layouts
         - buttons, text inputs, text styles, etc. (lots will prob come from file manager work)
         - dialogs
@@ -49,6 +49,7 @@
     - text editor, terminal, web browser, etc.
     - network simulation
     - volume simulation
+    - don't have alt text for icons
     - buncha other stuff i haven't thought of yet :)
 - remote viewer UI
     - ~~fullscreen button~~

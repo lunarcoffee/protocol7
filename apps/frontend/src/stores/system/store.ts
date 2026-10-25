@@ -28,7 +28,7 @@ export interface System {
 }
 
 export interface SystemStore extends System {
-    createProcess: (info: ProcessCreationInfo) => void;
+    createProcess: (info: ProcessCreationInfo, signal?: AbortSignal) => Promise<void>;
     destroyProcess: (pid: ProcessID) => void;
 
     createWindow: (info: WindowCreationInfo) => void;
@@ -56,7 +56,7 @@ export const createSystemStore = (hostname: string, fileManifest: RemoteFsManife
         immer((set) => ({
             ...createInitialSystem(hostname, fileManifest),
 
-            createProcess: (info) => set(({ pm }) => processCreate(pm, info)),
+            createProcess: (info, signal) => processCreate(info, set, signal),
             destroyProcess: (pid) => set((system) => processDestroy(system, pid)),
 
             createWindow: (info) => set((system) => windowCreate(system, info)),

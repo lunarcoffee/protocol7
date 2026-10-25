@@ -1,8 +1,9 @@
 import { windowDestroy } from '../windows/updateWindowManager';
+import { readFile } from '@/filesystem/api/readFile';
 
-import type { System } from '../store';
+import type { System, SystemStore } from '../store';
 import type { WindowID } from '../windows/WindowManager';
-import type { ProcessID, ProcessInfo, ProcessManager } from './ProcessManager';
+import type { AppSettings, ProcessID, ProcessInfo, ProcessManager } from './ProcessManager';
 import type { Draft } from 'immer';
 
 /* process manager helpers */
@@ -24,20 +25,39 @@ export const processDetachWindow = (system: Draft<System>, pid: ProcessID, wid: 
 
 /* process manager actions */
 
-type RequiredProcessProps = 'pid';
+type RequiredProcessProps = 'pid' | 'pname';
+type OptionalProcessProps = 'isHeadless';
 
 export type ProcessCreationInfo = Pick<ProcessInfo, RequiredProcessProps> &
-    Partial<Omit<ProcessInfo, RequiredProcessProps>>;
+    Partial<Pick<ProcessInfo, OptionalProcessProps>>;
 
-export const processCreate = ({ processes }: Draft<ProcessManager>, info: ProcessCreationInfo) => {
-    const { pid } = info;
+export const processCreate = async (
+    info: ProcessCreationInfo,
+    set: (updater: (state: Draft<SystemStore>) => void) => void,
+    signal?: AbortSignal,
+) => {
+    const { pid, pname } = info;
 
-    if (processes.has(pid)) console.warn(`pm: recreating existing pid ${pid}`);
+    const appSettingsFile = await readFile(`/system/programs/${pname}/settings.json`);
+    if (!appSettingsFile?.ok) return console.error(`pm: failed to read app settings for ${pname}`);
 
-    processes.set(pid, {
-        windows: [],
-        isHeadless: false,
-        ...info,
+    const contents = new TextDecoder().decode(await appSettingsFile.contents());
+    const appSettings = JSON.parse(contents);
+
+    if (signal?.aborted) return;
+
+    set(({ pm: { processes } }) => {
+        if (processes.has(pid)) console.warn(`pm: recreating existing pid ${pid}`);
+
+        processes.set(pid, {
+            windows: [],
+            isHeadless: false,
+
+            appSettings,
+            getAppSettings: <T extends Record<string, any>>() => appSettings as AppSettings<T>,
+
+            ...info,
+        });
     });
 };
 

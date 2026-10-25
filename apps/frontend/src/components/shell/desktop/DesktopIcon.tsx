@@ -50,8 +50,8 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                         `,
                 )}
                 onMouseDown={onClick}
-                onDoubleClick={() => {
-                    createProcess({ pid: nextProcessID });
+                onDoubleClick={async () => {
+                    await createProcess({ pid: nextProcessID, pname: 'fileManager' });
                     createWindow({
                         pid: nextProcessID,
                         wid: nextWindowID,
