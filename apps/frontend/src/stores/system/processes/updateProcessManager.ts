@@ -3,7 +3,7 @@ import { readFile } from '@/filesystem/api/readFile';
 
 import type { System, SystemStore } from '../store';
 import type { WindowID } from '../windows/WindowManager';
-import type { AppSettings, ProcessID, ProcessInfo, ProcessManager } from './ProcessManager';
+import type { ProcessID, ProcessInfo, ProcessManager, ProcessSettings } from './ProcessManager';
 import type { Draft } from 'immer';
 
 /* process manager helpers */
@@ -38,11 +38,11 @@ export const processCreate = async (
 ) => {
     const { pid, pname } = info;
 
-    const appSettingsFile = await readFile(`/system/programs/${pname}/settings.json`);
-    if (!appSettingsFile?.ok) return console.error(`pm: failed to read app settings for ${pname}`);
+    const settingsFile = await readFile(`/system/programs/${pname}/settings.json`);
+    if (!settingsFile?.ok) return console.error(`pm: failed to read app settings for ${pname}`);
 
-    const contents = new TextDecoder().decode(await appSettingsFile.contents());
-    const appSettings = JSON.parse(contents);
+    const contents = new TextDecoder().decode(await settingsFile.contents());
+    const settings = JSON.parse(contents);
 
     if (signal?.aborted) return;
 
@@ -53,8 +53,8 @@ export const processCreate = async (
             windows: [],
             isHeadless: false,
 
-            appSettings,
-            getAppSettings: <T extends Record<string, any>>() => appSettings as AppSettings<T>,
+            settings,
+            getSettings: <T>() => settings as ProcessSettings<T>,
 
             ...info,
         });

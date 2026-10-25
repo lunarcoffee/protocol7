@@ -44,7 +44,7 @@ export const windowCreate = (
 
     const size = info.size || { x: 300, y: 200 }; // TODO: better default size (store in app settings?)
     windows.set(wid, {
-        title: process.appSettings.displayName,
+        title: process.settings.displayName,
         position: wm.defaultPosition(size),
         zIndex: nextZIndex(wm),
         size,

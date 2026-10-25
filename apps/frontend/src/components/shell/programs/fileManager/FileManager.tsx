@@ -16,7 +16,7 @@ import type { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager'
 export type SavedLocation = { label: string; icon: string };
 export type SavedLocations = Map<string, SavedLocation>;
 
-interface FileManagerAppSettings {
+interface FileManagerSettings {
     locations: Record<string, SavedLocation>;
     favorites: string[];
 }
@@ -43,7 +43,7 @@ export const FileManager = ({ pinfo, winfo }: FileManagerProps) => {
     // meanwhile, this value is always pending or valid
     const [dir] = usePromise(() => readDirectory(cwd), [cwd]);
 
-    const { locations: locationsObject, favorites } = pinfo.getAppSettings<FileManagerAppSettings>();
+    const { locations: locationsObject, favorites } = pinfo.getSettings<FileManagerSettings>();
     const locations = new Map(Object.entries(locationsObject));
 
     return (
