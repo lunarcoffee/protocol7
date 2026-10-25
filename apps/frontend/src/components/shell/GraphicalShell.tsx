@@ -20,11 +20,7 @@ export const GraphicalShell = () => {
             if (signal.aborted) return;
 
             createWindow({ pid: PID_SHELL, wid: WID_TASKBAR, render: () => <Taskbar /> });
-            createWindow({
-                pid: PID_SHELL,
-                wid: WID_DESKTOP,
-                render: (windowInfo) => <Desktop windowInfo={windowInfo} />,
-            });
+            createWindow({ pid: PID_SHELL, wid: WID_DESKTOP, render: (_, winfo) => <Desktop winfo={winfo} /> });
         },
         [createProcess, createWindow],
         () => destroyProcess(PID_SHELL),

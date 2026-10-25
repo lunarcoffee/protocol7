@@ -7,8 +7,8 @@ import { handleMouseDrag } from '@/utils/handleMouseDrag';
 import type { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import type { Dimensions } from '@/utils/Dimensions';
 
-export const TitleBar = ({ windowInfo }: PropsWithWindowInfo) => {
-    const { wid, title, position, isMaximized, hasFocus } = windowInfo;
+export const TitleBar = ({ winfo }: PropsWithWindowInfo) => {
+    const { wid, title, position, isMaximized, hasFocus } = winfo;
 
     const moveWindow = useMoveWindow();
     const maximizeWindow = useMaximizeWindow();
@@ -34,7 +34,7 @@ export const TitleBar = ({ windowInfo }: PropsWithWindowInfo) => {
         >
             <p className="mr-4 overflow-hidden p-1 pt-1.25 text-xs text-nowrap text-ellipsis">{title}</p>
             <div className="grow" />
-            <ControlButtons windowInfo={windowInfo} />
+            <ControlButtons winfo={winfo} />
         </div>
     );
 };

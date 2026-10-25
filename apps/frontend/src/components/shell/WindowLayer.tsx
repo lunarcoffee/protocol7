@@ -2,6 +2,7 @@ import { AnimatePresence } from 'motion/react';
 import { useState } from 'react';
 
 import { useWindow, useWindowIDs } from '@/hooks/windows';
+import { shallowArrayEquals } from '@/utils/shallowArrayEquals';
 
 import type { WindowID } from '@/stores/system/windows/WindowManager';
 
@@ -10,15 +11,18 @@ interface WindowProps {
 }
 
 const Window = ({ wid }: WindowProps) => {
-    const windowInfo = useWindow(wid);
+    const window = useWindow(wid);
 
-    // store previous window info to allow windows to render even after closing by using the last known state; this
+    // store previous window state to allow windows to render even after closing by using the last known state; this
     // enables `exit` animations which only happen after the window is closed
-    const [prevWindowInfo, setPrevWindowInfo] = useState(windowInfo);
-    if (windowInfo && windowInfo !== prevWindowInfo) setPrevWindowInfo(windowInfo);
+    const [prevWindow, setPrevWindow] = useState(window);
+    if (window && !shallowArrayEquals(window, prevWindow)) setPrevWindow(window);
 
-    const latestWindowInfo = windowInfo ?? prevWindowInfo;
-    return latestWindowInfo?.render(latestWindowInfo);
+    const latestWindow = window ?? prevWindow;
+    if (!latestWindow) return null;
+
+    const [winfo, pinfo] = latestWindow;
+    return winfo.render(pinfo, winfo);
 };
 
 export const WindowLayer = () => {

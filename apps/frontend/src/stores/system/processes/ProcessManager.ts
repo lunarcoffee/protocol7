@@ -5,7 +5,7 @@ export type ProcessID = number;
 export const PID_SHELL = 0;
 export const PNAME_SHELL = 'shell';
 
-export type AppSettings<T extends Record<string, any>> = { displayName: string; icon: string } & T;
+export type AppSettings<T> = { displayName: string; icon: string } & T;
 
 export interface ProcessInfo {
     pid: ProcessID;
@@ -14,8 +14,12 @@ export interface ProcessInfo {
     windows: WindowID[]; // a process owns any number of windows
     isHeadless: boolean; // headless processes don't die when their last window is destroyed
 
-    appSettings: AppSettings<any>;
-    getAppSettings: <T extends Record<string, any>>() => AppSettings<T>;
+    appSettings: AppSettings<{}>;
+    getAppSettings: <T>() => AppSettings<T>;
+}
+
+export interface PropsWithProcessInfo {
+    pinfo: ProcessInfo;
 }
 
 export interface ProcessManager {

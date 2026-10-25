@@ -29,7 +29,7 @@ const Wallpaper = () => {
     );
 };
 
-export const Desktop = ({ windowInfo: { wid, hasFocus } }: PropsWithWindowInfo) => {
+export const Desktop = ({ winfo: { wid, hasFocus } }: PropsWithWindowInfo) => {
     const focusWindow = useFocusWindow();
 
     // TODO: can use refresh trigger to implement refresh context menu option

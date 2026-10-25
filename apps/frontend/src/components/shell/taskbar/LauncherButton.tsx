@@ -81,7 +81,7 @@ export const LauncherButton = () => {
                 wid: WID_LAUNCHER,
                 title: 'Launcher',
                 isEphemeral: true,
-                render: (windowInfo) => <Launcher windowInfo={windowInfo} />,
+                render: (_, winfo) => <Launcher winfo={winfo} />,
             });
         }
     };

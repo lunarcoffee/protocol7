@@ -1,4 +1,4 @@
-import type { ProcessID } from '../processes/ProcessManager';
+import type { ProcessID, ProcessInfo } from '../processes/ProcessManager';
 import type { Dimensions } from '@/utils/Dimensions';
 import type { JSX } from 'react';
 
@@ -30,11 +30,11 @@ export interface WindowInfo {
     hasFocus: boolean;
     isEphemeral: boolean; // ephemeral windows close upon losing focus
 
-    render: (info: WindowInfo) => JSX.Element;
+    render: (pinfo: ProcessInfo, winfo: WindowInfo) => JSX.Element;
 }
 
 export interface PropsWithWindowInfo {
-    windowInfo: WindowInfo;
+    winfo: WindowInfo;
 }
 
 export interface WindowManager {

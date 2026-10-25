@@ -18,7 +18,7 @@ const RESIZE_HANDLES: [string, number, number, string][] = [
     ['-bottom-0.5 -left-0.5 size-3 rounded-tr-full', -1, 1, 'nesw-resize'],
 ];
 
-export const ResizeHandles = ({ windowInfo: { wid, size } }: PropsWithWindowInfo) => {
+export const ResizeHandles = ({ winfo: { wid, size } }: PropsWithWindowInfo) => {
     const resizeWindow = useResizeWindow();
 
     const onWindowResizeStart = (initialPosition: Dimensions, xMul: number, yMul: number, cursor: string) =>

@@ -58,7 +58,7 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                         title: 'File Manager',
                         size: { x: 700, y: 450 },
                         minSize: { x: 700, y: 450 },
-                        render: (windowInfo) => <FileManager windowInfo={windowInfo} />,
+                        render: (pinfo, winfo) => <FileManager pinfo={pinfo} winfo={winfo} />,
                     });
                 }}
             >

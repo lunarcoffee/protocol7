@@ -50,8 +50,8 @@ const ReflectiveSurface = ({ size }: { size: Dimensions }) => {
 
 export type WindowFrameProps = PropsWithWindowInfo & PropsWithChildren;
 
-export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
-    const { wid, position, zIndex, size, resizable, isMaximized, isOpen, hasFocus } = windowInfo;
+export const WindowFrame = ({ winfo, children }: WindowFrameProps) => {
+    const { wid, position, zIndex, size, resizable, isMaximized, isOpen, hasFocus } = winfo;
 
     const focusWindow = useFocusWindow();
 
@@ -102,7 +102,7 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
                 }}
                 onAnimationComplete={toggleDisappearing}
             >
-                <TitleBar windowInfo={windowInfo} />
+                <TitleBar winfo={winfo} />
                 <ReflectiveSurface size={size} />
                 <div
                     className={cn(
@@ -116,7 +116,7 @@ export const WindowFrame = ({ windowInfo, children }: WindowFrameProps) => {
                 >
                     {children}
                 </div>
-                {resizable && !isMaximized && <ResizeHandles windowInfo={windowInfo} />}
+                {resizable && !isMaximized && <ResizeHandles winfo={winfo} />}
             </motion.div>
         </div>
     );

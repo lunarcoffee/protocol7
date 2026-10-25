@@ -6,21 +6,24 @@ import { FileTable } from './FileTable';
 import { LocationsPane } from './LocationsPane';
 import { StatusBar } from './StatusBar';
 import { readDirectory } from '@/filesystem/api/readDirectory';
-import { readFile } from '@/filesystem/api/readFile';
 import { readMetadata } from '@/filesystem/api/readMetadata';
 import { normalizePath } from '@/filesystem/internal';
 import { usePromise } from '@/hooks/usePromise';
 
+import type { PropsWithProcessInfo } from '@/stores/system/processes/ProcessManager';
 import type { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 
 export type SavedLocation = { label: string; icon: string };
 export type SavedLocations = Map<string, SavedLocation>;
 
-// TODO: use settings API once implemented
-export const LOCATIONS_PATH = '/system/programs/fileManager/locations.json';
-export const FAVORITES_PATH = '/system/programs/fileManager/favorites.json';
+interface FileManagerAppSettings {
+    locations: Record<string, SavedLocation>;
+    favorites: string[];
+}
 
-export const FileManager = ({ windowInfo }: PropsWithWindowInfo) => {
+export type FileManagerProps = PropsWithWindowInfo & PropsWithProcessInfo;
+
+export const FileManager = ({ pinfo, winfo }: FileManagerProps) => {
     // `cwd` is the actual current working directory; children call `setNextCwd` to request a new `cwd`
     const [cwd, setCwd] = useState('/');
     const [nextCwd, setNextCwd] = useState(cwd);
@@ -40,26 +43,11 @@ export const FileManager = ({ windowInfo }: PropsWithWindowInfo) => {
     // meanwhile, this value is always pending or valid
     const [dir] = usePromise(() => readDirectory(cwd), [cwd]);
 
-    // TODO: api for reading json config data into a type? maybe w zod for validation
-    const [locations] = usePromise(async () => {
-        const file = await readFile(LOCATIONS_PATH);
-        if (!file?.ok) return undefined;
-
-        const contents = new TextDecoder().decode(await file.contents());
-        const locations = JSON.parse(contents) as Record<string, SavedLocation>;
-        return new Map(Object.entries(locations));
-    }, []);
-
-    const [favorites] = usePromise(async () => {
-        const file = await readFile(FAVORITES_PATH);
-        if (!file?.ok) return undefined;
-
-        const contents = new TextDecoder().decode(await file.contents());
-        return JSON.parse(contents) as string[];
-    }, []);
+    const { locations: locationsObject, favorites } = pinfo.getAppSettings<FileManagerAppSettings>();
+    const locations = new Map(Object.entries(locationsObject));
 
     return (
-        <WindowFrame windowInfo={windowInfo}>
+        <WindowFrame winfo={winfo}>
             <div className="size-full bg-gray-100">
                 <div
                     className="
@@ -70,7 +58,7 @@ export const FileManager = ({ windowInfo }: PropsWithWindowInfo) => {
                     <ControlBar cwd={cwd} setCwd={setNextCwd} locations={locations} />
                     <div className="flex min-h-0 w-full flex-1 flex-row">
                         <LocationsPane setCwd={setNextCwd} locations={locations} favorites={favorites} />
-                        <FileTable setCwd={setNextCwd} dir={dir} locations={locations} wid={windowInfo.wid} />
+                        <FileTable setCwd={setNextCwd} dir={dir} locations={locations} wid={winfo.wid} />
                     </div>
                     <StatusBar dir={dir} />
                 </div>

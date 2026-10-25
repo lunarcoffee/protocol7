@@ -35,14 +35,16 @@ export const windowCreate = (
     const { windows } = wm;
 
     const { wid, pid } = info;
+    const process = pm.processes.get(pid);
 
     if (windows.has(wid)) console.warn(`wm: recreating existing wid ${wid}`);
+    if (!process) return console.error(`wm: pid ${pid} does not exist!`);
 
     unfocusAll(system);
 
-    const size = info.size || { x: 300, y: 200 }; // TODO: better default size
+    const size = info.size || { x: 300, y: 200 }; // TODO: better default size (store in app settings?)
     windows.set(wid, {
-        title: '',
+        title: process.appSettings.displayName,
         position: wm.defaultPosition(size),
         zIndex: nextZIndex(wm),
         size,

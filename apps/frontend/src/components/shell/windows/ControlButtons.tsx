@@ -74,7 +74,7 @@ const ControlButton = ({
     </div>
 );
 
-export const ControlButtons = ({ windowInfo: { wid } }: PropsWithWindowInfo) => {
+export const ControlButtons = ({ winfo: { wid } }: PropsWithWindowInfo) => {
     const minimizeWindow = useMinimizeWindow();
     const maximizeWindow = useMaximizeWindow();
     const destroyWindow = useDestroyWindow();
