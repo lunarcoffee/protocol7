@@ -7,6 +7,7 @@ import { useToggle } from '@/hooks/useToggle';
 import { useFocusWindow } from '@/hooks/windows';
 import { clamp } from '@/utils/clamp';
 
+import type { PropsWithProcessInfo } from '@/stores/system/processes/ProcessManager';
 import type { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import type { Dimensions } from '@/utils/Dimensions';
 import type { PropsWithChildren } from 'react';
@@ -48,10 +49,11 @@ const ReflectiveSurface = ({ size }: { size: Dimensions }) => {
     );
 };
 
-export type WindowFrameProps = PropsWithWindowInfo & PropsWithChildren;
+export type WindowFrameProps = PropsWithChildren & PropsWithWindowInfo & PropsWithProcessInfo;
 
-export const WindowFrame = ({ winfo, children }: WindowFrameProps) => {
+export const WindowFrame = ({ winfo, pinfo, children }: WindowFrameProps) => {
     const { wid, position, zIndex, size, resizable, isMaximized, isOpen, hasFocus } = winfo;
+    const { icon } = pinfo.getSettings();
 
     const focusWindow = useFocusWindow();
 
@@ -102,7 +104,7 @@ export const WindowFrame = ({ winfo, children }: WindowFrameProps) => {
                 }}
                 onAnimationComplete={toggleDisappearing}
             >
-                <TitleBar winfo={winfo} />
+                <TitleBar winfo={winfo} icon={icon} />
                 <ReflectiveSurface size={size} />
                 <div
                     className={cn(

@@ -30,7 +30,7 @@
             - 'executable' file format?
         - autolaunch scripts (e.g., for a welcome program)
     - windows
-        - window icons (also on taskbar)
+        - ~~window icons (also on taskbar)~~
         - snap to sides
             - maybe consider snap-based layouting
         - dialog/alert API?
@@ -48,7 +48,7 @@
     - text editor, terminal, web browser, etc.
     - network simulation
     - volume simulation
-    - don't have alt text for icons
+    - ~~don't have alt text for icons~~
     - buncha other stuff i haven't thought of yet :)
 - remote viewer UI
     - ~~fullscreen button~~
@@ -65,7 +65,7 @@
     - ~~allow partial metadata files~~
     - ~~cache file contents~~
     - more efficient network usage (also needs some client-side work)
-        - scaled icons
+        - scaled icons (with frontend icon component that adjusts reqs by size?)
         - image thumbnails
     - ~~percent encode filenames (or put in POST body)~~
 - tooling

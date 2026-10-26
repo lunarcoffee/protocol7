@@ -14,17 +14,17 @@ export type FileManagerProps = PropsWithWindowInfo & PropsWithProcessInfo;
 
 export const FileManager = ({ pinfo, winfo }: FileManagerProps) => (
     <FileManagerContextProvider pinfo={pinfo}>
-        <FileManagerWindow winfo={winfo} />
+        <FileManagerWindow pinfo={pinfo} winfo={winfo} />
     </FileManagerContextProvider>
 );
 
-const FileManagerWindow = ({ winfo }: PropsWithWindowInfo) => {
+const FileManagerWindow = ({ pinfo, winfo }: FileManagerProps) => {
     const setCwd = useFileManagerStore(({ setCwd }) => setCwd);
 
     usePromise(() => setCwd('/'), [setCwd]);
 
     return (
-        <WindowFrame winfo={winfo}>
+        <WindowFrame pinfo={pinfo} winfo={winfo}>
             <div className="size-full bg-gray-100">
                 <div
                     className="

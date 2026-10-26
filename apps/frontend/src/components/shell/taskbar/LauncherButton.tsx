@@ -52,7 +52,6 @@ const LauncherIcon = ({ active }: { active: boolean }) => {
     return (
         <img
             src={file.getObjectURL()}
-            alt="launcher icon"
             draggable={false}
             className={cn(
                 `

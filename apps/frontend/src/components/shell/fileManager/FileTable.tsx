@@ -125,7 +125,7 @@ const FileTableRow = ({ metadata, isSelected, onClick, wid }: FileTableRowProps)
             >
                 {/* display a shadow under custom image icons to ensure visibility */}
                 <div className={cn('px-1', icon?.isSystemIcon || 'drop-shadow-xs drop-shadow-aero-tint-dark')}>
-                    {icon && <img src={icon.objectURL} alt={name} width={16} />}
+                    {icon && <img src={icon.objectURL} width={16} />}
                 </div>
                 <div className="overflow-hidden py-0.5 pr-4 text-nowrap text-ellipsis">{name}</div>
                 <div>{formatTimestampShort(modified)}</div>

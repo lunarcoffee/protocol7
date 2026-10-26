@@ -2,12 +2,17 @@ import { cn } from 'cn';
 
 import { ControlButtons } from './ControlButtons';
 import { useMaximizeWindow, useMoveWindow } from '@/hooks/windows';
+import { getSystemIcon } from '@/utils/getSystemIcon';
 import { handleMouseDrag } from '@/utils/handleMouseDrag';
 
 import type { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import type { Dimensions } from '@/utils/Dimensions';
 
-export const TitleBar = ({ winfo }: PropsWithWindowInfo) => {
+export interface TitleBarProps extends PropsWithWindowInfo {
+    icon: string;
+}
+
+export const TitleBar = ({ icon, winfo }: TitleBarProps) => {
     const { wid, title, position, isMaximized, hasFocus } = winfo;
 
     const moveWindow = useMoveWindow();
@@ -32,6 +37,11 @@ export const TitleBar = ({ winfo }: PropsWithWindowInfo) => {
                 isMaximized && 'pr-2 pl-[0.2rem]',
             )}
         >
+            <img
+                src={getSystemIcon(icon)}
+                width={16}
+                className="mr-px ml-1 pt-px drop-shadow-xs drop-shadow-aero-tint-darkest/50"
+            />
             <p className="mr-4 overflow-hidden p-1 pt-1.25 text-xs text-nowrap text-ellipsis">{title}</p>
             <div className="grow" />
             <ControlButtons winfo={winfo} />

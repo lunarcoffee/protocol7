@@ -25,7 +25,7 @@ const LocationListEntry = ({ path, iconUrl, label }: LocationListEntryProps) => 
                 hover:from-white/50 hover:to-aero-tint-highlight hover:inset-ring hover:outline
             "
         >
-            <img src={iconUrl} alt={label} width={16} />
+            <img src={iconUrl} width={16} />
             <p className="line-clamp-2 overflow-hidden text-shadow-2xs text-shadow-white">{label}</p>
         </div>
     );

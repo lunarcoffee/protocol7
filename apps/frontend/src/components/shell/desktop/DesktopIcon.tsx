@@ -28,8 +28,8 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
 
     if (!iconFile?.ok) return null;
 
-    const { name: label, uid } = iconFile.metadata;
-    const tooltipLabel = `*${escapeMarkdown(label)}*`;
+    const { name, uid } = iconFile.metadata;
+    const tooltipLabel = `*${escapeMarkdown(name)}*`;
 
     return (
         <Tooltip label={tooltipLabel} className="h-fit">
@@ -55,7 +55,6 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                     createWindow({
                         pid: nextProcessID,
                         wid: nextWindowID,
-                        title: 'File Manager',
                         size: { x: 700, y: 450 },
                         minSize: { x: 700, y: 450 },
                         render: (pinfo, winfo) => <FileManager pinfo={pinfo} winfo={winfo} />,
@@ -68,7 +67,7 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                         drop-shadow-aero-tint-darkest/70
                     "
                 >
-                    {iconImage && <img src={iconImage.objectURL} alt={label} draggable={false} />}
+                    {iconImage && <img src={iconImage.objectURL} alt={name} draggable={false} />}
                 </div>
                 <div className="flex w-20 justify-center overflow-visible">
                     <p
@@ -80,7 +79,7 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                             isSelected ? 'line-clamp-4' : 'line-clamp-2',
                         )}
                     >
-                        {label}
+                        {name}
                     </p>
                 </div>
             </div>

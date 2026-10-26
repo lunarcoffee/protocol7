@@ -43,11 +43,7 @@ const RightIsland = () => {
                         {
                             renderIcon: () =>
                                 volumeIcon?.ok ? (
-                                    <img
-                                        src={volumeIcon.getObjectURL()}
-                                        alt="volume icon"
-                                        className="w-7 p-[0.27rem]"
-                                    />
+                                    <img src={volumeIcon.getObjectURL()} className="w-7 p-[0.27rem]" />
                                 ) : (
                                     <></>
                                 ),
@@ -57,11 +53,7 @@ const RightIsland = () => {
                         {
                             renderIcon: () =>
                                 networkIcon?.ok ? (
-                                    <img
-                                        src={networkIcon.getObjectURL()}
-                                        alt="network icon"
-                                        className="w-7 p-[0.4rem]"
-                                    />
+                                    <img src={networkIcon.getObjectURL()} className="w-7 p-[0.4rem]" />
                                 ) : (
                                     <></>
                                 ),
