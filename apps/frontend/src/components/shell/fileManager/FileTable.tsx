@@ -1,12 +1,19 @@
 import { cn } from 'cn';
-import { type Dispatch, type MouseEvent, type PropsWithChildren, type SetStateAction, useState } from 'react';
+import {
+    type Dispatch,
+    type MouseEvent,
+    type PropsWithChildren,
+    type SetStateAction,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 
 import { DragSelectContainer } from '../controls/DragSelectContainer';
 import { Tooltip } from '../controls/Tooltip';
 import { rightCaretIcon } from './Breadcrumbs';
 import { HeadingText } from './HeadingText';
 import { useFileManagerStore } from './store/useFileManagerStore';
-import { useDragSelectReducer } from '@/hooks/useDragSelectReducer';
 import { usePromise } from '@/hooks/usePromise';
 import { formatMetadataTooltip } from '@/utils/formatMetadataTooltip';
 import { formatSizeBytes } from '@/utils/formatSizeBytes';
@@ -141,7 +148,10 @@ const PlaceholderRow = ({ children }: PropsWithChildren) => (
 
 export const FileTable = ({ winfo }: PropsWithWindowInfo) => {
     const { wid } = winfo;
+
     const dir = useFileManagerStore(({ dir }) => dir);
+    const selectionStates = useFileManagerStore(({ selectionStates }) => selectionStates);
+    const updateSelection = useFileManagerStore(({ updateSelection }) => updateSelection);
 
     const [isScrolled, setIsScrolled] = useState(false);
 
@@ -161,18 +171,20 @@ export const FileTable = ({ winfo }: PropsWithWindowInfo) => {
     files?.sort(sortFn);
 
     const sortedEntries = [...(directories ?? []), ...(files ?? [])];
+
     const entryUids = sortedEntries.map(({ uid }) => uid);
+    const prevEntryUids = useRef(entryUids);
 
-    // entry selection states
-    const [entryStates, updateEntries] = useDragSelectReducer<number>();
+    // need to keep this update out of render time
+    useEffect(() => {
+        if (shallowArrayEquals(entryUids, prevEntryUids.current)) return;
 
-    const [prevEntryUids, setPrevEntryUids] = useState(entryUids);
-    if (!shallowArrayEquals(entryUids, prevEntryUids)) {
-        setPrevEntryUids(entryUids);
-
-        const newStates = new Map([...directories!, ...files!].map(({ uid }) => [uid, false]));
-        updateEntries({ action: 'replace', newStates });
-    }
+        prevEntryUids.current = entryUids;
+        updateSelection({
+            action: 'replace',
+            newStates: new Map(entryUids.map((uid) => [uid, !!selectionStates.get(uid)])),
+        });
+    }, [entryUids, selectionStates, updateSelection]);
 
     return (
         <div
@@ -184,8 +196,8 @@ export const FileTable = ({ winfo }: PropsWithWindowInfo) => {
             "
         >
             <DragSelectContainer
-                itemStates={entryStates}
-                updateItems={updateEntries}
+                itemStates={selectionStates}
+                updateItems={updateSelection}
                 renderItem={(key, isSelected, onClick) => (
                     <FileTableRow
                         key={key}

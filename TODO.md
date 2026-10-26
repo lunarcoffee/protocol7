@@ -16,7 +16,7 @@
         - search functionality
         - history
         - ~~status bar~~
-            - actually wire to selected item state
+            - ~~actually wire to selected item state~~
         - customizable favorite locations (through drag and drop GUI)
     - DragSelectContainer
         - ~~os-specific modifiers (e.g., cmd on mac)~~

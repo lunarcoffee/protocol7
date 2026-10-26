@@ -19,9 +19,9 @@ export const FileManager = ({ pinfo, winfo }: FileManagerProps) => (
 );
 
 const FileManagerWindow = ({ pinfo, winfo }: FileManagerProps) => {
-    const setCwd = useFileManagerStore(({ setCwd }) => setCwd);
+    const refresh = useFileManagerStore(({ refresh }) => refresh);
 
-    usePromise(() => setCwd('/'), [setCwd]);
+    usePromise(refresh, [refresh]);
 
     return (
         <WindowFrame pinfo={pinfo} winfo={winfo}>

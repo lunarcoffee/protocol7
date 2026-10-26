@@ -6,14 +6,17 @@ import type { FsFileMetadata } from '@protocol7/filesystem-types';
 
 export const StatusBar = () => {
     const dir = useFileManagerStore(({ dir }) => dir);
+    const selectionStates = useFileManagerStore(({ selectionStates }) => selectionStates);
 
     const entries = Object.values(dir?.ok ? dir.entries : {});
+    const selectedEntries = Array.from(selectionStates.values()).filter(Boolean);
+
     const files = entries.filter((entry): entry is FsFileMetadata => entry.type === 'file');
     const dirs = entries.filter(({ type }) => type === 'directory');
 
     const totalFileSize = files.reduce((total, { size }) => total + size, 0);
 
-    let contentsText = [
+    const contentsText = [
         files.length > 0 &&
             `${files.length} ${pluralize('file', files.length)} (total ${formatSizeBytes(totalFileSize)})`,
         dirs.length > 0 && `${dirs.length} ${pluralize('folder', dirs.length)}`,
@@ -31,8 +34,7 @@ export const StatusBar = () => {
         >
             {dir?.ok && <p>{contentsText}</p>}
             <div className="flex-1" />
-            {/*TODO: link to actual state now that it exists*/}
-            <p>0 selected</p>
+            <p>{selectedEntries.length} selected</p>
         </div>
     );
 };

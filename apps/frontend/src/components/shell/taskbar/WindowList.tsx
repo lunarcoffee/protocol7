@@ -40,18 +40,8 @@ const WindowListItem = ({ wid, pid, title, hasFocus }: WindowListItemProps) => {
                     `,
             )}
             variants={{
-                transition: {
-                    opacity: 0,
-                    transform: 'scale(0.5)',
-                    maxWidth: 0,
-                    padding: 0,
-                },
-                normal: {
-                    opacity: 1,
-                    transform: 'scale(1)',
-                    maxWidth: '10rem',
-                    padding: '0.5rem',
-                },
+                transition: { opacity: 0, transform: 'scale(0.5)', maxWidth: 0, padding: 0 },
+                normal: { opacity: 1, transform: 'scale(1)', maxWidth: '10rem', padding: '0.5rem' },
             }}
             initial="transition"
             animate="normal"
@@ -59,7 +49,7 @@ const WindowListItem = ({ wid, pid, title, hasFocus }: WindowListItemProps) => {
             transition={{ duration: 0.08 }}
         >
             <img
-                src={getSystemIcon(settings?.icon || '')}
+                src={settings ? getSystemIcon(settings.icon) : undefined}
                 width={20}
                 className="mr-0.5 -ml-px drop-shadow-xs drop-shadow-aero-tint-darkest/50"
             />
