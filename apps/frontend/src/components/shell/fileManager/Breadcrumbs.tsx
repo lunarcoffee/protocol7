@@ -57,7 +57,7 @@ const BreadcrumbSegment = ({
 export const Breadcrumbs = () => {
     const cwd = useFileManagerStore(({ cwd }) => cwd);
     const setCwd = useFileManagerStore(({ setCwd }) => setCwd);
-    const locations = useFileManagerStore(({ locations }) => locations);
+    const locations = useFileManagerStore(({ settings }) => settings.locations);
 
     const pathSegments = ['/', ...splitPath(cwd)];
     const pathPrefixes = pathSegments

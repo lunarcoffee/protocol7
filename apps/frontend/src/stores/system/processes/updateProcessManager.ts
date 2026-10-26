@@ -1,5 +1,6 @@
 import { windowDestroy } from '../windows/updateWindowManager';
 import { readFile } from '@/filesystem/api/readFile';
+import { writeFile } from '@/filesystem/api/writeFile';
 
 import type { System, SystemStore } from '../store';
 import type { WindowID } from '../windows/WindowManager';
@@ -23,6 +24,20 @@ export const processDetachWindow = (system: Draft<System>, pid: ProcessID, wid: 
     }
 };
 
+/* process settings serialization utilties */
+
+const parseProcessSettings = <T>(json: string): ProcessSettings<T> =>
+    JSON.parse(json, (_, value) =>
+        typeof value === 'object' && '_type' in value && value['_type'] === 'map'
+            ? new Map(Object.entries(value['_value']))
+            : value,
+    );
+
+const stringifyProcessSettings = <T>(settings: ProcessSettings<T>) =>
+    JSON.stringify(settings, (_, value) =>
+        value instanceof Map ? { _type: 'map', _value: Object.fromEntries(value.entries()) } : value,
+    );
+
 /* process manager actions */
 
 type RequiredProcessProps = 'pid' | 'pname';
@@ -38,11 +53,12 @@ export const processCreate = async (
 ) => {
     const { pid, pname } = info;
 
-    const settingsFile = await readFile(`/system/programs/${pname}/settings.json`);
+    const settingsFilePath = `/system/programs/${pname}/settings.json`;
+    const settingsFile = await readFile(settingsFilePath);
     if (!settingsFile?.ok) return console.error(`pm: failed to read app settings for ${pname}`);
 
     const contents = new TextDecoder().decode(await settingsFile.contents());
-    const settings = JSON.parse(contents);
+    const settings = parseProcessSettings(contents);
 
     if (signal?.aborted) return;
 
@@ -53,8 +69,12 @@ export const processCreate = async (
             windows: [],
             isHeadless: false,
 
+            // settings are only read from file at process creation; programs are expected to maintain any relevant
+            // state internally and use the process API only to persist changes through `saveSettings`
             settings,
             getSettings: <T>() => settings as ProcessSettings<T>,
+            saveSettings: <T>(settings: ProcessSettings<T>) =>
+                writeFile(settingsFilePath, stringifyProcessSettings(settings)),
 
             ...info,
         });

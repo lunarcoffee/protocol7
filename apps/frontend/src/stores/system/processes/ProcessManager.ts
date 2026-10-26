@@ -1,4 +1,5 @@
 import type { WindowID } from '../windows/WindowManager';
+import type { WriteFileResult } from '@/filesystem/api/writeFile';
 
 export type ProcessID = number;
 
@@ -16,6 +17,7 @@ export interface ProcessInfo {
 
     settings: ProcessSettings<{}>;
     getSettings: <T>() => ProcessSettings<T>;
+    saveSettings: <T>(settings: ProcessSettings<T>) => Promise<WriteFileResult>;
 }
 
 export interface PropsWithProcessInfo {

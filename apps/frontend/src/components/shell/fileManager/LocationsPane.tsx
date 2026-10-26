@@ -32,8 +32,8 @@ const LocationListEntry = ({ path, iconUrl, label }: LocationListEntryProps) => 
 };
 
 export const LocationsPane = () => {
-    const locations = useFileManagerStore(({ locations }) => locations);
-    const favorites = useFileManagerStore(({ favorites }) => favorites);
+    const locations = useFileManagerStore(({ settings }) => settings.locations);
+    const favorites = useFileManagerStore(({ settings }) => settings.favorites);
 
     const [favoritesIcons] = usePromise(() => Promise.all(favorites.map(getIconForEntry)), [favorites]);
 

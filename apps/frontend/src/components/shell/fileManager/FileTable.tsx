@@ -1,13 +1,5 @@
 import { cn } from 'cn';
-import {
-    type Dispatch,
-    type MouseEvent,
-    type PropsWithChildren,
-    type SetStateAction,
-    useEffect,
-    useRef,
-    useState,
-} from 'react';
+import { type MouseEvent, type PropsWithChildren, useEffect, useRef, useState } from 'react';
 
 import { DragSelectContainer } from '../controls/DragSelectContainer';
 import { Tooltip } from '../controls/Tooltip';
@@ -37,7 +29,7 @@ const FILE_TABLE_COLUMNS = {
     ['Size']: { compareFn: sizeCompareFn },
 };
 
-type FileTableColumnName = keyof typeof FILE_TABLE_COLUMNS;
+export type FileTableColumnName = keyof typeof FILE_TABLE_COLUMNS;
 
 interface FileTableColumnHeaderProps extends PropsWithChildren {
     // current table state values
@@ -47,7 +39,7 @@ interface FileTableColumnHeaderProps extends PropsWithChildren {
     // the name of this particular column
     thisSortColumn: FileTableColumnName;
 
-    setIsAscending: Dispatch<SetStateAction<boolean>>;
+    setIsAscending: (isAscending: boolean) => void;
     setSortColumn: (column: FileTableColumnName) => void;
 }
 
@@ -64,7 +56,7 @@ const FileTableColumnHeader = ({
     const updateSortSettings = () => {
         // toggle direction if this column is currently selected; otherwise, always set ascending
         if (currentlySortingByThisColumn) {
-            setIsAscending((value) => !value);
+            setIsAscending(!isAscending);
         } else {
             setSortColumn(thisSortColumn);
             setIsAscending(true);
@@ -96,7 +88,7 @@ interface FileTableRowProps {
 
 const FileTableRow = ({ metadata, isSelected, onClick, wid }: FileTableRowProps) => {
     const setCwd = useFileManagerStore(({ setCwd }) => setCwd);
-    const locations = useFileManagerStore(({ locations }) => locations);
+    const locations = useFileManagerStore(({ settings }) => settings.locations);
 
     const { type, name, path, modified, uid } = metadata;
     const isDirectory = type === 'directory';
@@ -150,13 +142,17 @@ export const FileTable = ({ winfo }: PropsWithWindowInfo) => {
     const { wid } = winfo;
 
     const dir = useFileManagerStore(({ dir }) => dir);
+    const settings = useFileManagerStore(({ settings }) => settings);
+    const updateSettings = useFileManagerStore(({ updateSettings }) => updateSettings);
     const selectionStates = useFileManagerStore(({ selectionStates }) => selectionStates);
     const updateSelection = useFileManagerStore(({ updateSelection }) => updateSelection);
 
-    const [isScrolled, setIsScrolled] = useState(false);
+    const { sortColumn, isAscending } = settings;
+    const setSortColumn = (value: FileTableColumnName) =>
+        void updateSettings((draft) => void (draft.sortColumn = value));
+    const setIsAscending = (value: boolean) => void updateSettings((draft) => void (draft.isAscending = value));
 
-    const [sortColumn, setSortColumn] = useState<FileTableColumnName>('Name');
-    const [isAscending, setIsAscending] = useState(true);
+    const [isScrolled, setIsScrolled] = useState(false);
 
     const isDirLoading = !dir?.ok;
     const entries = isDirLoading ? null : Object.values(dir.entries);

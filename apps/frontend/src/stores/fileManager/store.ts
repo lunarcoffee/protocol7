@@ -1,3 +1,4 @@
+import { type Draft, produce } from 'immer';
 import { createStore } from 'zustand/vanilla';
 
 import { readDirectory } from '@/filesystem/api/readDirectory';
@@ -5,15 +6,20 @@ import { readMetadata } from '@/filesystem/api/readMetadata';
 import { normalizePath } from '@/filesystem/internal';
 import { reduceItemStates } from '@/hooks/useDragSelectReducer';
 
+import type { ProcessInfo, ProcessSettings } from '../system/processes/ProcessManager';
 import type { ItemStates, UpdateItemStatesAction } from '@/components/shell/controls/DragSelectContainer';
+import type { FileTableColumnName } from '@/components/shell/fileManager/FileTable';
 import type { ReadDirectoryResult } from '@/filesystem/api/readDirectory';
 import type { StoreApi } from 'zustand/vanilla';
 
 export type SavedLocation = { label: string; icon: string };
 
 export interface FileManagerSettings {
-    locations: Record<string, SavedLocation>;
+    locations: Map<string, SavedLocation>;
     favorites: string[];
+
+    sortColumn: FileTableColumnName;
+    isAscending: boolean;
 }
 
 export interface FileManagerStore {
@@ -24,8 +30,8 @@ export interface FileManagerStore {
     selectionStates: ItemStates<number>;
     updateSelection: (action: UpdateItemStatesAction<number>) => void;
 
-    locations: Map<string, SavedLocation>;
-    favorites: string[];
+    settings: ProcessSettings<FileManagerSettings>;
+    updateSettings: (recipe: (draft: Draft<FileManagerSettings>) => void) => Promise<void>;
 
     refresh: () => Promise<void>;
     setCwd: (path: string) => Promise<void>;
@@ -36,11 +42,11 @@ export type FileManagerStoreAPI = StoreApi<FileManagerStore>;
 const makeSelectionStates = (dir: ReadDirectoryResult) =>
     new Map(Object.values(dir.ok ? dir.entries : []).map(({ uid }) => [uid, false]));
 
-export const createFileManagerStore = (settings: FileManagerSettings): FileManagerStoreAPI => {
-    let setCwdRequest = 0;
+export const createFileManagerStore = (pinfo: ProcessInfo): FileManagerStoreAPI => {
+    const settings = pinfo.getSettings<FileManagerSettings>();
+    const saveSettings = pinfo.saveSettings<FileManagerSettings>;
 
-    const locations = new Map(Object.entries(settings.locations));
-    const { favorites } = settings;
+    let setCwdRequest = 0;
 
     return createStore<FileManagerStore>()((set, get) => ({
         cwd: '/',
@@ -48,33 +54,34 @@ export const createFileManagerStore = (settings: FileManagerSettings): FileManag
 
         selectionStates: new Map(),
         updateSelection: (action) =>
-            set(({ selectionStates }) => ({
-                selectionStates: reduceItemStates(selectionStates, action),
-            })),
+            set(({ selectionStates }) => ({ selectionStates: reduceItemStates(selectionStates, action) })),
 
-        locations,
-        favorites,
+        settings,
+        updateSettings: async (recipe) => {
+            const settings = produce(get().settings, recipe);
+
+            set({ settings });
+            await saveSettings(settings);
+        },
 
         refresh: async () => {
             const dir = await readDirectory(get().cwd);
             set({ dir, selectionStates: makeSelectionStates(dir) });
         },
         setCwd: async (entryPath) => {
-            const normalizedPath = normalizePath(entryPath);
-            if (get().cwd === normalizedPath) return;
+            const cwd = normalizePath(entryPath);
+            if (get().cwd === cwd) return;
 
             setCwdRequest = (setCwdRequest + 1) % 10_000;
             const curRequest = setCwdRequest;
 
-            const result = await readMetadata(normalizedPath);
+            const result = await readMetadata(cwd);
             if (!result?.ok) return;
 
             const { type, path } = result.metadata;
-            if (curRequest === setCwdRequest && type === 'directory' && path === normalizedPath) {
-                const dir = await readDirectory(normalizedPath);
-                if (curRequest === setCwdRequest) {
-                    set({ cwd: normalizedPath, dir, selectionStates: makeSelectionStates(dir) });
-                }
+            if (curRequest === setCwdRequest && type === 'directory' && path === cwd) {
+                const dir = await readDirectory(cwd);
+                if (curRequest === setCwdRequest) set({ cwd, dir, selectionStates: makeSelectionStates(dir) });
             }
         },
     }));

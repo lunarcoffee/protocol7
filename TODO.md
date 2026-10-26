@@ -15,6 +15,7 @@
         - grid view
         - search functionality
         - history
+        - ~~persist sort mode~~
         - ~~status bar~~
             - ~~actually wire to selected item state~~
         - customizable favorite locations (through drag and drop GUI)
