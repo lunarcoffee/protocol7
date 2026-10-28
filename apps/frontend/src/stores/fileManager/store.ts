@@ -9,7 +9,7 @@ import { keyToCompareFn } from '@/utils/keyToCompareFn';
 
 import type { ProcessInfo, ProcessSettings } from '../system/processes/ProcessManager';
 import type { ItemStates, UpdateItemStatesAction } from '@/components/shell/controls/DragSelectContainer';
-import type { ReadDirectoryResult } from '@/filesystem/api/readDirectory';
+import type { RecursiveSearchResult } from '@/hooks/useRecursiveSearch';
 import type { FsEntryMetadata } from '@protocol7/filesystem-types';
 import type { StoreApi } from 'zustand/vanilla';
 
@@ -29,12 +29,26 @@ export interface FileManagerStore {
     forwardStack: string[];
 
     cwd: () => string;
+    setCwd: (path: string) => Promise<void>;
+
+    cwdEntries?: FsEntryMetadata[];
+    refresh: () => Promise<void>;
+
     cwdBack: () => Promise<void>;
     cwdForward: () => Promise<void>;
     canCwdBack: () => boolean;
     canCwdForward: () => boolean;
 
-    dir: ReadDirectoryResult | undefined;
+    // the behavior of some of the store functions changes depending on whether `searchQuery` is empty; if it's not
+    // empty, we say we're in search mode. when in search mode, `cwdEntries` contains the current search results (as
+    // long as `isDoneSearching` is false, there might be more added later).
+    searchQuery: string;
+    setSearchQuery: (query: string) => void;
+    isDoneSearching: boolean;
+    // the actual searching (i.e., determining the entries to put in `cwdEntries`) doesn't happen in the store; it
+    // happens in `useRecursiveSearch` (in `SearchBar`), which calls this function to update `cwdEntries` and
+    // `isDoneSearching` as results come in
+    updateSearchResults: (result: RecursiveSearchResult) => void;
 
     // key is entry uid
     selectionStates: ItemStates<number>;
@@ -42,9 +56,6 @@ export interface FileManagerStore {
 
     settings: ProcessSettings<FileManagerSettings>;
     updateSettings: (updates: Partial<ProcessSettings<FileManagerSettings>>) => Promise<void>;
-
-    refresh: () => Promise<void>;
-    setCwd: (path: string) => Promise<void>;
 }
 
 export type FileManagerStoreAPI = StoreApi<FileManagerStore>;
@@ -64,30 +75,25 @@ export const FILE_TABLE_COLUMNS = {
 
 export type FileTableColumnName = keyof typeof FILE_TABLE_COLUMNS;
 
-const readDirectorySorted = async (
-    dirPath: string,
-    { sortColumn, isAscending }: ProcessSettings<FileManagerSettings>,
-): Promise<ReadDirectoryResult> => {
-    const dir = await readDirectory(dirPath);
-    if (!dir?.ok) return dir;
-
-    const dirEntries = Object.values(dir.entries);
-
-    // split directories and files so we can process them separately
-    const directories = dirEntries.filter(({ type }) => type === 'directory');
-    const files = dirEntries.filter(({ type }) => type === 'file');
+const sortEntries = (entries: FsEntryMetadata[], { sortColumn, isAscending }: ProcessSettings<FileManagerSettings>) => {
+    const directories = entries.filter(({ type }) => type === 'directory');
+    const files = entries.filter(({ type }) => type === 'file');
 
     const sortFn = FILE_TABLE_COLUMNS[sortColumn].compareFn(!isAscending);
     directories.sort(sortFn);
     files.sort(sortFn);
 
-    const sortedEntries = [...directories, ...files];
-    const entries = Object.fromEntries(sortedEntries.map((entry) => [entry.path, entry]));
-    return { ...dir, entries };
+    // directories before files, always
+    return [...directories, ...files];
 };
 
-const makeSelectionStates = (dir: ReadDirectoryResult, oldStates?: ItemStates<number>) =>
-    new Map(Object.values(dir.ok ? dir.entries : []).map(({ uid }) => [uid, !!oldStates?.get(uid)]));
+const readDirectorySorted = async (dirPath: string, settings: ProcessSettings<FileManagerSettings>) => {
+    const dir = await readDirectory(dirPath);
+    return dir?.ok ? sortEntries(Object.values(dir.entries), settings) : undefined;
+};
+
+const makeSelectionStates = (cwdEntries?: FsEntryMetadata[], oldStates?: ItemStates<number>) =>
+    new Map(Object.values(cwdEntries ?? []).map(({ uid }) => [uid, !!oldStates?.get(uid)]));
 
 /* the actual store */
 
@@ -95,14 +101,59 @@ export const createFileManagerStore = (pinfo: ProcessInfo): FileManagerStoreAPI 
     const settings = pinfo.getSettings<FileManagerSettings>();
     const saveSettings = pinfo.saveSettings<FileManagerSettings>;
 
-    let refreshRequest = 0;
     let setCwdRequest = 0;
+    let refreshRequest = 0;
 
     return createStore<FileManagerStore>()((set, get) => ({
         backStack: ['/'],
         forwardStack: [],
 
         cwd: () => get().backStack.at(-1)!,
+        setCwd: async (entryPath) => {
+            const cwd = normalizePath(entryPath);
+            if (get().cwd() === cwd) return;
+
+            // don't fetch directory contents if we're searching, `useRecursiveSearch` will update by itself
+            if (get().searchQuery) return set({ backStack: [...get().backStack, cwd], forwardStack: [] });
+
+            setCwdRequest = (setCwdRequest + 1) % 10_000;
+            const curRequest = setCwdRequest;
+
+            const result = await readMetadata(cwd);
+            if (!result?.ok) return;
+
+            const { type, path } = result.metadata;
+            if (curRequest === setCwdRequest && type === 'directory' && path === cwd) {
+                const cwdEntries = await readDirectorySorted(cwd, get().settings);
+                if (curRequest === setCwdRequest) {
+                    set({
+                        backStack: [...get().backStack, cwd],
+                        forwardStack: [],
+                        cwdEntries,
+                        selectionStates: makeSelectionStates(cwdEntries),
+                    });
+                }
+            }
+        },
+
+        // call `refresh` to initialize
+        cwdEntries: undefined,
+        refresh: async () => {
+            refreshRequest = (refreshRequest + 1) % 10_000;
+            const curRequest = refreshRequest;
+
+            // TODO: make this also restart the search; this is pretty misleading
+            // only re-sort entries if we're in search mode
+            const cwdEntries = get().searchQuery
+                ? sortEntries(get().cwdEntries!, get().settings)
+                : await readDirectorySorted(get().cwd(), get().settings);
+
+            if (curRequest === refreshRequest) {
+                const selectionStates = makeSelectionStates(cwdEntries, get().selectionStates);
+                set({ cwdEntries, selectionStates });
+            }
+        },
+
         cwdBack: async () => {
             if (get().canCwdBack()) {
                 set(produce(get(), (draft) => void draft.forwardStack.push(draft.backStack.pop()!)));
@@ -118,8 +169,21 @@ export const createFileManagerStore = (pinfo: ProcessInfo): FileManagerStoreAPI 
         canCwdBack: () => get().backStack.length > 1,
         canCwdForward: () => get().forwardStack.length > 0,
 
-        // call `refresh` to initialize
-        dir: undefined,
+        searchQuery: '',
+        setSearchQuery: (searchQuery: string) => {
+            // cancel any ongoing refresh if we're starting another search
+            if (searchQuery) refreshRequest = (refreshRequest + 1) % 10_000;
+            set({ searchQuery });
+        },
+        isDoneSearching: true,
+        updateSearchResults: ({ isDone, entries }: RecursiveSearchResult) => {
+            const cwdEntries = sortEntries(entries, get().settings);
+            set({
+                isDoneSearching: isDone,
+                cwdEntries,
+                selectionStates: makeSelectionStates(cwdEntries, get().selectionStates),
+            });
+        },
 
         selectionStates: new Map(),
         updateSelection: (action) =>
@@ -132,41 +196,6 @@ export const createFileManagerStore = (pinfo: ProcessInfo): FileManagerStoreAPI 
 
             await get().refresh();
             await saveSettings(settings);
-        },
-
-        refresh: async () => {
-            refreshRequest = (refreshRequest + 1) % 10_000;
-            const curRequest = refreshRequest;
-
-            const dir = await readDirectorySorted(get().cwd(), get().settings);
-
-            if (curRequest === refreshRequest) {
-                const selectionStates = makeSelectionStates(dir, get().selectionStates);
-                set({ dir, selectionStates });
-            }
-        },
-        setCwd: async (entryPath) => {
-            const cwd = normalizePath(entryPath);
-            if (get().cwd() === cwd) return;
-
-            setCwdRequest = (setCwdRequest + 1) % 10_000;
-            const curRequest = setCwdRequest;
-
-            const result = await readMetadata(cwd);
-            if (!result?.ok) return;
-
-            const { type, path } = result.metadata;
-            if (curRequest === setCwdRequest && type === 'directory' && path === cwd) {
-                const dir = await readDirectorySorted(cwd, get().settings);
-                if (curRequest === setCwdRequest) {
-                    set({
-                        backStack: [...get().backStack, cwd],
-                        forwardStack: [],
-                        dir,
-                        selectionStates: makeSelectionStates(dir),
-                    });
-                }
-            }
         },
     }));
 };

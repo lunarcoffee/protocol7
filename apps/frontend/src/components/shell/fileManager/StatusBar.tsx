@@ -5,10 +5,10 @@ import { pluralize } from '@/utils/pluralize';
 import type { FsFileMetadata } from '@protocol7/filesystem-types';
 
 export const StatusBar = () => {
-    const dir = useFileManagerStore(({ dir }) => dir);
+    const cwdEntries = useFileManagerStore(({ cwdEntries }) => cwdEntries);
     const selectionStates = useFileManagerStore(({ selectionStates }) => selectionStates);
 
-    const entries = Object.values(dir?.ok ? dir.entries : {});
+    const entries = cwdEntries ?? [];
     const selectedEntries = Array.from(selectionStates.values()).filter(Boolean);
 
     const files = entries.filter((entry): entry is FsFileMetadata => entry.type === 'file');
@@ -32,7 +32,7 @@ export const StatusBar = () => {
                 text-shadow-white/80
             "
         >
-            {dir?.ok && <p>{contentsText}</p>}
+            {cwdEntries && <p>{contentsText}</p>}
             <div className="flex-1" />
             <p>{selectedEntries.length} selected</p>
         </div>

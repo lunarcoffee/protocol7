@@ -57,6 +57,7 @@ const BreadcrumbSegment = ({
 export const Breadcrumbs = () => {
     const cwd = useFileManagerStore(({ cwd }) => cwd());
     const setCwd = useFileManagerStore(({ setCwd }) => setCwd);
+    const searchQuery = useFileManagerStore(({ searchQuery }) => searchQuery);
     const locations = useFileManagerStore(({ settings }) => settings.locations);
 
     const pathSegments = ['/', ...splitPath(cwd)];
@@ -72,9 +73,9 @@ export const Breadcrumbs = () => {
     return (
         <div
             className="
-                h-6 w-full min-w-0 rounded-full border border-x-aero-tint/58 border-t-aero-tint-dark/56
-                border-b-aero-tint/50 bg-white text-xs text-aero-tint-dark italic outline outline-white/70
-                text-shadow-none
+                h-6 w-full min-w-0 overflow-clip rounded-full border border-x-aero-tint/58
+                border-t-aero-tint-dark/56 border-b-aero-tint/50 bg-white text-xs text-aero-tint-dark italic
+                outline outline-white/70 text-shadow-none
             "
         >
             {isInputMode ? (
@@ -92,6 +93,9 @@ export const Breadcrumbs = () => {
                 />
             ) : (
                 <div className="flex h-full max-w-full cursor-auto flex-row items-center px-1">
+                    {/* TODO:  animate*/}
+                    {searchQuery && <p className="shrink-0 pr-0.5 pl-1 text-[11px] text-aero-tint/80">Searching in</p>}
+
                     <div className="flex h-full max-w-fit min-w-0 flex-row items-center">
                         {pathSegments.map((segment, i) => {
                             if (i < locationIndex) return null;

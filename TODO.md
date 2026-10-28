@@ -13,7 +13,8 @@
             - ~~allow drag select to start from edges (maybe add custom children portal to DragSelectContainer?)~~
         - ~~refactor state into store context~~
         - grid view
-        - search functionality
+        - ~~search functionality~~
+            - ~~sorting in search mode~~
         - ~~history~~
         - ~~persist sort mode~~
         - ~~status bar~~

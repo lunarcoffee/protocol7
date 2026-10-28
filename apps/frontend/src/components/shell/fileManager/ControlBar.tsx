@@ -1,34 +1,15 @@
 import { cn } from 'cn';
 import path from 'path-browserify';
-import { useState } from 'react';
 
 import { Tooltip } from '../controls/Tooltip';
 import { Breadcrumbs } from './Breadcrumbs';
+import { SearchBar } from './SearchBar';
 import { useFileManagerStore } from './store/useFileManagerStore';
 import { CurvedArrowRightIcon } from '@/components/icons/CurvedArrowRightIcon';
 import { RefreshIcon } from '@/components/icons/RefreshIcon';
 import { getSystemIcon } from '@/utils/getSystemIcon';
 
 import type { IconComponentType } from '@/components/icons/types';
-
-const SearchBar = () => {
-    const [query, setQuery] = useState('');
-    return (
-        <input
-            value={query}
-            onChange={({ target }) => setQuery(target.value)}
-            placeholder="Search..."
-            className={cn(
-                `
-                    h-6 w-50 shrink-0 rounded-full border border-x-aero-tint/58 border-t-aero-tint-dark/56
-                    border-b-aero-tint/50 bg-white px-2 py-1 text-xs text-aero-tint-darkest outline
-                    outline-white/70
-                `,
-                query === '' && 'italic',
-            )}
-        />
-    );
-};
 
 interface ControlBarButtonProps {
     // one or the other; see below
@@ -80,9 +61,9 @@ const IconButton = ({ Icon, onClick, disabled = false, label, className }: Contr
         className={cn(
             'px-0.5 drop-shadow-[0_1px_0] drop-shadow-white',
             disabled
-                ? 'text-gray-300'
+                ? 'text-[#b8c2d4]'
                 : `
-                    m-auto mask-linear-135 mask-linear-to-black/65 mask-no-clip text-gray-400
+                    m-auto mask-linear-135 mask-linear-to-black/50 mask-no-clip text-[#6f7c8f]
                     hover:brightness-80
                     active:brightness-60
                 `,
@@ -136,7 +117,7 @@ export const ControlBar = () => {
             />
             <Breadcrumbs />
             <SearchBar />
-            <IconButton Icon={RefreshIcon} onClick={refresh} label="Refresh" />
+            <IconButton Icon={RefreshIcon} onClick={refresh} label="Refresh" className="mr-px rotate-66" />
         </div>
     );
 };

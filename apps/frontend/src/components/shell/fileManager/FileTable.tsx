@@ -60,6 +60,8 @@ interface FileTableRowProps {
 const FileTableRow = ({ metadata, isSelected, onClick, wid }: FileTableRowProps) => {
     const setCwd = useFileManagerStore(({ setCwd }) => setCwd);
     const locations = useFileManagerStore(({ settings }) => settings.locations);
+    const searchQuery = useFileManagerStore(({ searchQuery }) => searchQuery);
+    const setSearchQuery = useFileManagerStore(({ setSearchQuery }) => setSearchQuery);
 
     const { type, name, path, modified, uid } = metadata;
     const isDirectory = type === 'directory';
@@ -72,7 +74,7 @@ const FileTableRow = ({ metadata, isSelected, onClick, wid }: FileTableRowProps)
         return await getIconForEntry(path);
     }, [locations, path]);
 
-    const tooltipLabel = formatMetadataTooltip(metadata);
+    const tooltipLabel = formatMetadataTooltip(metadata, !!searchQuery);
 
     return (
         <Tooltip
@@ -82,7 +84,13 @@ const FileTableRow = ({ metadata, isSelected, onClick, wid }: FileTableRowProps)
         >
             <div
                 onClick={onClick}
-                {...(isDirectory && { onDoubleClick: () => void setCwd(path) })}
+                {...(isDirectory && {
+                    onDoubleClick: () => {
+                        // if the user clicks on a directory in the search results, assume they're done searching
+                        if (searchQuery) setSearchQuery('');
+                        void setCwd(path);
+                    },
+                })}
                 className={cn(
                     `
                         col-span-4 grid grid-cols-subgrid rounded-xs bg-linear-to-b inset-ring-gray-100
@@ -112,15 +120,16 @@ const PlaceholderRow = ({ children }: PropsWithChildren) => (
 export const FileTable = ({ winfo }: PropsWithWindowInfo) => {
     const { wid } = winfo;
 
-    const dir = useFileManagerStore(({ dir }) => dir);
+    const cwdEntries = useFileManagerStore(({ cwdEntries }) => cwdEntries);
     const selectionStates = useFileManagerStore(({ selectionStates }) => selectionStates);
     const updateSelection = useFileManagerStore(({ updateSelection }) => updateSelection);
+    const searchQuery = useFileManagerStore(({ searchQuery }) => searchQuery);
+    const isDoneSearching = useFileManagerStore(({ isDoneSearching }) => isDoneSearching);
 
     const [isScrolled, setIsScrolled] = useState(false);
 
-    const isDirLoading = !dir?.ok;
-    const entries = isDirLoading ? null : Object.values(dir.entries);
-    const hasEntries = !isDirLoading && entries!.length > 0;
+    const entries = cwdEntries ?? null;
+    const hasEntries = cwdEntries && entries!.length > 0;
 
     return (
         <div
@@ -177,10 +186,12 @@ export const FileTable = ({ winfo }: PropsWithWindowInfo) => {
                     <div className="h-1" />
                 </div>
 
-                {isDirLoading ? (
+                {!cwdEntries ? (
                     <PlaceholderRow>Loading...</PlaceholderRow>
                 ) : (
-                    !hasEntries && <PlaceholderRow>No items</PlaceholderRow>
+                    !hasEntries && (
+                        <PlaceholderRow>{searchQuery && !isDoneSearching ? 'Searching...' : 'No items'}</PlaceholderRow>
+                    )
                 )}
 
                 {/* the actual file table gets portalled here */}
