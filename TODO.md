@@ -14,10 +14,11 @@
         - ~~refactor state into store context~~
         - grid view
         - search functionality
-        - history
+        - ~~history~~
         - ~~persist sort mode~~
         - ~~status bar~~
             - ~~actually wire to selected item state~~
+        - actual filesystem operations (lol)
         - customizable favorite locations (through drag and drop GUI)
     - DragSelectContainer
         - ~~os-specific modifiers (e.g., cmd on mac)~~
@@ -35,6 +36,7 @@
         - snap to sides
             - maybe consider snap-based layouting
         - dialog/alert API?
+        - fullscreen mode
     - generic controls and layouts
         - buttons, text inputs, text styles, etc. (lots will prob come from file manager work)
         - dialogs
@@ -46,7 +48,7 @@
         - on desktop, in file manager, on taskbar, etc.
     - custom cursor icons
     - app launcher menu
-    - text editor, terminal, web browser, etc.
+    - text editor, photo/media viewer, terminal, web browser, etc.
     - network simulation
     - volume simulation
     - ~~don't have alt text for icons~~

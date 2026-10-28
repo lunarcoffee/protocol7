@@ -1,5 +1,5 @@
 import { cn } from 'cn';
-import { type MouseEvent, type PropsWithChildren, useEffect, useRef, useState } from 'react';
+import { type MouseEvent, type PropsWithChildren, useState } from 'react';
 
 import { DragSelectContainer } from '../controls/DragSelectContainer';
 import { Tooltip } from '../controls/Tooltip';
@@ -7,60 +7,31 @@ import { rightCaretIcon } from './Breadcrumbs';
 import { HeadingText } from './HeadingText';
 import { useFileManagerStore } from './store/useFileManagerStore';
 import { usePromise } from '@/hooks/usePromise';
+import { FILE_TABLE_COLUMNS, type FileTableColumnName } from '@/stores/fileManager/store';
 import { formatMetadataTooltip } from '@/utils/formatMetadataTooltip';
 import { formatSizeBytes } from '@/utils/formatSizeBytes';
 import { formatTimestampShort } from '@/utils/formatTimestamp';
 import { getIconForEntry } from '@/utils/getIconForEntry';
 import { getSystemIcon } from '@/utils/getSystemIcon';
-import { keyToCompareFn } from '@/utils/keyToCompareFn';
-import { shallowArrayEquals } from '@/utils/shallowArrayEquals';
 
 import type { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 import type { FsEntryMetadata } from '@protocol7/filesystem-types';
 
-const nameCompareFn = keyToCompareFn<FsEntryMetadata>(({ name }) => [name]);
-const modifiedCompareFn = keyToCompareFn<FsEntryMetadata>(({ modified }) => [modified]);
-const sizeCompareFn = keyToCompareFn<FsEntryMetadata>((metadata) => [metadata.type === 'file' ? metadata.size : 0]);
-
-// mapping columns and the comparison functions they use for ordering entries
-const FILE_TABLE_COLUMNS = {
-    ['Name']: { compareFn: nameCompareFn },
-    ['Last modified']: { compareFn: modifiedCompareFn },
-    ['Size']: { compareFn: sizeCompareFn },
-};
-
-export type FileTableColumnName = keyof typeof FILE_TABLE_COLUMNS;
-
 interface FileTableColumnHeaderProps extends PropsWithChildren {
-    // current table state values
-    isAscending: boolean;
-    currentSortColumn: FileTableColumnName;
-
-    // the name of this particular column
     thisSortColumn: FileTableColumnName;
-
-    setIsAscending: (isAscending: boolean) => void;
-    setSortColumn: (column: FileTableColumnName) => void;
 }
 
-const FileTableColumnHeader = ({
-    isAscending,
-    currentSortColumn,
-    thisSortColumn,
-    setIsAscending,
-    setSortColumn,
-    children,
-}: FileTableColumnHeaderProps) => {
+const FileTableColumnHeader = ({ thisSortColumn, children }: FileTableColumnHeaderProps) => {
+    const currentSortColumn = useFileManagerStore(({ settings }) => settings.sortColumn);
+    const isAscending = useFileManagerStore(({ settings }) => settings.isAscending);
+    const updateSettings = useFileManagerStore(({ updateSettings }) => updateSettings);
+
     const currentlySortingByThisColumn = currentSortColumn === thisSortColumn;
 
     const updateSortSettings = () => {
-        // toggle direction if this column is currently selected; otherwise, always set ascending
-        if (currentlySortingByThisColumn) {
-            setIsAscending(!isAscending);
-        } else {
-            setSortColumn(thisSortColumn);
-            setIsAscending(true);
-        }
+        // toggle direction if this column is currently selected; otherwise, always set to ascending
+        if (currentlySortingByThisColumn) void updateSettings({ isAscending: !isAscending });
+        else void updateSettings({ sortColumn: thisSortColumn, isAscending: true });
     };
 
     return (
@@ -142,45 +113,14 @@ export const FileTable = ({ winfo }: PropsWithWindowInfo) => {
     const { wid } = winfo;
 
     const dir = useFileManagerStore(({ dir }) => dir);
-    const settings = useFileManagerStore(({ settings }) => settings);
-    const updateSettings = useFileManagerStore(({ updateSettings }) => updateSettings);
     const selectionStates = useFileManagerStore(({ selectionStates }) => selectionStates);
     const updateSelection = useFileManagerStore(({ updateSelection }) => updateSelection);
-
-    const { sortColumn, isAscending } = settings;
-    const setSortColumn = (value: FileTableColumnName) =>
-        void updateSettings((draft) => void (draft.sortColumn = value));
-    const setIsAscending = (value: boolean) => void updateSettings((draft) => void (draft.isAscending = value));
 
     const [isScrolled, setIsScrolled] = useState(false);
 
     const isDirLoading = !dir?.ok;
     const entries = isDirLoading ? null : Object.values(dir.entries);
     const hasEntries = !isDirLoading && entries!.length > 0;
-
-    // split directories and files so we can process them separately
-    const directories = entries?.filter(({ type }) => type === 'directory');
-    const files = entries?.filter(({ type }) => type === 'file');
-
-    const sortFn = FILE_TABLE_COLUMNS[sortColumn].compareFn(!isAscending);
-    directories?.sort(sortFn);
-    files?.sort(sortFn);
-
-    const sortedEntries = [...(directories ?? []), ...(files ?? [])];
-
-    const entryUids = sortedEntries.map(({ uid }) => uid);
-    const prevEntryUids = useRef(entryUids);
-
-    // need to keep this update out of render time
-    useEffect(() => {
-        if (shallowArrayEquals(entryUids, prevEntryUids.current)) return;
-
-        prevEntryUids.current = entryUids;
-        updateSelection({
-            action: 'replace',
-            newStates: new Map(entryUids.map((uid) => [uid, !!selectionStates.get(uid)])),
-        });
-    }, [entryUids, selectionStates, updateSelection]);
 
     return (
         <div
@@ -228,12 +168,8 @@ export const FileTable = ({ winfo }: PropsWithWindowInfo) => {
                     {Object.keys(FILE_TABLE_COLUMNS).map((column) => (
                         <FileTableColumnHeader
                             key={column}
-                            isAscending={isAscending}
-                            currentSortColumn={sortColumn}
                             // oxlint-disable-next-line typescript/no-unsafe-type-assertion
                             thisSortColumn={column as FileTableColumnName}
-                            setIsAscending={setIsAscending}
-                            setSortColumn={setSortColumn}
                         >
                             {column}
                         </FileTableColumnHeader>
