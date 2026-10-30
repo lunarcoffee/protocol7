@@ -92,9 +92,19 @@ export const Breadcrumbs = () => {
                     autoFocus
                 />
             ) : (
-                <div className="flex h-full max-w-full cursor-auto flex-row items-center px-1">
-                    {/* TODO:  animate*/}
-                    {searchQuery && <p className="shrink-0 pr-0.5 pl-1 text-[11px] text-aero-tint/80">Searching in</p>}
+                <div className="flex h-full max-w-full cursor-auto flex-row items-center pr-1">
+                    {/* search mode indicator */}
+                    <p
+                        className={cn(
+                            `
+                                -mr-1 ml-2 min-w-0 shrink-0 overflow-hidden text-[11px] text-nowrap
+                                text-aero-tint/80 transition-[width] duration-150
+                            `,
+                            searchQuery ? 'w-16.25' : 'w-0',
+                        )}
+                    >
+                        Searching in
+                    </p>
 
                     <div className="flex h-full max-w-fit min-w-0 flex-row items-center">
                         {pathSegments.map((segment, i) => {

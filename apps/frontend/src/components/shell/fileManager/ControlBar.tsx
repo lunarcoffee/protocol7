@@ -63,7 +63,8 @@ const IconButton = ({ Icon, onClick, disabled = false, label, className }: Contr
             disabled
                 ? 'text-[#b8c2d4]'
                 : `
-                    m-auto mask-linear-135 mask-linear-to-black/50 mask-no-clip text-[#6f7c8f]
+                    m-auto mask-linear-135 mask-linear-to-black/40 mask-no-clip
+                    text-[oklch(57.2%_0.2_131.589)]
                     hover:brightness-80
                     active:brightness-60
                 `,
@@ -82,6 +83,7 @@ export const ControlBar = () => {
     const canCwdBack = useFileManagerStore(({ canCwdBack }) => canCwdBack());
     const canCwdForward = useFileManagerStore(({ canCwdForward }) => canCwdForward());
 
+    const isSearching = useFileManagerStore(({ searchQuery, isDoneSearching }) => !!searchQuery && !isDoneSearching);
     const refresh = useFileManagerStore(({ refresh }) => refresh);
 
     const isRoot = cwd === '/';
@@ -117,7 +119,13 @@ export const ControlBar = () => {
             />
             <Breadcrumbs />
             <SearchBar />
-            <IconButton Icon={RefreshIcon} onClick={refresh} label="Refresh" className="mr-px rotate-66" />
+            <IconButton
+                Icon={RefreshIcon}
+                onClick={refresh}
+                disabled={isSearching}
+                label="Refresh"
+                className="mr-px rotate-66"
+            />
         </div>
     );
 };
