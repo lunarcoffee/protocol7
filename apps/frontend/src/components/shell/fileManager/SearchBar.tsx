@@ -5,12 +5,10 @@ import { useFileManagerStore } from './store/useFileManagerStore';
 import { CloseIcon } from '@/components/icons/CloseIcon';
 import { useTimeout } from '@/hooks/useTimeout';
 
-// TODO: shell settings
-const SEARCH_DEBOUNCE_TIME = 300;
-
 export const SearchBar = () => {
     const searchQuery = useFileManagerStore(({ searchQuery }) => searchQuery);
     const setSearchQuery = useFileManagerStore(({ setSearchQuery }) => setSearchQuery);
+    const searchDebounceDelay = useFileManagerStore(({ settings }) => settings.searchDebounceDelay);
 
     const [inputValue, setInputValue] = useState('');
 
@@ -21,7 +19,7 @@ export const SearchBar = () => {
         if (searchQuery !== inputValue) setInputValue(searchQuery);
     }
 
-    const [cancel, restart] = useTimeout(SEARCH_DEBOUNCE_TIME);
+    const [cancel, restart] = useTimeout(searchDebounceDelay);
 
     const setQuery = (query: string) => {
         setInputValue(query);

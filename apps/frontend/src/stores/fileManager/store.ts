@@ -21,6 +21,8 @@ export interface FileManagerSettings {
 
     sortColumn: FileTableColumnName;
     isAscending: boolean;
+
+    searchDebounceDelay: number;
 }
 
 export interface FileManagerStore {
