@@ -17,10 +17,15 @@ export interface ViewerTooltipProps extends PropsWithChildren {
 
 export const ViewerTooltip = ({ label, isFullscreen, className, children }: ViewerTooltipProps) => {
     const [isVisible, setVisible, setNotVisible] = useBoolean();
-    const [cancelShow, restartShowAfterDelay] = useTimeout(setVisible, setNotVisible, TOOLTIP_DELAY);
+    const [cancelShow, restartShowAfterDelay] = useTimeout(TOOLTIP_DELAY, setVisible, setNotVisible);
 
     return (
-        <div onMouseMove={restartShowAfterDelay} onClick={cancelShow} onMouseLeave={cancelShow} className={className}>
+        <div
+            onMouseMove={() => restartShowAfterDelay()}
+            onClick={cancelShow}
+            onMouseLeave={cancelShow}
+            className={className}
+        >
             {children}
             <AnimatePresence>
                 {isVisible && (

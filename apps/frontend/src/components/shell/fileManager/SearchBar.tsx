@@ -1,11 +1,38 @@
 import { cn } from 'cn';
+import { useState } from 'react';
 
 import { useFileManagerStore } from './store/useFileManagerStore';
 import { CloseIcon } from '@/components/icons/CloseIcon';
+import { useTimeout } from '@/hooks/useTimeout';
+
+// TODO: shell settings
+const SEARCH_DEBOUNCE_TIME = 300;
 
 export const SearchBar = () => {
     const searchQuery = useFileManagerStore(({ searchQuery }) => searchQuery);
     const setSearchQuery = useFileManagerStore(({ setSearchQuery }) => setSearchQuery);
+
+    const [inputValue, setInputValue] = useState('');
+
+    // `searchQuery` sometimes changes from beyond this component so we need to keep the input box in sync
+    const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
+    if (searchQuery !== prevSearchQuery) {
+        setPrevSearchQuery(searchQuery);
+        if (searchQuery !== inputValue) setInputValue(searchQuery);
+    }
+
+    const [cancel, restart] = useTimeout(SEARCH_DEBOUNCE_TIME);
+
+    const setQuery = (query: string) => {
+        setInputValue(query);
+
+        if (query) {
+            restart(() => setSearchQuery(query));
+        } else {
+            cancel();
+            setSearchQuery('');
+        }
+    };
 
     return (
         <div
@@ -15,18 +42,18 @@ export const SearchBar = () => {
             "
         >
             <input
-                value={searchQuery}
-                onChange={({ target }) => setSearchQuery(target.value)}
+                value={inputValue}
+                onChange={({ target }) => setQuery(target.value)}
                 placeholder="Search..."
                 className={cn(
                     `
                         m-0 h-full grow overflow-visible border-none bg-transparent px-2 py-1 text-xs
                         text-aero-tint-darkest outline-none
                     `,
-                    searchQuery || 'italic',
+                    inputValue || 'italic',
                 )}
             />
-            {searchQuery && (
+            {inputValue && (
                 <div
                     className="
                         mr-1 text-aero-tint/50
@@ -34,7 +61,7 @@ export const SearchBar = () => {
                         active:text-aero-tint/80
                     "
                 >
-                    <CloseIcon width={18} height={18} onClick={() => setSearchQuery('')} />
+                    <CloseIcon width={18} height={18} onClick={() => setQuery('')} />
                 </div>
             )}
         </div>

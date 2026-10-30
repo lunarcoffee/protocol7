@@ -15,7 +15,7 @@
         - grid view
         - ~~search functionality~~
             - ~~sorting in search mode~~
-            - debounce search input
+            - ~~debounce search input~~
         - ~~history~~
         - ~~persist sort mode~~
         - ~~status bar~~

@@ -18,11 +18,11 @@ export interface TooltipProps extends PropsWithChildren {
 
 export const Tooltip = ({ label, className, children, id }: TooltipProps) => {
     const [isVisible, setVisible, setNotVisible] = useBoolean();
-    const [cancelShow, restartShowAfterDelay] = useTimeout(setVisible, setNotVisible, TOOLTIP_DELAY);
+    const [cancelShow, restartShowAfterDelay] = useTimeout(TOOLTIP_DELAY, setVisible, setNotVisible);
 
     return (
         <div
-            onMouseMove={restartShowAfterDelay}
+            onMouseMove={() => restartShowAfterDelay()}
             onClick={cancelShow}
             onMouseLeave={cancelShow}
             className={className}

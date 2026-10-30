@@ -1,17 +1,17 @@
 import { useRef } from 'react';
 
 // cancellable and restartable timeout
-export const useTimeout = (fn: () => void, cancelFn: () => void, delay: number) => {
+export const useTimeout = (delay: number, defaultFn?: () => void, cancelFn?: () => void) => {
     const timeoutRef = useRef<number>(null);
 
     const cancel = () => {
-        cancelFn();
+        cancelFn?.();
         if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
     };
 
-    const restart = () => {
+    const restart = (fn?: () => void) => {
         cancel();
-        timeoutRef.current = window.setTimeout(fn, delay);
+        timeoutRef.current = window.setTimeout(fn ?? defaultFn!, delay);
     };
 
     return [cancel, restart] as const;
