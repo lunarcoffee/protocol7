@@ -21,7 +21,7 @@ export const FileManager = ({ pinfo, winfo }: FileManagerProps) => (
 const FileManagerWindow = ({ pinfo, winfo }: FileManagerProps) => {
     const refresh = useFileManagerStore(({ refresh }) => refresh);
 
-    usePromise(refresh, [refresh]);
+    usePromise(() => refresh(), [refresh]);
 
     return (
         <WindowFrame pinfo={pinfo} winfo={winfo}>

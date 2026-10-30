@@ -9,7 +9,6 @@ import { keyToCompareFn } from '@/utils/keyToCompareFn';
 
 import type { ProcessInfo, ProcessSettings } from '../system/processes/ProcessManager';
 import type { ItemStates, UpdateItemStatesAction } from '@/components/shell/controls/DragSelectContainer';
-import type { RecursiveSearchResult } from '@/hooks/useRecursiveSearch';
 import type { FsEntryMetadata } from '@protocol7/filesystem-types';
 import type { StoreApi } from 'zustand/vanilla';
 
@@ -32,7 +31,7 @@ export interface FileManagerStore {
     setCwd: (path: string) => Promise<void>;
 
     cwdEntries?: FsEntryMetadata[];
-    refresh: (refreshSearch?: boolean) => Promise<void>;
+    refresh: (restartSearch?: boolean) => Promise<void>;
 
     cwdBack: () => Promise<void>;
     cwdForward: () => Promise<void>;
@@ -45,11 +44,7 @@ export interface FileManagerStore {
     searchQuery: string;
     setSearchQuery: (query: string) => void;
     isDoneSearching: boolean;
-    searchRefreshToken: number;
-    // the actual searching (i.e., determining the entries to put in `cwdEntries`) doesn't happen in the store; it
-    // happens in `useRecursiveSearch` (in `SearchBar`), which calls this function to update `cwdEntries` and
-    // `isDoneSearching` as results come in
-    updateSearchResults: (result: RecursiveSearchResult) => void;
+    searchCwd: () => Promise<void>;
 
     // key is entry uid
     selectionStates: ItemStates<number>;
@@ -104,6 +99,7 @@ export const createFileManagerStore = (pinfo: ProcessInfo): FileManagerStoreAPI 
 
     let setCwdRequest = 0;
     let refreshRequest = 0;
+    let searchRequest = 0;
 
     return createStore<FileManagerStore>()((set, get) => ({
         backStack: ['/'],
@@ -114,9 +110,6 @@ export const createFileManagerStore = (pinfo: ProcessInfo): FileManagerStoreAPI 
             const cwd = normalizePath(entryPath);
             if (get().cwd() === cwd) return;
 
-            // don't fetch directory contents if we're searching, `useRecursiveSearch` will update by itself
-            if (get().searchQuery) return set({ backStack: [...get().backStack, cwd], forwardStack: [] });
-
             setCwdRequest = (setCwdRequest + 1) % 10_000;
             const curRequest = setCwdRequest;
 
@@ -125,30 +118,21 @@ export const createFileManagerStore = (pinfo: ProcessInfo): FileManagerStoreAPI 
 
             const { type, path } = result.metadata;
             if (curRequest === setCwdRequest && type === 'directory' && path === cwd) {
-                const cwdEntries = await readDirectorySorted(cwd, get().settings);
-                if (curRequest === setCwdRequest) {
-                    set({
-                        backStack: [...get().backStack, cwd],
-                        forwardStack: [],
-                        cwdEntries,
-                        selectionStates: makeSelectionStates(cwdEntries),
-                    });
-                }
+                set({ backStack: [...get().backStack, cwd], forwardStack: [] });
+                await get().refresh();
             }
         },
 
         // call `refresh` to initialize
         cwdEntries: undefined,
-        refresh: async (refreshSearch: boolean = false) => {
+        refresh: async (restartSearch: boolean = true) => {
             refreshRequest = (refreshRequest + 1) % 10_000;
             const curRequest = refreshRequest;
 
-            // this only happens with the refresh button in the menu bar
-            if (refreshSearch) return set({ searchRefreshToken: (get().searchRefreshToken + 1) % 10_000 });
+            if (restartSearch && get().searchQuery) return get().searchCwd();
 
-            // otherwise, only re-sort entries if we're in search mode
             const cwdEntries = get().searchQuery
-                ? sortEntries(get().cwdEntries!, get().settings)
+                ? sortEntries(get().cwdEntries ?? [], get().settings)
                 : await readDirectorySorted(get().cwd(), get().settings);
 
             if (curRequest === refreshRequest) {
@@ -174,19 +158,46 @@ export const createFileManagerStore = (pinfo: ProcessInfo): FileManagerStoreAPI 
 
         searchQuery: '',
         setSearchQuery: (searchQuery: string) => {
-            // cancel any ongoing refresh if we're starting another search
-            if (searchQuery) refreshRequest = (refreshRequest + 1) % 10_000;
+            if (searchQuery === get().searchQuery) return;
+
             set({ searchQuery });
+            if (searchQuery) {
+                void get().searchCwd();
+            } else {
+                searchRequest = (searchRequest + 1) % 10_000;
+                set({ isDoneSearching: true });
+                void get().refresh();
+            }
         },
         isDoneSearching: true,
-        searchRefreshToken: 0,
-        updateSearchResults: ({ isDone, entries }: RecursiveSearchResult) => {
-            const cwdEntries = sortEntries(entries, get().settings);
-            set({
-                isDoneSearching: isDone,
-                cwdEntries,
-                selectionStates: makeSelectionStates(cwdEntries, get().selectionStates),
-            });
+        searchCwd: async () => {
+            searchRequest = (searchRequest + 1) % 10_000;
+            const curRequest = ++searchRequest;
+
+            setCwdRequest = (setCwdRequest + 1) % 10_000;
+            refreshRequest = (refreshRequest + 1) % 10_000;
+
+            set({ isDoneSearching: false, cwdEntries: [], selectionStates: new Map() });
+
+            const normalizedQuery = get().searchQuery.toLocaleLowerCase();
+            const searchDirs = [get().cwd()];
+            const results: FsEntryMetadata[] = [];
+
+            while (searchDirs.length > 0) {
+                const dir = await readDirectory(searchDirs.pop()!);
+                if (curRequest !== searchRequest) return;
+                if (!dir?.ok) continue;
+
+                const entries = Object.values(dir.entries);
+                searchDirs.push(...entries.filter(({ type }) => type === 'directory').map(({ path }) => path));
+                results.push(...entries.filter(({ name }) => name.toLocaleLowerCase().includes(normalizedQuery)));
+
+                const cwdEntries = sortEntries(results, get().settings);
+                const selectionStates = makeSelectionStates(cwdEntries, get().selectionStates);
+                set({ cwdEntries, selectionStates });
+            }
+
+            set({ isDoneSearching: true });
         },
 
         selectionStates: new Map(),
@@ -198,7 +209,8 @@ export const createFileManagerStore = (pinfo: ProcessInfo): FileManagerStoreAPI 
             const settings = { ...get().settings, ...updates };
             set({ settings });
 
-            await get().refresh();
+            // the only relevant settings here are the sorting-related ones; we shouldn't restart a search for that
+            await get().refresh(false);
             await saveSettings(settings);
         },
     }));

@@ -121,7 +121,7 @@ export const ControlBar = () => {
             <SearchBar />
             <IconButton
                 Icon={RefreshIcon}
-                onClick={() => refresh(true)}
+                onClick={refresh}
                 disabled={isSearching}
                 label="Refresh"
                 className="mr-px rotate-66"

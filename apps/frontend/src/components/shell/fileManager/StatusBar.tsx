@@ -7,6 +7,7 @@ import type { FsFileMetadata } from '@protocol7/filesystem-types';
 export const StatusBar = () => {
     const cwdEntries = useFileManagerStore(({ cwdEntries }) => cwdEntries);
     const selectionStates = useFileManagerStore(({ selectionStates }) => selectionStates);
+    const searchQuery = useFileManagerStore(({ searchQuery }) => searchQuery);
 
     const entries = cwdEntries ?? [];
     const selectedEntries = Array.from(selectionStates.values()).filter(Boolean);
@@ -20,7 +21,7 @@ export const StatusBar = () => {
         files.length > 0 &&
             `${files.length} ${pluralize('file', files.length)} (total ${formatSizeBytes(totalFileSize)})`,
         dirs.length > 0 && `${dirs.length} ${pluralize('folder', dirs.length)}`,
-        files.length + dirs.length === 0 && 'Empty folder',
+        files.length + dirs.length === 0 && (searchQuery ? 'No results' : 'Empty folder'),
     ]
         .filter(Boolean)
         .join(', ');

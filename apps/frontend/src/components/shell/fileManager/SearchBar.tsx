@@ -1,27 +1,11 @@
 import { cn } from 'cn';
-import { useEffect } from 'react';
 
 import { useFileManagerStore } from './store/useFileManagerStore';
 import { CloseIcon } from '@/components/icons/CloseIcon';
-import { useRecursiveSearch } from '@/hooks/useRecursiveSearch';
 
 export const SearchBar = () => {
-    const cwd = useFileManagerStore(({ cwd }) => cwd());
-    const refresh = useFileManagerStore(({ refresh }) => refresh);
-
     const searchQuery = useFileManagerStore(({ searchQuery }) => searchQuery);
     const setSearchQuery = useFileManagerStore(({ setSearchQuery }) => setSearchQuery);
-    const searchRefreshToken = useFileManagerStore(({ searchRefreshToken }) => searchRefreshToken);
-    const updateSearchResults = useFileManagerStore(({ updateSearchResults }) => updateSearchResults);
-
-    const updateQuery = (query: string) => {
-        setSearchQuery(query);
-        if (query === '') void refresh();
-    };
-
-    const { entries, isDone } = useRecursiveSearch(cwd, searchQuery, searchRefreshToken);
-
-    useEffect(() => updateSearchResults({ entries, isDone }), [entries, isDone, updateSearchResults]);
 
     return (
         <div
@@ -32,7 +16,7 @@ export const SearchBar = () => {
         >
             <input
                 value={searchQuery}
-                onChange={({ target }) => updateQuery(target.value)}
+                onChange={({ target }) => setSearchQuery(target.value)}
                 placeholder="Search..."
                 className={cn(
                     `
@@ -50,7 +34,7 @@ export const SearchBar = () => {
                         active:text-aero-tint/80
                     "
                 >
-                    <CloseIcon width={18} height={18} onClick={() => updateQuery('')} />
+                    <CloseIcon width={18} height={18} onClick={() => setSearchQuery('')} />
                 </div>
             )}
         </div>
