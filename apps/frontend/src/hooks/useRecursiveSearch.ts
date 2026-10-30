@@ -11,19 +11,28 @@ export interface RecursiveSearchResult {
     entries: FsEntryMetadata[];
 }
 
-export const useRecursiveSearch = (dirPath: string, query: string): RecursiveSearchResult => {
+export const useRecursiveSearch = (dirPath: string, query: string, refreshToken: number): RecursiveSearchResult => {
     const prevDirPath = useRef(dirPath);
     const prevQuery = useRef(query);
+    const prevRefreshToken = useRef(refreshToken);
 
     const [isDone, setDone, setNotDone] = useBoolean();
     const [entries, setEntries] = useState<FsEntryMetadata[]>([]);
 
     usePromise(
         async (signal) => {
-            if (dirPath === prevDirPath.current && query === prevQuery.current) return;
+            if (
+                dirPath === prevDirPath.current &&
+                query === prevQuery.current &&
+                refreshToken === prevRefreshToken.current
+            ) {
+                return;
+            }
 
             prevDirPath.current = dirPath;
             prevQuery.current = query;
+            prevRefreshToken.current = refreshToken;
+
             if (query === '') return;
 
             setNotDone();
@@ -50,7 +59,7 @@ export const useRecursiveSearch = (dirPath: string, query: string): RecursiveSea
 
             setDone();
         },
-        [dirPath, query, setDone, setNotDone, setEntries],
+        [dirPath, query, setDone, setNotDone, setEntries, refreshToken],
     );
 
     return { isDone, entries };

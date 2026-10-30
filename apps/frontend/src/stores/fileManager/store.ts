@@ -32,7 +32,7 @@ export interface FileManagerStore {
     setCwd: (path: string) => Promise<void>;
 
     cwdEntries?: FsEntryMetadata[];
-    refresh: () => Promise<void>;
+    refresh: (refreshSearch?: boolean) => Promise<void>;
 
     cwdBack: () => Promise<void>;
     cwdForward: () => Promise<void>;
@@ -45,6 +45,7 @@ export interface FileManagerStore {
     searchQuery: string;
     setSearchQuery: (query: string) => void;
     isDoneSearching: boolean;
+    searchRefreshToken: number;
     // the actual searching (i.e., determining the entries to put in `cwdEntries`) doesn't happen in the store; it
     // happens in `useRecursiveSearch` (in `SearchBar`), which calls this function to update `cwdEntries` and
     // `isDoneSearching` as results come in
@@ -138,12 +139,14 @@ export const createFileManagerStore = (pinfo: ProcessInfo): FileManagerStoreAPI 
 
         // call `refresh` to initialize
         cwdEntries: undefined,
-        refresh: async () => {
+        refresh: async (refreshSearch: boolean = false) => {
             refreshRequest = (refreshRequest + 1) % 10_000;
             const curRequest = refreshRequest;
 
-            // TODO: make this also restart the search; this is pretty misleading
-            // only re-sort entries if we're in search mode
+            // this only happens with the refresh button in the menu bar
+            if (refreshSearch) return set({ searchRefreshToken: (get().searchRefreshToken + 1) % 10_000 });
+
+            // otherwise, only re-sort entries if we're in search mode
             const cwdEntries = get().searchQuery
                 ? sortEntries(get().cwdEntries!, get().settings)
                 : await readDirectorySorted(get().cwd(), get().settings);
@@ -176,6 +179,7 @@ export const createFileManagerStore = (pinfo: ProcessInfo): FileManagerStoreAPI 
             set({ searchQuery });
         },
         isDoneSearching: true,
+        searchRefreshToken: 0,
         updateSearchResults: ({ isDone, entries }: RecursiveSearchResult) => {
             const cwdEntries = sortEntries(entries, get().settings);
             set({

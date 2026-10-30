@@ -11,6 +11,7 @@ export const SearchBar = () => {
 
     const searchQuery = useFileManagerStore(({ searchQuery }) => searchQuery);
     const setSearchQuery = useFileManagerStore(({ setSearchQuery }) => setSearchQuery);
+    const searchRefreshToken = useFileManagerStore(({ searchRefreshToken }) => searchRefreshToken);
     const updateSearchResults = useFileManagerStore(({ updateSearchResults }) => updateSearchResults);
 
     const updateQuery = (query: string) => {
@@ -18,7 +19,7 @@ export const SearchBar = () => {
         if (query === '') void refresh();
     };
 
-    const { entries, isDone } = useRecursiveSearch(cwd, searchQuery);
+    const { entries, isDone } = useRecursiveSearch(cwd, searchQuery, searchRefreshToken);
 
     useEffect(() => updateSearchResults({ entries, isDone }), [entries, isDone, updateSearchResults]);
 
