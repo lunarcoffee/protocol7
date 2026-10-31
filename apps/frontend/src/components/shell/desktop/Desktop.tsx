@@ -9,12 +9,17 @@ import { usePromise } from '@/hooks/usePromise';
 import { useFocusWindow } from '@/hooks/windows';
 import { shallowArrayEquals } from '@/utils/shallowArrayEquals';
 
+import type { PropsWithProcessInfo } from '@/stores/system/processes/ProcessManager';
 import type { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 
-const Wallpaper = () => {
-    // TODO: get wallpaper from system settings eventually
-    const name = 'leaves';
-    const [file] = usePromise(() => readFile(`/users/lunarcoffee/Pictures/wallpapers/${name}.jpg`), [name]);
+interface ShellSettings {
+    wallpaperPath: string;
+}
+
+const Wallpaper = ({ pinfo }: PropsWithProcessInfo) => {
+    const { wallpaperPath } = pinfo.getSettings<ShellSettings>();
+
+    const [file] = usePromise(() => readFile(wallpaperPath), [wallpaperPath]);
     if (!file?.ok) return null;
 
     return (
@@ -29,10 +34,11 @@ const Wallpaper = () => {
     );
 };
 
-export const Desktop = ({ winfo: { wid, hasFocus } }: PropsWithWindowInfo) => {
+export type DesktopProps = PropsWithWindowInfo & PropsWithProcessInfo;
+
+export const Desktop = ({ winfo: { wid, hasFocus }, pinfo }: DesktopProps) => {
     const focusWindow = useFocusWindow();
 
-    // TODO: can use refresh trigger to implement refresh context menu option
     const [dir] = usePromise(() => readDirectory('/users/lunarcoffee/Desktop'), []);
     const iconFiles = dir?.ok ? Object.values(dir.entries) : [];
 
@@ -54,7 +60,7 @@ export const Desktop = ({ winfo: { wid, hasFocus } }: PropsWithWindowInfo) => {
 
     return (
         <div className="absolute inset-0 z-0" onMouseDown={() => focusWindow(wid)}>
-            <Wallpaper />
+            <Wallpaper pinfo={pinfo} />
             <DragSelectContainer
                 itemStates={iconStates}
                 updateItems={updateIcons}

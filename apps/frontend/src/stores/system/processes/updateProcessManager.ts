@@ -24,7 +24,9 @@ export const processDetachWindow = (system: Draft<System>, pid: ProcessID, wid: 
     }
 };
 
-/* process settings serialization utilties */
+/* process settings utilties */
+
+const processSettingsPath = (pname: string) => `/system/programs/${pname}/settings.json`;
 
 const parseProcessSettings = <T>(json: string): ProcessSettings<T> =>
     JSON.parse(json, (_, value) =>
@@ -38,6 +40,20 @@ const stringifyProcessSettings = <T>(settings: ProcessSettings<T>) =>
         value instanceof Map ? { _type: 'map', _value: Object.fromEntries(value.entries()) } : value,
     );
 
+export const readProcessSettings = async (pname: string) => {
+    const settingsFilePath = processSettingsPath(pname);
+    const settingsFile = await readFile(settingsFilePath);
+    if (!settingsFile?.ok) return console.error(`pm: failed to read app settings for ${pname}`);
+
+    const contents = new TextDecoder().decode(await settingsFile.contents());
+    return parseProcessSettings(contents);
+};
+
+export const makeSaveSettings =
+    (pname: string) =>
+    <T>(settings: ProcessSettings<T>) =>
+        writeFile(processSettingsPath(pname), stringifyProcessSettings(settings));
+
 /* process manager actions */
 
 type RequiredProcessProps = 'pid' | 'pname';
@@ -46,21 +62,13 @@ type OptionalProcessProps = 'isHeadless';
 export type ProcessCreationInfo = Pick<ProcessInfo, RequiredProcessProps> &
     Partial<Pick<ProcessInfo, OptionalProcessProps>>;
 
-export const processCreate = async (
-    info: ProcessCreationInfo,
-    set: (updater: (state: Draft<SystemStore>) => void) => void,
-    signal?: AbortSignal,
-) => {
+export type ImmerSetter = (updater: (state: Draft<SystemStore>) => void) => void;
+
+export const processCreate = async (info: ProcessCreationInfo, set: ImmerSetter, signal?: AbortSignal) => {
     const { pid, pname } = info;
 
-    const settingsFilePath = `/system/programs/${pname}/settings.json`;
-    const settingsFile = await readFile(settingsFilePath);
-    if (!settingsFile?.ok) return console.error(`pm: failed to read app settings for ${pname}`);
-
-    const contents = new TextDecoder().decode(await settingsFile.contents());
-    const settings = parseProcessSettings(contents);
-
-    if (signal?.aborted) return;
+    const settings = await readProcessSettings(pname);
+    if (!settings || signal?.aborted) return;
 
     set(({ pm: { processes } }) => {
         if (processes.has(pid)) console.warn(`pm: recreating existing pid ${pid}`);
@@ -69,12 +77,9 @@ export const processCreate = async (
             windows: [],
             isHeadless: false,
 
-            // settings are only read from file at process creation; programs are expected to maintain any relevant
-            // state internally and use the process API only to persist changes through `saveSettings`
             settings,
             getSettings: <T>() => settings as ProcessSettings<T>,
-            saveSettings: <T>(settings: ProcessSettings<T>) =>
-                writeFile(settingsFilePath, stringifyProcessSettings(settings)),
+            saveSettings: makeSaveSettings(pname),
 
             ...info,
         });
@@ -92,4 +97,21 @@ export const processDestroy = (system: Draft<System>, pid: ProcessID) => {
         processes.delete(pid);
         process.windows.forEach((wid) => windowDestroy(system, wid));
     }
+};
+
+export const processReloadSettings = async ({ processes }: ProcessManager, pid: ProcessID, set: ImmerSetter) => {
+    const process = processes.get(pid);
+    if (!process) return;
+
+    const settings = await readProcessSettings(process.pname);
+    if (!settings) return;
+
+    set(({ pm: { processes } }) => {
+        const process = processes.get(pid);
+        if (!process) return;
+
+        process.settings = settings;
+        process.getSettings = <T>() => settings as ProcessSettings<T>;
+        process.saveSettings = makeSaveSettings(process.pname);
+    });
 };

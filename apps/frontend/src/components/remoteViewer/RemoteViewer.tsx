@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useRef, useState } from 'react';
 
 import { useInitializeSystem } from '../../hooks/system/useInitializeSystem';
-import { GraphicalShell } from '../shell/GraphicalShell';
+import { Shell } from '../shell/Shell';
 import { ViewerControls } from './ViewerControls';
 import { useBoolean } from '@/hooks/useBoolean';
 
@@ -73,7 +73,7 @@ export const RemoteViewer = () => {
                                 tracking-normal
                             "
                         >
-                            <GraphicalShell />
+                            <Shell />
                         </div>
                     ) : (
                         <LoadingFallback key="loading-fallback" />

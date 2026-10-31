@@ -8,7 +8,7 @@ import { PID_SHELL, PNAME_SHELL } from '@/stores/system/processes/ProcessManager
 import { WID_DESKTOP, WID_TASKBAR } from '@/stores/system/windows/WindowManager';
 import { SHELL_ROOT_ELEMENT_ID } from '@/utils/getShellRootElement';
 
-export const GraphicalShell = () => {
+export const Shell = () => {
     const createProcess = useCreateProcess();
     const destroyProcess = useDestroyProcess();
     const createWindow = useCreateWindow();
@@ -20,7 +20,11 @@ export const GraphicalShell = () => {
             if (signal.aborted) return;
 
             createWindow({ pid: PID_SHELL, wid: WID_TASKBAR, render: () => <Taskbar /> });
-            createWindow({ pid: PID_SHELL, wid: WID_DESKTOP, render: (_, winfo) => <Desktop winfo={winfo} /> });
+            createWindow({
+                pid: PID_SHELL,
+                wid: WID_DESKTOP,
+                render: (pinfo, winfo) => <Desktop winfo={winfo} pinfo={pinfo} />,
+            });
         },
         [createProcess, createWindow],
         () => destroyProcess(PID_SHELL),

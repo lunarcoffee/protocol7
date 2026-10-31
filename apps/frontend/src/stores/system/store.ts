@@ -2,7 +2,12 @@ import { immer } from 'zustand/middleware/immer';
 import { type StoreApi, createStore } from 'zustand/vanilla';
 
 import { DEFAULT_PROCESS_MANAGER, type ProcessID, type ProcessManager } from './processes/ProcessManager';
-import { type ProcessCreationInfo, processCreate, processDestroy } from './processes/updateProcessManager';
+import {
+    type ProcessCreationInfo,
+    processCreate,
+    processDestroy,
+    processReloadSettings,
+} from './processes/updateProcessManager';
 import {
     type WindowCreationInfo,
     windowCreate,
@@ -30,6 +35,7 @@ export interface System {
 export interface SystemStore extends System {
     createProcess: (info: ProcessCreationInfo, signal?: AbortSignal) => Promise<void>;
     destroyProcess: (pid: ProcessID) => void;
+    reloadProcessSettings: (pid: ProcessID) => Promise<void>;
 
     createWindow: (info: WindowCreationInfo) => void;
     destroyWindow: (wid: WindowID) => void;
@@ -53,11 +59,12 @@ const createInitialSystem = (hostname: string, fileManifest: RemoteFsManifest): 
 
 export const createSystemStore = (hostname: string, fileManifest: RemoteFsManifest): SystemStoreAPI =>
     createStore<SystemStore>()(
-        immer((set) => ({
+        immer((set, get) => ({
             ...createInitialSystem(hostname, fileManifest),
 
             createProcess: (info, signal) => processCreate(info, set, signal),
             destroyProcess: (pid) => set((system) => processDestroy(system, pid)),
+            reloadProcessSettings: (pid) => processReloadSettings(get().pm, pid, set),
 
             createWindow: (info) => set((system) => windowCreate(system, info)),
             destroyWindow: (wid) => set((system) => windowDestroy(system, wid)),
