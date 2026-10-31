@@ -56,10 +56,10 @@ export const PositionAnchor = ({ position, offsetForCursor, className, children 
         if (x + width > right) setLeft(rightEdge - width);
 
         // flip upwards instead of overflowing vertically
-        if (y + height > bottom) setTop(sy - height - CURSOR_HEIGHT - CURSOR_PADDING);
+        if (y + height > bottom) setTop(sy - height - (offsetForCursor ? CURSOR_HEIGHT + CURSOR_PADDING : 0));
 
         setCanDisplay();
-    }, [x, y, sx, sy, setCanDisplay]);
+    }, [x, y, sx, sy, offsetForCursor, setCanDisplay]);
 
     return (
         <>
@@ -70,6 +70,7 @@ export const PositionAnchor = ({ position, offsetForCursor, className, children 
                 </div>,
                 document.body,
             )}
+
             {canDisplay &&
                 createPortal(
                     <div className={cn(className, 'absolute')} style={{ left, top }}>

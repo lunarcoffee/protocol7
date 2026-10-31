@@ -1,13 +1,11 @@
 import ReactMarkdown from 'react-markdown';
 
 import { PositionAnchor } from './PositionAnchor';
+import { useShellProcessSettings } from '@/hooks/processes/useShellProcessSettings';
 import { useBoolean } from '@/hooks/useBoolean';
 import { useTimeout } from '@/hooks/useTimeout';
 
 import type { PropsWithChildren } from 'react';
-
-// TODO: maybe move this to a global user settings store eventually
-const TOOLTIP_DELAY = 500;
 
 export interface TooltipProps extends PropsWithChildren {
     label: string;
@@ -17,13 +15,15 @@ export interface TooltipProps extends PropsWithChildren {
 }
 
 export const Tooltip = ({ label, className, children, id }: TooltipProps) => {
+    const tooltipDelay = useShellProcessSettings(({ tooltipDelay }) => tooltipDelay);
+
     const [isVisible, setVisible, setNotVisible] = useBoolean();
-    const [cancelShow, restartShowAfterDelay] = useTimeout(TOOLTIP_DELAY, setVisible, setNotVisible);
+    const [cancelShow, restartShowAfterDelay] = useTimeout(tooltipDelay, setVisible, setNotVisible);
 
     return (
         <div
             onMouseMove={() => restartShowAfterDelay()}
-            onClick={cancelShow}
+            onMouseDown={cancelShow}
             onMouseLeave={cancelShow}
             className={className}
             id={id}
@@ -33,7 +33,7 @@ export const Tooltip = ({ label, className, children, id }: TooltipProps) => {
                 <PositionAnchor offsetForCursor className="z-[calc(infinity)]">
                     <div
                         className="
-                            max-w-lg rounded-sm border border-aero-tint-dark bg-linear-to-b from-gray-100
+                            max-w-lg rounded-sm border border-aero-tint-dark bg-linear-to-br from-gray-100
                             to-aero-tint-highlight shadow-md shadow-aero-tint-darkest/30
                         "
                         // prevent the tooltip from being kept open if the mouse enters this div before it unmounts

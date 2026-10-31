@@ -1,10 +1,8 @@
 import { type DependencyList, useEffect, useState } from 'react';
 
-import { useToggle } from './useToggle';
+import { type RefreshSignal, useRefreshToken } from './useRefreshToken';
 
-export type RefreshTrigger = () => void;
-
-export type UsePromiseResult<T> = [T | undefined, RefreshTrigger];
+export type UsePromiseResult<T> = [T | undefined, RefreshSignal];
 
 export const usePromise = <T>(
     promiseFn: (signal: AbortSignal) => Promise<T>,
@@ -12,7 +10,7 @@ export const usePromise = <T>(
     cleanupFn?: () => void,
 ): UsePromiseResult<T> => {
     const [result, setResult] = useState<T>();
-    const [refreshSignal, triggerRefresh] = useToggle();
+    const [refreshToken, refresh] = useRefreshToken();
 
     useEffect(() => {
         let controller = new AbortController();
@@ -29,7 +27,7 @@ export const usePromise = <T>(
         };
         // clients should declare the relevant dependencies, including those used in `promiseFn`
         // oxlint-disable-next-line react-hooks/exhaustive-deps
-    }, [...deps, refreshSignal]);
+    }, [...deps, refreshToken]);
 
-    return [result, triggerRefresh];
+    return [result, refresh];
 };

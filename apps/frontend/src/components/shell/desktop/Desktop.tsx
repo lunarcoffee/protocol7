@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { ContextMenu } from '../controls/ContextMenu';
 import { DragSelectContainer } from '../controls/DragSelectContainer';
 import { DesktopIcon } from './DesktopIcon';
 import { readDirectory } from '@/filesystem/api/readDirectory';
@@ -9,12 +10,10 @@ import { usePromise } from '@/hooks/usePromise';
 import { useFocusWindow } from '@/hooks/windows';
 import { shallowArrayEquals } from '@/utils/shallowArrayEquals';
 
+import type { ListMenuItem } from '../controls/ListMenu';
+import type { ShellSettings } from '@/hooks/processes/useShellProcessSettings';
 import type { PropsWithProcessInfo } from '@/stores/system/processes/ProcessManager';
 import type { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
-
-interface ShellSettings {
-    wallpaperPath: string;
-}
 
 const Wallpaper = ({ pinfo }: PropsWithProcessInfo) => {
     const { wallpaperPath } = pinfo.getSettings<ShellSettings>();
@@ -28,6 +27,7 @@ const Wallpaper = ({ pinfo }: PropsWithProcessInfo) => {
                 src={file.getObjectURL()}
                 alt="desktop wallpaper"
                 draggable={false}
+                onContextMenu={() => {}}
                 className="absolute size-full object-cover object-center"
             />
         </div>
@@ -58,19 +58,36 @@ export const Desktop = ({ winfo: { wid, hasFocus }, pinfo }: DesktopProps) => {
         if (!hasFocus) updateIcons({ action: 'set-all', value: false });
     }, [hasFocus, updateIcons]);
 
+    const contextMenuItems: ListMenuItem[] = [
+        { type: 'button', label: 'test', onClick: () => {} },
+        { type: 'button', label: 'test 2', icon: 'devices/drive-harddisk.png', onClick: () => {} },
+        {
+            type: 'submenu',
+            label: 'longer item name that ',
+            subItems: [
+                { type: 'button', label: 'subitem 1', onClick: () => {} },
+                { type: 'button', label: 'subitem 2', icon: 'devices/drive-disc.png', onClick: () => {} },
+            ],
+        },
+        { type: 'separator' },
+        { type: 'button', label: 'test 3', icon: 'places/folder.png', onClick: () => {} },
+    ];
+
     return (
         <div className="absolute inset-0 z-0" onMouseDown={() => focusWindow(wid)}>
             <Wallpaper pinfo={pinfo} />
-            <DragSelectContainer
-                itemStates={iconStates}
-                updateItems={updateIcons}
-                renderItem={(key, isSelected, onClick) => {
-                    const { path } = iconFiles.find(({ uid }) => uid === key)!;
-                    return <DesktopIcon key={key} iconPath={path} isSelected={isSelected} onClick={onClick} />;
-                }}
-                className="absolute flex size-full flex-row flex-wrap gap-2 p-1"
-                uniqueId="desktop"
-            />
+            <ContextMenu items={contextMenuItems}>
+                <DragSelectContainer
+                    itemStates={iconStates}
+                    updateItems={updateIcons}
+                    renderItem={(key, isSelected, onClick) => {
+                        const { path } = iconFiles.find(({ uid }) => uid === key)!;
+                        return <DesktopIcon key={key} iconPath={path} isSelected={isSelected} onClick={onClick} />;
+                    }}
+                    className="absolute flex size-full flex-row flex-wrap gap-2 p-1"
+                    uniqueId="desktop"
+                />
+            </ContextMenu>
         </div>
     );
 };

@@ -1,3 +1,5 @@
+import { getShellRootElement } from './getShellRootElement';
+
 import type { Dimensions } from './Dimensions';
 
 export interface HandleMouseDragArgs {
@@ -13,7 +15,9 @@ export interface HandleMouseDragArgs {
 // useful in mouseDown handlers where you want to track the associated drag movement that comes after - see
 // `WindowFrame` or `ResizeHandles` for examples
 export const handleMouseDrag = ({ initialPosition: { x, y }, onMove, onDragEnd, cursor }: HandleMouseDragArgs) => {
-    if (cursor) document.body.style.cursor = cursor;
+    const shellRoot = getShellRootElement()!;
+
+    if (cursor) shellRoot.style.cursor = cursor;
 
     const mouseMoveListener = (event: MouseEvent) => {
         const dx = event.clientX - x;
@@ -23,14 +27,16 @@ export const handleMouseDrag = ({ initialPosition: { x, y }, onMove, onDragEnd, 
     };
 
     const mouseUpListener = () => {
-        document.removeEventListener('mousemove', mouseMoveListener);
-        document.removeEventListener('mouseup', mouseUpListener);
+        shellRoot.removeEventListener('mousemove', mouseMoveListener);
+        shellRoot.removeEventListener('mouseleave', mouseUpListener);
+        shellRoot.removeEventListener('mouseup', mouseUpListener);
 
-        if (cursor) document.body.style.cursor = 'unset';
+        if (cursor) shellRoot.style.cursor = 'unset';
 
         onDragEnd?.();
     };
 
-    document.addEventListener('mousemove', mouseMoveListener);
-    document.addEventListener('mouseup', mouseUpListener);
+    shellRoot.addEventListener('mousemove', mouseMoveListener);
+    shellRoot.addEventListener('mouseleave', mouseUpListener);
+    shellRoot.addEventListener('mouseup', mouseUpListener);
 };
