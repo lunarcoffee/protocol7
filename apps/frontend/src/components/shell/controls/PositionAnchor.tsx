@@ -19,8 +19,8 @@ const toScreenPosition = (position: Dimensions, offsetForCursor?: boolean) => {
         y += CURSOR_HEIGHT;
     }
 
-    const shellRect = getShellRootElement()!.getBoundingClientRect();
-    return [x - shellRect.left, y - shellRect.top] as const;
+    const { left, top } = getShellRootElement()!.getBoundingClientRect();
+    return [x - left, y - top] as const;
 };
 
 export interface PositionAnchorProps extends PropsWithChildren {

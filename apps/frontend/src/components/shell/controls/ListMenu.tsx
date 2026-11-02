@@ -1,10 +1,11 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { type PropsWithChildren, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 
 import { rightCaretIcon } from '../fileManager/Breadcrumbs';
 import { PositionAnchor, type PositionAnchorProps } from './PositionAnchor';
+import { useShellProcessSettings } from '@/hooks/processes/useShellProcessSettings';
 import { useBoolean } from '@/hooks/useBoolean';
+import { useTimeout } from '@/hooks/useTimeout';
 import { getSystemIcon } from '@/utils/getSystemIcon';
 
 import type { Dimensions } from '@/utils/Dimensions';
@@ -26,6 +27,7 @@ interface ListMenuRowProps<T> {
 
 const ListMenuButtonRow = ({ item, hide }: ListMenuRowProps<ListMenuButtonItem>) => {
     const { label, icon, onClick } = item;
+
     return (
         <div
             onClick={() => {
@@ -47,9 +49,15 @@ const ListMenuButtonRow = ({ item, hide }: ListMenuRowProps<ListMenuButtonItem>)
 const ListMenuSubmenuRow = ({ item, hide }: ListMenuRowProps<ListMenuSubmenuItem>) => {
     const { label, icon, subItems } = item;
 
+    const submenuHideDelay = useShellProcessSettings(({ listMenuSubmenuHideDelay }) => listMenuSubmenuHideDelay);
+
     const [isVisible, setVisible, setNotVisible] = useBoolean();
+    const [cancelClose, restartClose] = useTimeout(submenuHideDelay, setNotVisible);
+
+    // we need the position of this row itself in order to position the submenu
     const rowRef = useRef<HTMLDivElement>(null);
 
+    // `PositionAnchor` props
     const [initialPosition, setInitialPosition] = useState<Dimensions>();
     const [fallbackX, setFallbackX] = useState<number>();
 
@@ -64,8 +72,11 @@ const ListMenuSubmenuRow = ({ item, hide }: ListMenuRowProps<ListMenuSubmenuItem
     return (
         <div
             ref={rowRef}
-            onMouseEnter={setVisible}
-            onMouseLeave={setNotVisible}
+            onMouseEnter={() => {
+                cancelClose();
+                setVisible();
+            }}
+            onMouseLeave={() => restartClose()}
             className="
                 flex flex-row gap-1 rounded-xs bg-linear-to-b py-0.5 pl-1 inset-ring-gray-200
                 outline-aero-tint/40
@@ -75,11 +86,6 @@ const ListMenuSubmenuRow = ({ item, hide }: ListMenuRowProps<ListMenuSubmenuItem
             <div className="w-6 px-1">{icon && <img src={getSystemIcon(icon)} width={16} height={16} />}</div>
             <div className="pr-2">{label}</div>
             <div className="flex grow items-center justify-end">{rightCaretIcon}</div>
-            {fallbackX &&
-                createPortal(
-                    <div className="absolute size-2 bg-red-500" style={{ left: fallbackX.x, top: fallbackX.y }} />,
-                    document.body,
-                )}
             {initialPosition && fallbackX && (
                 <ListMenu
                     items={subItems}
@@ -98,6 +104,7 @@ const ListMenuSubmenuRow = ({ item, hide }: ListMenuRowProps<ListMenuSubmenuItem
 export interface ListMenuProps extends PropsWithChildren {
     items: ListMenuItem[];
     isVisible?: boolean;
+    // used to hide the menu after clicking an item
     hide: () => void;
 
     positionAnchorProps?: PositionAnchorProps;
