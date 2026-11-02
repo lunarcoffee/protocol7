@@ -2,7 +2,7 @@ import { cn } from 'cn';
 import { AnimatePresence, motion } from 'motion/react';
 
 import { useProcess } from '@/hooks/processes';
-import { useSystemStoreWithEqualityFn } from '@/hooks/system/useSystemStoreWithEqualityFn';
+import { useSystemStoreWithEqualityFn } from '@/hooks/system';
 import { useFocusWindow, useMinimizeWindow } from '@/hooks/windows';
 import { WID_DESKTOP, WID_LAUNCHER, WID_TASKBAR, type WindowInfo } from '@/stores/system/windows/WindowManager';
 import { getSystemIcon } from '@/utils/getSystemIcon';

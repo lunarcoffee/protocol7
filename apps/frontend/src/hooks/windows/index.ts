@@ -8,3 +8,4 @@ export { useNextWindowID } from './useNextWindowID';
 export { useResizeWindow } from './useResizeWindow';
 export { useWindow } from './useWindow';
 export { useWindowIDs } from './useWindowIDs';
+export { useSetTitleWindow } from './useSetTitleWindow';

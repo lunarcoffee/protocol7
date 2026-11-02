@@ -1,7 +1,7 @@
 import ReactMarkdown from 'react-markdown';
 
 import { PositionAnchor } from './PositionAnchor';
-import { useShellProcessSettings } from '@/hooks/processes/useShellProcessSettings';
+import { useShellProcessSettings } from '@/hooks/processes';
 import { useBoolean } from '@/hooks/useBoolean';
 import { useTimeout } from '@/hooks/useTimeout';
 

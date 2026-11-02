@@ -3,3 +3,4 @@ export { useDestroyProcess } from './useDestroyProcess';
 export { useNextProcessID } from './useNextProcessID';
 export { useProcess } from './useProcess';
 export { useProcessIDs } from './useProcessIDs';
+export { useShellProcessSettings, type ShellSettings } from './useShellProcessSettings';

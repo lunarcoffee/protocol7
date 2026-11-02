@@ -3,7 +3,7 @@ import { type PropsWithChildren, useEffect, useRef, useState } from 'react';
 
 import { rightCaretIcon } from '../fileManager/Breadcrumbs';
 import { PositionAnchor, type PositionAnchorProps } from './PositionAnchor';
-import { useShellProcessSettings } from '@/hooks/processes/useShellProcessSettings';
+import { useShellProcessSettings } from '@/hooks/processes';
 import { useBoolean } from '@/hooks/useBoolean';
 import { useTimeout } from '@/hooks/useTimeout';
 import { getSystemIcon } from '@/utils/getSystemIcon';

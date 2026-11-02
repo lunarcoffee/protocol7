@@ -11,7 +11,7 @@ import { useFocusWindow } from '@/hooks/windows';
 import { shallowArrayEquals } from '@/utils/shallowArrayEquals';
 
 import type { ListMenuItem } from '../controls/ListMenu';
-import type { ShellSettings } from '@/hooks/processes/useShellProcessSettings';
+import type { ShellSettings } from '@/hooks/processes';
 import type { PropsWithProcessInfo } from '@/stores/system/processes/ProcessManager';
 import type { PropsWithWindowInfo } from '@/stores/system/windows/WindowManager';
 
