@@ -78,6 +78,8 @@ export const processCreate = async (info: ProcessCreationInfo, set: ImmerSetter,
             isHeadless: false,
 
             settings,
+            // assume the client code knows what it's doing
+            // oxlint-disable-next-line typescript/no-unsafe-type-assertion
             getSettings: <T>() => settings as ProcessSettings<T>,
             saveSettings: makeSaveSettings(pname),
 
@@ -111,6 +113,8 @@ export const processReloadSettings = async ({ processes }: ProcessManager, pid: 
         if (!process) return;
 
         process.settings = settings;
+        // assume the client code knows what it's doing
+        // oxlint-disable-next-line typescript/no-unsafe-type-assertion
         process.getSettings = <T>() => settings as ProcessSettings<T>;
         process.saveSettings = makeSaveSettings(process.pname);
     });

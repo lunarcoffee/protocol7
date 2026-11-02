@@ -46,8 +46,8 @@
     - taskbar
         - extra chrome
     - system clipboard
-    - context menus
-        - on desktop, in file manager, on taskbar, etc.
+    - ~~context menu control~~
+        - implement on desktop, in file manager, on taskbar, etc.
     - custom cursor icons
     - app launcher menu
     - text editor, photo/media viewer, terminal, web browser, etc.

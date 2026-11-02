@@ -39,7 +39,7 @@ export type DesktopProps = PropsWithWindowInfo & PropsWithProcessInfo;
 export const Desktop = ({ winfo: { wid, hasFocus }, pinfo }: DesktopProps) => {
     const focusWindow = useFocusWindow();
 
-    const [dir] = usePromise(() => readDirectory('/users/lunarcoffee/Desktop'), []);
+    const [dir, refreshDir] = usePromise(() => readDirectory('/users/lunarcoffee/Desktop'), []);
     const iconFiles = dir?.ok ? Object.values(dir.entries) : [];
 
     const [iconStates, updateIcons] = useDragSelectReducer<number>();
@@ -59,14 +59,23 @@ export const Desktop = ({ winfo: { wid, hasFocus }, pinfo }: DesktopProps) => {
     }, [hasFocus, updateIcons]);
 
     const contextMenuItems: ListMenuItem[] = [
-        { type: 'button', label: 'test', onClick: () => {} },
+        { type: 'button', label: 'Refresh', onClick: refreshDir },
         { type: 'button', label: 'test 2', icon: 'devices/drive-harddisk.png', onClick: () => {} },
         {
             type: 'submenu',
-            label: 'longer item name that ',
+            label: 'longer item name that is long and will make this expand',
             subItems: [
                 { type: 'button', label: 'subitem 1', onClick: () => {} },
-                { type: 'button', label: 'subitem 2', icon: 'devices/drive-disc.png', onClick: () => {} },
+                { type: 'button', label: 'subitem 2', icon: 'devices/network-wireless.png', onClick: () => {} },
+                {
+                    type: 'submenu',
+                    label: 'EVEN MORE MENU!!!',
+                    subItems: [
+                        { type: 'button', label: 'test 2', icon: 'devices/drive-harddisk.png', onClick: () => {} },
+                        { type: 'button', label: 'test 2', icon: 'devices/drive-harddisk.png', onClick: () => {} },
+                        { type: 'button', label: 'test 2', icon: 'devices/drive-harddisk.png', onClick: () => {} },
+                    ],
+                },
             ],
         },
         { type: 'separator' },

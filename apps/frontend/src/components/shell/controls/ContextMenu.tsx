@@ -31,7 +31,7 @@ export const ContextMenu = ({ items, className, children }: ContextMenuProps) =>
     return (
         <div onContextMenu={showContextMenu} className={className}>
             {children}
-            <ListMenu items={items} isVisible={isVisible} positionRefreshToken={refreshToken} />
+            <ListMenu items={items} isVisible={isVisible} hide={hideContextMenu} positionRefreshToken={refreshToken} />
         </div>
     );
 };
