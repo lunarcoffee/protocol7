@@ -8,8 +8,6 @@ import { useBoolean } from '@/hooks/useBoolean';
 import { useTimeout } from '@/hooks/useTimeout';
 import { getSystemIcon } from '@/utils/getSystemIcon';
 
-import type { Dimensions } from '@/utils/Dimensions';
-
 type ListMenuLabeledItem = { label: string; icon?: string };
 type ListMenuButtonItem = ListMenuLabeledItem & { type: 'button'; onClick: () => void };
 type ListMenuSubmenuItem = ListMenuLabeledItem & { type: 'submenu'; subItems: ListMenuItem[] };
@@ -57,16 +55,17 @@ const ListMenuSubmenuRow = ({ item, hide }: ListMenuRowProps<ListMenuSubmenuItem
     // we need the position of this row itself in order to position the submenu
     const rowRef = useRef<HTMLDivElement>(null);
 
-    // `PositionAnchor` props
-    const [initialPosition, setInitialPosition] = useState<Dimensions>();
-    const [fallbackX, setFallbackX] = useState<number>();
+    const [positionAnchorProps, setPositionAnchorProps] = useState<PositionAnchorProps>();
 
     useEffect(() => {
         if (!rowRef.current) return;
 
-        const { top, right, left } = rowRef.current.getBoundingClientRect();
-        setInitialPosition({ x: right, y: top });
-        setFallbackX(left);
+        const { top, right, left, height } = rowRef.current.getBoundingClientRect();
+        setPositionAnchorProps({
+            position: { x: right, y: top },
+            fallbackX: left,
+            flippedYOffset: height,
+        });
     }, []);
 
     return (
@@ -86,7 +85,8 @@ const ListMenuSubmenuRow = ({ item, hide }: ListMenuRowProps<ListMenuSubmenuItem
             <div className="w-6 px-1">{icon && <img src={getSystemIcon(icon)} width={16} height={16} />}</div>
             <div className="pr-2">{label}</div>
             <div className="flex grow items-center justify-end">{rightCaretIcon}</div>
-            {initialPosition && fallbackX && (
+
+            {positionAnchorProps && (
                 <ListMenu
                     items={subItems}
                     isVisible={isVisible}
@@ -94,7 +94,7 @@ const ListMenuSubmenuRow = ({ item, hide }: ListMenuRowProps<ListMenuSubmenuItem
                         hide();
                         setNotVisible();
                     }}
-                    positionAnchorProps={{ position: initialPosition, fallbackX }}
+                    positionAnchorProps={positionAnchorProps}
                 />
             )}
         </div>

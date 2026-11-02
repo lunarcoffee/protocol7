@@ -12,7 +12,7 @@ import type { Dimensions } from '@/utils/Dimensions';
 const CURSOR_HEIGHT = 20;
 const CURSOR_PADDING = 8;
 
-const toScreenPosition = (position: Dimensions, offsetForCursor?: boolean) => {
+const toScreenPosition = (position: Dimensions, offsetForCursor: boolean) => {
     let { x, y } = position;
     if (offsetForCursor) {
         x += CURSOR_PADDING;
@@ -27,18 +27,27 @@ export interface PositionAnchorProps extends PropsWithChildren {
     // position in client coordinates; defaults to the cursor position at the time of first render
     position?: Dimensions;
 
-    // if the children overflow the screen horizontally, anchor the children's right edge to this coordinate; if not
-    // provided, this defaults to the right edge of the screen
+    // if the children overflow the screen horizontally, anchor the children's right edge to this client coordinate; if
+    // not provided, this defaults to the right edge of the screen
     fallbackX?: number;
-    // whether to nudge the contents out of the way of the cursor
+    // whether to nudge the children away from the cursor
     offsetForCursor?: boolean;
+    // vertical offset to add if the children end up being flipped vertically
+    flippedYOffset?: number;
 
     className?: string;
 }
 
-// tries to anchor `children` to the bottom right of the given `position`, adjusting as necessary to keep the entire
-// contents visible on the screen without clipping
-export const PositionAnchor = ({ position, fallbackX, offsetForCursor, className, children }: PositionAnchorProps) => {
+// tries to anchor its `children` to the bottom right of the given `position`, shifting horizontally and flipping
+// vertically as necessary to keep the the entirety of the children visible on the screen
+export const PositionAnchor = ({
+    position,
+    fallbackX,
+    offsetForCursor = false,
+    flippedYOffset = 0,
+    className,
+    children,
+}: PositionAnchorProps) => {
     // initial anchor position
     const [screenX, screenY] = toScreenPosition(position ?? getMousePosition(), offsetForCursor);
 
@@ -63,10 +72,10 @@ export const PositionAnchor = ({ position, fallbackX, offsetForCursor, className
 
         // flip upwards instead of overflowing vertically
         const cursorPadding = offsetForCursor ? CURSOR_HEIGHT + CURSOR_PADDING : 0;
-        if (screenY + childrenHeight > screenHeight) setTop(screenY - childrenHeight - cursorPadding);
+        if (screenY + childrenHeight > screenHeight) setTop(screenY - childrenHeight - cursorPadding + flippedYOffset);
 
         setCanDisplay();
-    }, [screenX, screenY, fallbackX, offsetForCursor, setCanDisplay]);
+    }, [screenX, screenY, fallbackX, flippedYOffset, offsetForCursor, setCanDisplay]);
 
     return (
         <>
