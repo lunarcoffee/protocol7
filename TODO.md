@@ -35,6 +35,7 @@
         - autolaunch scripts (e.g., for a welcome program)
     - windows
         - ~~window icons (also on taskbar)~~
+        - winfo context (also consider pinfo context)
         - snap to sides
             - maybe consider snap-based layouting
         - dialog/alert API?

@@ -11,6 +11,7 @@ import type { Dimensions } from '@/utils/Dimensions';
 
 // so that we can interpolate values of type `K` in template literals
 export interface DragSelectItemKey {
+    // caveat: this shouldn't return anything containing whitespace (we interpolate this value in DOM element IDs)
     toString(): string;
 }
 

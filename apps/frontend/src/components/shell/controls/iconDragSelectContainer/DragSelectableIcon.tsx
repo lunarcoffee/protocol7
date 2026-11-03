@@ -1,40 +1,52 @@
 import { cn } from 'cn';
 
 import { Tooltip } from '@/components/shell/controls/Tooltip';
-import { FileManager } from '@/components/shell/fileManager/FileManager';
-import { readMetadata } from '@/filesystem/api/readMetadata';
-import { useCreateProcess, useNextProcessID } from '@/hooks/processes';
 import { usePromise } from '@/hooks/usePromise';
-import { useCreateWindow, useNextWindowID } from '@/hooks/windows';
-import { escapeMarkdown } from '@/utils/escapeMarkdown';
 import { getIconForEntry } from '@/utils/getIconForEntry';
+import { getSystemIcon } from '@/utils/getSystemIcon';
 
 import type { MouseEvent } from 'react';
 
-export interface DesktopIconProps {
-    iconPath: string;
-    isSelected: boolean;
-    onClick: (event: MouseEvent) => void;
+export interface DragSelectableIconUserProps {
+    // allow a system icon or an entry to take an icon from
+    icon?: string; // TODO: consider global SystemIcon = string alias for clarity
+    iconEntryPath?: string;
+    label: string;
+    tooltip: string; // TODO: optional
+    // TODO: context menu items
+    onClick: () => Promise<void>;
 }
 
-export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps) => {
-    const nextProcessID = useNextProcessID();
-    const nextWindowID = useNextWindowID();
-    const createProcess = useCreateProcess();
-    const createWindow = useCreateWindow();
+export type DragSelectableIconProps = DragSelectableIconUserProps & {
+    isSelected: boolean;
+    onSelect: (event: MouseEvent) => void;
 
-    const [iconImage] = usePromise(() => getIconForEntry(iconPath), [iconPath]);
-    const [iconFile] = usePromise(() => readMetadata(iconPath), [iconPath]);
+    containerUid: string;
+    iconKey: string;
+};
 
-    if (!iconFile?.ok) return null;
+// for use as children of `DragSelectContainer`
+export const DragSelectableIcon = ({
+    icon,
+    iconEntryPath,
+    label,
+    tooltip,
+    onClick,
+    isSelected,
+    onSelect,
+    containerUid,
+    iconKey,
+}: DragSelectableIconProps) => {
+    const [iconImage] = usePromise(
+        async () => (iconEntryPath ? await getIconForEntry(iconEntryPath) : getSystemIcon(icon!)),
+        [iconEntryPath, icon],
+    );
 
-    const { name, uid } = iconFile.metadata;
-    const tooltipLabel = `*${escapeMarkdown(name)}*`;
-
+    // TODO: factor out icon display component?
     return (
-        <Tooltip label={tooltipLabel} className="h-fit">
+        <Tooltip label={tooltip} className="h-fit">
             <div
-                id={`drag-select-container-desktop-item-${uid}`}
+                id={`drag-select-container-${containerUid}-item-${iconKey}`}
                 className={cn(
                     `
                         flex w-20 flex-col items-center gap-1.5 overflow-visible rounded-xs pt-1
@@ -49,17 +61,8 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                             hover:outline-aero-tint-highlight/55
                         `,
                 )}
-                onMouseDown={onClick}
-                onDoubleClick={async () => {
-                    await createProcess({ pid: nextProcessID, pname: 'fileManager' });
-                    createWindow({
-                        pid: nextProcessID,
-                        wid: nextWindowID,
-                        size: { x: 700, y: 450 },
-                        minSize: { x: 700, y: 450 },
-                        render: (pinfo, winfo) => <FileManager pinfo={pinfo} winfo={winfo} />,
-                    });
-                }}
+                onMouseDown={onSelect}
+                onDoubleClick={onClick}
             >
                 <div
                     className="
@@ -67,7 +70,9 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                         drop-shadow-aero-tint-darkest/70
                     "
                 >
-                    {iconImage && <img src={iconImage.objectURL} alt={name} draggable={false} />}
+                    {iconImage && (
+                        <img src={typeof iconImage === 'string' ? iconImage : iconImage.objectURL} draggable={false} />
+                    )}
                 </div>
                 <div className="flex w-20 justify-center overflow-visible">
                     <p
@@ -79,7 +84,7 @@ export const DesktopIcon = ({ iconPath, isSelected, onClick }: DesktopIconProps)
                             isSelected ? 'line-clamp-4' : 'line-clamp-2',
                         )}
                     >
-                        {name}
+                        {label}
                     </p>
                 </div>
             </div>
