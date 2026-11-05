@@ -4,7 +4,7 @@ import { PID_SHELL, type ProcessSettings } from '@/stores/system/processes/Proce
 export interface ShellSettings {
     wallpaperPath: string;
     tooltipDelay: number;
-    listMenuSubmenuHideDelay: number;
+    listMenuSubmenuDelay: number;
 }
 
 export const useShellProcessSettings = <T>(selector: (settings: ProcessSettings<ShellSettings>) => T): T =>

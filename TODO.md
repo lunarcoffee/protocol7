@@ -12,7 +12,7 @@
         - ~~(multi-)select functionality (extract from desktop)~~
             - ~~allow drag select to start from edges (maybe add custom children portal to DragSelectContainer?)~~
         - ~~refactor state into store context~~
-        - grid view
+        - ~~grid view~~
         - ~~search functionality~~
             - ~~sorting in search mode~~
             - ~~debounce search input~~
@@ -21,6 +21,7 @@
         - ~~status bar~~
             - ~~actually wire to selected item state~~
         - actual filesystem operations (lol)
+        - modified time relative to current time
         - customizable favorite locations (through drag and drop GUI)
     - DragSelectContainer
         - ~~os-specific modifiers (e.g., cmd on mac)~~
@@ -39,6 +40,7 @@
         - snap to sides
             - maybe consider snap-based layouting
         - dialog/alert API?
+        - try fixing weird rendering issue with control buttons on blink
         - fullscreen mode
     - generic controls and layouts
         - buttons, text inputs, text styles, etc. (lots will prob come from file manager work)

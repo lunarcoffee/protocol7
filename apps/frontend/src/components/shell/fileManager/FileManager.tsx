@@ -1,6 +1,6 @@
 import { WindowFrame } from '../windowFrame/WindowFrame';
 import { ControlBar } from './ControlBar';
-import { FileTable } from './FileTable';
+import { FileDisplayPane } from './FileDisplayPane';
 import { LocationsPane } from './LocationsPane';
 import { StatusBar } from './StatusBar';
 import { FileManagerContextProvider } from './store/FileManagerContext';
@@ -35,7 +35,7 @@ const FileManagerWindow = ({ pinfo, winfo }: FileManagerProps) => {
                     <ControlBar />
                     <div className="flex min-h-0 w-full flex-1 flex-row">
                         <LocationsPane />
-                        <FileTable winfo={winfo} />
+                        <FileDisplayPane winfo={winfo} />
                     </div>
                     <StatusBar />
                 </div>

@@ -15,10 +15,13 @@ import type { StoreApi } from 'zustand/vanilla';
 
 export type SavedLocation = { label: string; icon: string };
 
+export type DisplayMode = 'list' | 'grid';
+
 export interface FileManagerSettings {
     locations: Map<string, SavedLocation>;
     favorites: string[];
 
+    displayMode: DisplayMode;
     sortColumn: FileTableColumnName;
     isAscending: boolean;
 

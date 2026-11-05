@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { type PropsWithChildren, useEffect, useRef, useState } from 'react';
+import { type PropsWithChildren, type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { rightCaretIcon } from '../fileManager/Breadcrumbs';
 import { PositionAnchor, type PositionAnchorProps } from './PositionAnchor';
@@ -8,7 +8,7 @@ import { useBoolean } from '@/hooks/useBoolean';
 import { useTimeout } from '@/hooks/useTimeout';
 import { getSystemIcon } from '@/utils/getSystemIcon';
 
-type ListMenuLabeledItem = { label: string; icon?: string };
+type ListMenuLabeledItem = { label: string; icon?: string | ReactNode };
 type ListMenuButtonItem = ListMenuLabeledItem & { type: 'button'; onClick: () => void };
 type ListMenuSubmenuItem = ListMenuLabeledItem & { type: 'submenu'; subItems: ListMenuItem[] };
 
@@ -17,6 +17,16 @@ type ListMenuSeparatorItem = { type: 'separator' };
 export type ListMenuItem = ListMenuButtonItem | ListMenuSubmenuItem | ListMenuSeparatorItem;
 
 const ListMenuSeparatorRow = () => <div className="mx-1 my-0.5 border-y border-t-aero-tint/30 border-b-white" />;
+
+interface ListMenuRowIconProps {
+    icon: ListMenuLabeledItem['icon'];
+}
+
+const ListMenuRowIcon = ({ icon }: ListMenuRowIconProps) => (
+    <div className="flex w-6 items-center px-1">
+        {typeof icon === 'string' ? <img src={getSystemIcon(icon)} width={16} height={16} /> : icon}
+    </div>
+);
 
 interface ListMenuRowProps<T> {
     item: T;
@@ -38,7 +48,7 @@ const ListMenuButtonRow = ({ item, hide }: ListMenuRowProps<ListMenuButtonItem>)
                 hover:from-white/50 hover:to-aero-tint-highlight hover:inset-ring hover:outline
             "
         >
-            <div className="w-6 px-1">{icon && <img src={getSystemIcon(icon)} width={16} height={16} />}</div>
+            <ListMenuRowIcon icon={icon} />
             {label}
         </div>
     );
@@ -47,10 +57,12 @@ const ListMenuButtonRow = ({ item, hide }: ListMenuRowProps<ListMenuButtonItem>)
 const ListMenuSubmenuRow = ({ item, hide }: ListMenuRowProps<ListMenuSubmenuItem>) => {
     const { label, icon, subItems } = item;
 
-    const submenuHideDelay = useShellProcessSettings(({ listMenuSubmenuHideDelay }) => listMenuSubmenuHideDelay);
+    const submenuDelay = useShellProcessSettings(({ listMenuSubmenuDelay }) => listMenuSubmenuDelay);
 
     const [isVisible, setVisible, setNotVisible] = useBoolean();
-    const [cancelClose, restartClose] = useTimeout(submenuHideDelay, setNotVisible);
+
+    const [cancelOpen, restartOpen] = useTimeout(submenuDelay, setVisible);
+    const [cancelClose, restartClose] = useTimeout(submenuDelay, setNotVisible);
 
     // we need the position of this row itself in order to position the submenu
     const rowRef = useRef<HTMLDivElement>(null);
@@ -73,16 +85,19 @@ const ListMenuSubmenuRow = ({ item, hide }: ListMenuRowProps<ListMenuSubmenuItem
             ref={rowRef}
             onMouseEnter={() => {
                 cancelClose();
-                setVisible();
+                restartOpen();
             }}
-            onMouseLeave={() => restartClose()}
+            onMouseLeave={() => {
+                cancelOpen();
+                restartClose();
+            }}
             className="
                 flex flex-row gap-1 rounded-xs bg-linear-to-b py-0.5 pl-1 inset-ring-gray-200
                 outline-aero-tint/40
                 hover:from-white/50 hover:to-aero-tint-highlight hover:inset-ring hover:outline
             "
         >
-            <div className="w-6 px-1">{icon && <img src={getSystemIcon(icon)} width={16} height={16} />}</div>
+            <ListMenuRowIcon icon={icon} />
             <div className="pr-2">{label}</div>
             <div className="flex grow items-center justify-end">{rightCaretIcon}</div>
 
@@ -125,7 +140,7 @@ export const ListMenu = ({
             separatorCounter++;
             return `separator-${separatorCounter}`;
         }
-        return `${item.label}-${item.icon}`;
+        return `${item.label}${typeof item.icon === 'string' ? item.icon : ''}`;
     };
 
     return (

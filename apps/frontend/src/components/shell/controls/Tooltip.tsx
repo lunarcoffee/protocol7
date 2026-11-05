@@ -8,7 +8,7 @@ import { useTimeout } from '@/hooks/useTimeout';
 import type { PropsWithChildren } from 'react';
 
 export interface TooltipProps extends PropsWithChildren {
-    label: string;
+    label?: string;
 
     className?: string;
     id?: string;
@@ -20,7 +20,7 @@ export const Tooltip = ({ label, className, children, id }: TooltipProps) => {
     const [isVisible, setVisible, setNotVisible] = useBoolean();
     const [cancelShow, restartShowAfterDelay] = useTimeout(tooltipDelay, setVisible, setNotVisible);
 
-    return (
+    return label ? (
         <div
             onMouseMove={() => restartShowAfterDelay()}
             onMouseDown={cancelShow}
@@ -49,5 +49,5 @@ export const Tooltip = ({ label, className, children, id }: TooltipProps) => {
                 </PositionAnchor>
             )}
         </div>
-    );
+    ) : null;
 };
