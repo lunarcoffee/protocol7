@@ -1,4 +1,4 @@
-import { type PropsWithChildren } from 'react';
+import { type MouseEvent, type PropsWithChildren } from 'react';
 
 import { ListMenu, type ListMenuItem } from './ListMenu';
 import { useBoolean } from '@/hooks/useBoolean';
@@ -6,7 +6,7 @@ import { useRefreshToken } from '@/hooks/useRefreshToken';
 import { getShellRootElement } from '@/utils/getShellRootElement';
 
 export interface ContextMenuProps extends PropsWithChildren {
-    items: ListMenuItem[];
+    items?: ListMenuItem[];
 
     className?: string;
 }
@@ -17,7 +17,10 @@ export const ContextMenu = ({ items, className, children }: ContextMenuProps) =>
 
     const shellRoot = getShellRootElement()!;
 
-    const showContextMenu = () => {
+    const showContextMenu = (event: MouseEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+
         refreshMenuPosition();
         setVisible();
         shellRoot.addEventListener('mousedown', hideContextMenu);
@@ -28,10 +31,12 @@ export const ContextMenu = ({ items, className, children }: ContextMenuProps) =>
         shellRoot.removeEventListener('mousedown', hideContextMenu);
     };
 
-    return (
+    return items ? (
         <div onContextMenu={showContextMenu} className={className}>
             {children}
             <ListMenu items={items} isVisible={isVisible} hide={hideContextMenu} positionRefreshToken={refreshToken} />
         </div>
+    ) : (
+        children
     );
 };
