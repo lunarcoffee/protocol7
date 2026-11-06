@@ -20,6 +20,7 @@ export type DisplayMode = 'list' | 'grid';
 export interface FileManagerSettings {
     locations: Map<string, SavedLocation>;
     favorites: string[];
+    trashDirPath: string;
 
     displayMode: DisplayMode;
     sortColumn: FileTableColumnName;

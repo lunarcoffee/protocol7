@@ -1,4 +1,5 @@
 import { cn } from 'cn';
+import path from 'path-browserify';
 import { type MouseEvent, type PropsWithChildren, useState } from 'react';
 
 import { ContextMenu } from '../controls/ContextMenu';
@@ -9,6 +10,8 @@ import { rightCaretIcon } from './Breadcrumbs';
 import { HeadingText } from './HeadingText';
 import { useFileManagerStore } from './store/useFileManagerStore';
 import { CheckIcon } from '@/components/icons/CheckIcon';
+import { move } from '@/filesystem/api/move';
+import { remove } from '@/filesystem/api/remove';
 import { usePromise } from '@/hooks/usePromise';
 import { FILE_TABLE_COLUMNS, type FileTableColumnName } from '@/stores/fileManager/store';
 import { formatMetadataTooltip } from '@/utils/formatMetadataTooltip';
@@ -222,11 +225,14 @@ const FileGrid = ({ winfo }: PropsWithWindowInfo) => {
 
     const setCwd = useFileManagerStore(({ setCwd }) => setCwd);
     const cwdEntries = useFileManagerStore(({ cwdEntries }) => cwdEntries);
+    const refresh = useFileManagerStore(({ refresh }) => refresh);
     const selectionStates = useFileManagerStore(({ selectionStates }) => selectionStates);
     const updateSelection = useFileManagerStore(({ updateSelection }) => updateSelection);
 
     const searchQuery = useFileManagerStore(({ searchQuery }) => searchQuery);
     const setSearchQuery = useFileManagerStore(({ setSearchQuery }) => setSearchQuery);
+
+    const trashDirPath = useFileManagerStore(({ settings }) => settings.trashDirPath);
 
     const getIconWithLocations = useGetIconWithLocations();
 
@@ -244,6 +250,29 @@ const FileGrid = ({ winfo }: PropsWithWindowInfo) => {
                     getIcon: () => getIconWithLocations(metadata.path),
                     label: metadata.name,
                     tooltip: formatMetadataTooltip(metadata, !!searchQuery),
+                    contextMenuItems: [
+                        {
+                            type: 'button',
+                            label: 'Move to trash',
+                            onClick: async () => {
+                                await move(metadata.path, path.join(trashDirPath, metadata.name));
+                                await refresh();
+                            },
+                        },
+                        {
+                            type: 'button',
+                            label: 'Delete',
+                            onClick: async () => {
+                                await remove(metadata.path, { recursive: true });
+                                await refresh();
+                            },
+                        },
+                        {
+                            type: 'button',
+                            label: 'Copy location',
+                            onClick: () => void navigator.clipboard.writeText(metadata.path),
+                        },
+                    ],
                     onClick:
                         metadata.type === 'directory'
                             ? async () => {

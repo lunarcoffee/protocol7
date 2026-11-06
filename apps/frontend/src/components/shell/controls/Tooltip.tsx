@@ -49,5 +49,7 @@ export const Tooltip = ({ label, className, children, id }: TooltipProps) => {
                 </PositionAnchor>
             )}
         </div>
-    ) : null;
+    ) : (
+        children
+    );
 };

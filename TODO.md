@@ -21,10 +21,17 @@
         - ~~status bar~~
             - ~~actually wire to selected item state~~
         - actual filesystem operations (lol)
+            - ~~delete~~
+                - confirm dialog
+            - copy/cut/paste
+            - actual trash implementation (erase/restore)
         - modified time relative to current time
         - customizable favorite locations (through drag and drop GUI)
     - DragSelectContainer
         - ~~os-specific modifiers (e.g., cmd on mac)~~
+    - IconDragSelectContainer
+        - unified context menu handling (must take whole selection into account)
+        - drag and drop
     - filesystem
         - soft links?
         - also most of the API is practically untested lol
